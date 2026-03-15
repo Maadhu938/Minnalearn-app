@@ -14,12 +14,19 @@ class _StatsScreenState extends State<StatsScreen> {
   int _streak = 0;
   List<Map<String, dynamic>> _weeklyTime = [];
   Map<String, double> _mastery = {'vocabulary': 0.0, 'kanji': 0.0, 'grammar': 0.0};
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _loadStats();
+    DatabaseService.refreshNotifier.addListener(_loadStats);
+  }
+
+  @override
+  void dispose() {
+    DatabaseService.refreshNotifier.removeListener(_loadStats);
+    super.dispose();
   }
 
   Future<void> _loadStats() async {
@@ -40,11 +47,6 @@ class _StatsScreenState extends State<StatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator(color: Color(0xFFEC4899))),
-      );
-    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),

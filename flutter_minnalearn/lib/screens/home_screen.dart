@@ -7,9 +7,30 @@ import 'kanji_screen.dart';
 import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final Function(int)? onTabChange;
   const HomeScreen({Key? key, this.onTabChange}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    DatabaseService.refreshNotifier.addListener(_refresh);
+  }
+
+  @override
+  void dispose() {
+    DatabaseService.refreshNotifier.removeListener(_refresh);
+    super.dispose();
+  }
+
+  void _refresh() {
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +173,7 @@ class HomeScreen extends StatelessWidget {
                               icon: LucideIcons.bookOpen,
                               bgColor: const Color(0xFFEFF6FF), // Blue-50
                               iconColor: const Color(0xFF3B82F6), // Blue-500
-                              onTap: () => onTabChange?.call(1),
+                              onTap: () => widget.onTabChange?.call(1),
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -162,11 +183,12 @@ class HomeScreen extends StatelessWidget {
                               icon: LucideIcons.sparkles,
                               bgColor: const Color(0xFFFAF5FF), // Purple-50
                               iconColor: const Color(0xFFA855F7), // Purple-500
-                              onTap: () {
-                                Navigator.push(
+                              onTap: () async {
+                                await Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => const KanjiScreen()),
                                 );
+                                _refresh();
                               },
                             ),
                           ),
@@ -181,7 +203,7 @@ class HomeScreen extends StatelessWidget {
                               icon: LucideIcons.gamepad2,
                               bgColor: const Color(0xFFF0FDF4), // Green-50
                               iconColor: const Color(0xFF22C55E), // Green-500
-                              onTap: () => onTabChange?.call(2),
+                              onTap: () => widget.onTabChange?.call(2),
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -191,7 +213,7 @@ class HomeScreen extends StatelessWidget {
                               icon: LucideIcons.barChart3,
                               bgColor: const Color(0xFFFFF7ED), // Orange-50
                               iconColor: const Color(0xFFF97316), // Orange-500
-                              onTap: () => onTabChange?.call(3),
+                              onTap: () => widget.onTabChange?.call(3),
                             ),
                           ),
                         ],

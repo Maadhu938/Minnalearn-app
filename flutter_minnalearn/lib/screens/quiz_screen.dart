@@ -48,23 +48,26 @@ class _QuizScreenState extends State<QuizScreen> {
       }
     });
 
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      if (_currentIndex < _questions.length - 1) {
-        setState(() {
-          _currentIndex++;
-          _isAnswered = false;
-          _selectedOptionIndex = null;
-        });
-      } else {
-        setState(() {
-          _showResults = true;
-        });
-        _updateLessonProgress();
-      }
-    });
+    if (_currentIndex < _questions.length - 1) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          setState(() {
+            _currentIndex++;
+            _isAnswered = false;
+            _selectedOptionIndex = null;
+          });
+        }
+      });
+    } else {
+      setState(() {
+        _showResults = true;
+      });
+      Future(() => _updateLessonProgress());
+    }
   }
 
   Future<void> _updateLessonProgress() async {
+    if (_questions.isEmpty) return;
     double progress = _score / _questions.length;
     // Only update if current performance is better
     if (progress > widget.lesson.progress) {

@@ -6,9 +6,14 @@ import '../services/database_service.dart';
 import '../models/lesson.dart';
 import 'lesson_detail_screen.dart';
 
-class LessonsScreen extends StatelessWidget {
+class LessonsScreen extends StatefulWidget {
   const LessonsScreen({Key? key}) : super(key: key);
 
+  @override
+  State<LessonsScreen> createState() => _LessonsScreenState();
+}
+
+class _LessonsScreenState extends State<LessonsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +91,7 @@ class LessonsScreen extends StatelessWidget {
                             builder: (context) => LessonDetailScreen(lesson: lesson),
                           ),
                         );
-                        // Refresh if needed (though stateless, we might need stateful for real refresh)
+                        if (mounted) setState(() {});
                       },
                       child: Container(
                         padding: const EdgeInsets.all(16),
@@ -161,7 +166,7 @@ class LessonsScreen extends StatelessWidget {
                                     color: const Color(0xFF4B5563),
                                   ),
                                 ),
-                                const SizedBox(width: 16),
+                                const SizedBox(width: 12),
                                 Text(
                                   'Quiz + games',
                                   style: GoogleFonts.inter(
@@ -170,6 +175,21 @@ class LessonsScreen extends StatelessWidget {
                                     color: const Color(0xFF4B5563),
                                   ),
                                 ),
+                                if (lesson.progress < 1.0) ...[
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'Test required',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xFF9CA3AF),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                             const SizedBox(height: 12),
@@ -196,7 +216,7 @@ class LessonsScreen extends StatelessWidget {
                             LinearPercentIndicator(
                               padding: EdgeInsets.zero,
                               lineHeight: 8.0,
-                              percent: lesson.progress,
+                              percent: lesson.progress.clamp(0.0, 1.0),
                               backgroundColor: Colors.grey.shade200,
                               progressColor: Colors.pink,
                               barRadius: const Radius.circular(10),

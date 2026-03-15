@@ -7,17 +7,41 @@ import 'flashcards_screen.dart';
 import 'vocabulary_list_screen.dart';
 import 'quiz_screen.dart';
 import 'lesson_games_screen.dart';
+import '../services/database_service.dart';
 
-class LessonDetailScreen extends StatelessWidget {
+class LessonDetailScreen extends StatefulWidget {
   final Lesson lesson;
 
   const LessonDetailScreen({Key? key, required this.lesson}) : super(key: key);
 
   @override
+  State<LessonDetailScreen> createState() => _LessonDetailScreenState();
+}
+
+class _LessonDetailScreenState extends State<LessonDetailScreen> {
+  late Lesson _currentLesson;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentLesson = widget.lesson;
+  }
+
+  Future<void> _refreshLesson() async {
+    final lessons = await DatabaseService().getLessons();
+    final updated = lessons.firstWhere((l) => l.id == _currentLesson.id);
+    if (mounted) {
+      setState(() {
+        _currentLesson = updated;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final estimatedMinutes = lesson.vocabulary.isEmpty
+    final estimatedMinutes = _currentLesson.vocabulary.isEmpty
         ? 0
-        : (lesson.vocabulary.length * 2).clamp(10, 45).toInt();
+        : (_currentLesson.vocabulary.length * 2).clamp(10, 45).toInt();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
@@ -62,17 +86,17 @@ class LessonDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Lesson ${lesson.id}',
+                    'Lesson ${_currentLesson.id}',
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  if (lesson.title.isNotEmpty) ...[
+                  if (_currentLesson.title.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      lesson.title,
+                      _currentLesson.title,
                       style: GoogleFonts.inter(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 16,
@@ -107,7 +131,7 @@ class LessonDetailScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: StatCard(
-                        value: '${lesson.vocabulary.length}',
+                        value: '${_currentLesson.vocabulary.length}',
                         label: 'Words',
                         bgColor: Colors.blue.shade50,
                       ),
@@ -115,7 +139,7 @@ class LessonDetailScreen extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: StatCard(
-                        value: '${(lesson.progress * 100).round()}%',
+                        value: '${(_currentLesson.progress * 100).round()}%',
                         label: 'Progress',
                         bgColor: Colors.purple.shade50,
                       ),
@@ -163,12 +187,15 @@ class LessonDetailScreen extends StatelessWidget {
                         LucideIcons.bookOpen,
                         Colors.blue.shade50,
                         Colors.blue.shade500,
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FlashcardsScreen(lesson: lesson),
-                          ),
-                        ),
+                        () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FlashcardsScreen(lesson: _currentLesson),
+                            ),
+                          );
+                          _refreshLesson();
+                        },
                       ),
                       _buildActivityCard(
                         context,
@@ -176,12 +203,15 @@ class LessonDetailScreen extends StatelessWidget {
                         LucideIcons.sparkles,
                         Colors.purple.shade50,
                         Colors.purple.shade500,
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => VocabularyListScreen(lesson: lesson),
-                          ),
-                        ),
+                        () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => VocabularyListScreen(lesson: _currentLesson),
+                            ),
+                          );
+                          _refreshLesson();
+                        },
                       ),
                       _buildActivityCard(
                         context,
@@ -189,12 +219,15 @@ class LessonDetailScreen extends StatelessWidget {
                         LucideIcons.target,
                         Colors.green.shade50,
                         Colors.green.shade500,
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => QuizScreen(lesson: lesson),
-                          ),
-                        ),
+                        () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QuizScreen(lesson: _currentLesson),
+                            ),
+                          );
+                          _refreshLesson();
+                        },
                       ),
                       _buildActivityCard(
                         context,
@@ -202,12 +235,15 @@ class LessonDetailScreen extends StatelessWidget {
                         LucideIcons.gamepad2,
                         Colors.orange.shade50,
                         Colors.orange.shade500,
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LessonGamesScreen(lesson: lesson),
-                          ),
-                        ),
+                        () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LessonGamesScreen(lesson: _currentLesson),
+                            ),
+                          );
+                          _refreshLesson();
+                        },
                       ),
                     ],
                   ),
@@ -232,12 +268,15 @@ class LessonDetailScreen extends StatelessWidget {
                         ],
                       ),
                       child: ElevatedButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FlashcardsScreen(lesson: lesson),
-                          ),
-                        ),
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FlashcardsScreen(lesson: _currentLesson),
+                            ),
+                          );
+                          _refreshLesson();
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,

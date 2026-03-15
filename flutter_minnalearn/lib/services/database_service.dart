@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 import '../models/lesson.dart';
@@ -6,6 +7,13 @@ import 'data_seeder.dart';
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
   static Database? _database;
+  
+  // Notifier to trigger UI refreshes across the app
+  static final ValueNotifier<int> refreshNotifier = ValueNotifier<int>(0);
+  
+  void notifyDataChanged() {
+    refreshNotifier.value++;
+  }
 
   factory DatabaseService() => _instance;
 
@@ -297,6 +305,7 @@ class DatabaseService {
     }
     
     await updateStreak();
+    notifyDataChanged();
   }
 
   Future<int> getTotalStudyTime() async {
@@ -543,6 +552,7 @@ class DatabaseService {
       where: 'id = ?',
       whereArgs: [id],
     );
+    notifyDataChanged();
   }
 
   // Seed Helper

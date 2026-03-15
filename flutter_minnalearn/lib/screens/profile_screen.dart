@@ -18,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _completedLessons = 0;
   int _streak = 0;
   String _studyTime = '0m';
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   final List<_AchievementDefinition> _achievements = const [
     _AchievementDefinition(
@@ -75,6 +75,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _loadStats();
+    DatabaseService.refreshNotifier.addListener(_loadStats);
+  }
+
+  @override
+  void dispose() {
+    DatabaseService.refreshNotifier.removeListener(_loadStats);
+    super.dispose();
   }
 
   Future<void> _loadStats() async {
@@ -114,9 +121,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
 
     final unlockedCount = _achievements.where((item) => _currentValueFor(item.kind) >= item.goal).length;
 
