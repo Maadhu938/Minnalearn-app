@@ -73,6 +73,7 @@ class _QuizScreenState extends State<QuizScreen> {
     if (progress > widget.lesson.progress) {
       await DatabaseService().updateLessonProgress(widget.lesson.id, progress);
     }
+    await DatabaseService().updateStreak();
   }
 
   @override

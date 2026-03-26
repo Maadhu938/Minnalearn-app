@@ -1,0 +1,103 @@
+﻿
+1) Verb dictionary form
+
+Verbs are given in this form in the dictionary.
+
+Group I
+
+In the verbs of this group the last sound of the ます-form is always in the い-line. Replace it with the sound in the う-line to make the dictionary form.
+
+Group II
+
+Attach る to the ます-form.
+
+Group III
+
+します becomes する and きます becomes くる.
+#
+2) できます
+
+This verb is used to describe ability or possibility.
+#
+2.1) N が できます
+
+Nouns placed before が mostly express actions such as driving a car, shopping, skiing, dancing, etc. Nouns such as にほんご, which is associated with the action はなす can also be used here.
+
+ミラさんは　にほんごが　できます。
+
+Mr. Miller can speak Japanese.
+
+ことしは　スキーが　できます。
+
+We can ski this year.
+#
+2.2) V ことが　できます
+
+When a verb is used to describe ability or possibility, こと is attached to the dictionary form and が できます is put after that.
+
+ミラさんは　[かんじを　よむこと]が　できます。
+
+Mr. Miller can read Kanji.
+
+[カードで　はらうこと]が　できます。
+
+You can pay by credit card.
+#
+3) わたしの　しゅみは[dict. form+こと]　です。
+
+The dictionary form + こと can express the content of hobbies more concretely than the noun alone can do.
+
+わたしの　しゅみは　おんがく　です。 My hobby is music.
+
+わたしの　しゅみは　おんがくを　きくこと　です。My hobby is listening to music.
+#
+4) A まえに、B
+
+This sentence pattern indicates that action B occurs before action A takes place.
+#
+4.1) V1(dict. form)まえに、V2
+
+This pattern is used when A is a verb. The tense of V1 is always the dictionary form, independent from the tense of V2.
+
+にほんへ　くる　まえに、にほんごを　べんきょうしました。
+
+I studied Japanese before I came to Japan.
+#
+4.2) Nの まえに、V
+
+This pattern is used when A is a noun. It is used with nouns which express or imply actions.
+
+しょくじの　まえに、てを　あらいます。
+
+I wash my hands before eating.
+#
+4.3) Quantifier まえに
+
+When まえに comes after a quantifier, の is not necessary.
+
+たなかさんは　１じかん　まえに　でかきました。
+
+Mr. Tanaka left an hour ago.
+#
+5) なかなか
+
+When なかなか is accompanied by a negative expression, it means "not easily" or "not as expected."
+
+にほんでは　なかなか　うまを　みることが　できません。
+
+In Japan we can rarely see horses.
+
+[Note] はof にほんでは is attached to で to emphasize the location or area under discussion.
+#
+6) ぜひ
+
+ぜひ is used with expressions of hope and request such as ほしいです, ます-form たい です and て-form ください and emphasizes the meaning of these expressions.
+
+ぜひ　ほっかいどへ　いきたいです。
+
+I want to go to Hokkaido very much.
+
+ぜひ　あそびに　きてく　ださい。
+
+Please come to my place.
+#

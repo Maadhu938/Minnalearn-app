@@ -1,0 +1,67 @@
+﻿
+1) ない-form
+
+The ない-form is formed in 3 ways:
+
+Group I
+
+In the verbs of this group the last sound of the ます-form is in the い-line. Replace it with the corresponding sound of the あ-line to make ない-form.
+
+かきます → かかない
+
+よみます → よまない
+
+とります → とらない
+
+The exceptions to this rule are such verbs as かいます, あいます etc. Instead of あ, insert わ.
+
+Group II
+
+The ない-form of verbs of this group is just the same as the ます-form.
+
+たべます → たべない
+
+みます → みない
+
+Group III
+
+The ない-form of します is the same as the ます-form. きます becomes こない.
+
+べんきょうします→ べんきょうしない
+
+します → しない
+
+きます → こない
+#
+2) [V-ないで] Please don't...
+
+This expression is used to ask or instruct someone not to do something.
+
+げんき　ですから、しんぱいしないで　ください。
+
+I am fine, so please don't worry about me.
+
+ここで　しゃしんを　とらないで　ください。
+
+Please don't take pictures here.
+#
+3) [ない-form なければ　なりません] I must...
+
+This expression means something has to be done regardless of the will of the actor. Note that this doesn't have a negative meaning.
+
+くすりを　のまなければ　なりません。 I must take medicine.
+#
+4) ない-form [なくても　いい　です] need not ...
+
+This pattern indicates that the described action does not have to be done.
+
+あした　こなくても　いい　です。 You don't have to come tomorrow.
+#
+5) までに
+
+The point in time indicated by までに is the time limit by which an action is to be done.
+
+かいぎは　５じまでに　おわります。 The meeting will be over by five.
+
+どようびまでに　ほんを　かえさなければ　なりません。I must return the book by Saturday.
+#

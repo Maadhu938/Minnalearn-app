@@ -1,0 +1,67 @@
+﻿
+1) Noun modification
+
+You learned how to modify nouns in Lesson 2 and Lesson 8.
+
+ミラーさんの　うち Mr. Miller's house (L. 2)
+
+あたらしい　うち a new house (L. 8)
+
+きれいな　うち a beautiful house (L. 8)
+
+In Japanese, whatever modifies a word, whether it's a word or a sentence, it always comes before the word to be modified. Here you learn another way to modify nouns.
+#
+2.1) Noun modification by sentences
+
+Sentences which modify a noun are put in the plain form. In な-adjective sentences, ~ だ becomes ~な. In noun sentences ~だ becomes ~の.
+#
+2.2) Nouns can be picked out of a sentence and be modified by it.
+
+わたしは　せんしゅう　えいがを　みました → わたしが　せんしゅう　みた えいが
+
+I saw a movie last week → the movie that I saw last week
+
+ワンさんは　びょういんで　はたらいて　います → ワンさんが　はたらいて　いる　びょういん
+
+Mr. Wang works at a hospital → the hospital where Mr. Wang works
+
+In that case, を, で and に dissappear.
+#
+2.3) The noun modified by a sentence ("the house where Mr. Miller lived" in the example sentences below) can be used in various parts of a sentence.
+#
+3) が
+
+When a sentence modifies a noun, the subject in the sentence is indicated by が.
+
+みらさんは　ケーキを　つくりました。
+
+Mr. Miller baked a cake.
+
+→
+
+これは　みらさんが　つくった　ケーキ　です。
+
+This is the cake which Mr. Miller baked.
+
+カリナさんが　かいた　えが　すき　です。
+
+I like the picture that Ms. Karina drew.
+#
+4) dictionary form じかん/やくそく/ようじ
+
+When expressing the time for doing some activity, put the dictionary form of the action before じかん.
+
+あさごはんを　たべる　じかんが　ありません。
+
+I have no time to eat breakfast.
+
+You can also describe the content of an appointment, etc., by putting the dictionary form of that action before やくそく, etc.
+
+ともだちと　えいがを　みる　やくそくが　あります。
+
+I have an arrangement to see a movie with a friend of mine.
+
+きょうは　しやくしょへ　いく　ようじが　あります。
+
+I have something to do at the city hall today.
+#

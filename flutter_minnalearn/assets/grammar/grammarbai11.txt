@@ -1,0 +1,87 @@
+﻿
+1) Saying numbers
+
+ひとつ、ふたつ。。。とお
+
+These words are used to count things up to ten. Eleven and higher are counted by using the numbers themselves.
+#
+2) Counter Suffixes
+
+When counting some sorts of things or expressing the quantity of things, counter suffixes are attached after the numbers.
+
+-にん / -人 number of people except for one and two
+
+ひとり and ふたり are used for one and two.
+
+ 4人(four people) is read よにん
+
+-だい / -台 number of machines or vehicles like cars and bicycles
+
+−まい / −枚 number of thin or flat things such as paper, dishes, shirts, CDs, etc.
+
+−かい / −回 times
+
+−ふん / −分 minutes
+
+−じかん / −時間 hours
+
+−にち / −日 days
+
+The number of days takes the counter suffix にち. However, from two to ten, the same words as used for dates are used.
+
+("One day" is いちにち, "two days" is ふつか, .... , "ten days" is とおか)
+
+−しゅうかん / −週間 weeks
+
+−かげつ / −か月 months
+
+−ねん / −年 years
+
+Quantifiers (numbers with counter suffixes) are usually put before the verbs they modify. However, this is not always the case with length of time .
+
+りんごを　４つ(よっつ)　かいました。 We bought four apples.
+
+がいこくじんの　がくせいが　 2人(ふたにん)　います。There are two foreign students.
+
+くにで　２か月(にかげつ)　にほんごを　べんきょうしました。I studied Japanese for two months in my country.
+#
+3) Interrogatives
+
+いくつ
+
+いくつ is used to ask how many about things which are counted as ひとつ、ふたつ、....
+
+みかんを　いくつ　かいましたか。How many mandarin oranges did you buy?
+
+ 4つ(よっつ)　かいました。I bought eight.
+
+なん
+
+なん is used with a counter suffix to ask how many.
+
+この かいしゃに がいこくじんが なんにん いますか。How many foreigners are there in this company?
+
+どのくらい
+
+どのくらい is used to ask the length of time something takes.
+
+どのくらい にほんごを べんきょうしましたか。How long did you study Japanese?
+
+くらい
+
+くらい is added after quantifiers to mean "about."
+
+がっこうに せんせいが 三十くらい(さんじゅうくらい) います。There are about thirty teachers in our school.
+
+4) Quantifier (period) に −かい verb
+
+With this expression you can say how often you do something.
+
+ １か月に(いっかげつ)　2回(にかい)　えいがを　みます。 I go to see movies twice a month.
+#
+5) Quantifier だけ/ Nだけ
+
+だけ means "only." It is added after quantifiers or nouns to express that there is no more or nothing (no one) else.
+
+やすみは　にちようびだけ　です。I only have Sundays off.
+#

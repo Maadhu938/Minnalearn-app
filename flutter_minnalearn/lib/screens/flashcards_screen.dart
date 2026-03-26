@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../models/lesson.dart';
+import '../services/database_service.dart';
 import '../services/speech_service.dart';
 import '../services/study_timer_service.dart';
 import '../utils/vocabulary_display.dart';
@@ -34,6 +35,8 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
         _currentIndex++;
         _isFlipped = false;
       });
+      // Trigger streak update when moving through cards
+      DatabaseService().updateStreak();
     }
   }
 

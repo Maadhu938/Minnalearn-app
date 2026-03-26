@@ -1,0 +1,73 @@
+﻿
+1) Polite style and plain style
+
+Japanese language has two styles of speech: polite style and plain style.
+
+The predicates which are used in polite style sentences and accompanied by either です or ます are called the polite form, while the predicates used in plain style sentences are called the plain form. (See Main Textbook, Lesson 20, p. 166)
+#
+2) Proper use of the polite style or the plain style
+
+The polite style can be used at anytime in any place and to anybody. Therefore, the polite style is used most commonly in daily conversation between adults who are not close friends. It is used when talking to a person one has met for the first time, to one's superiors, or even to persons in a similar age group to whom one is not very close. The polite style may be chosen when one talks to a person who is younger or lower in rank yet not so close. The plain style is used when talking to one's close friends, colleagues and family members. Note that you need to be careful about how much politeness is needed, basing this on the age of your conversation partner and your type of relationship. If the plain style is used inappropriately, you could sound rough and impolite, so when you cannot tell the situation it is safer to use the polite style.
+
+The plain style is commonly used in written work. Newspapers, books, theses and diaries are all written in the plain style. Most letters are written in the polite style.
+#
+3) Conversation in the plain style
+
+ 3.1
+
+Questions in the plain style generally omit the particle か, which denotes a question, and end with a rising intonation, such as のむ(↑).
+
+コーヒーを　のむ？(↑)
+
+Do you want a coffee?
+
+うん、のむ。(↓)
+
+Yes, I do.
+
+ 3.2
+
+In noun and な-adjective questions, だ, which is the plain form of です, is omitted. In an answer in the affirmative, ending the sentence with だ could sound too rough. You can either omit だ or add some sentence final particle to soften the tone of the sentence. Women seldom use だ.
+
+こんばん　ひま？ Are you free tonight? (used by both men and women)
+
+うん、ひま/ひまだ/ひまだよ。Yes, I am. (used by men)
+
+うん、ひま/ひまよ。Yes, I am. (used by women)
+
+ううん、ひま　じゃない。 No, I am not. (used by both men and women)
+
+ 3.3
+
+In the plain style, certain particles are often omitted if the meaning of the sentence is evident from the context.
+
+ごはん[を]　たべる？Will you take a meal?
+
+あした　きょうと[へ]　いかない？Won't you come to Kyoto tomorrow with me?
+
+この　りんご[が]　おいしいね。This apple is tasty, isn't it?
+
+そこに　はさみ[が]　ある？ Is there a pair of scissors there?
+
+で、に、から、まで, etc., however, are not omitted because the meaning of the sentence may not be clear without them.
+#
+4) In the plain style, い of いる is also often dropped.
+
+じしょ　もって[い]る？ Do you have a dictionary?
+
+うん、もって[い]る。 ···Yes, I do.
+
+ううん、もって[い]ない。 ... No, I don't.
+#
+5) けど
+
+けど has the same function as が, which is used to connect two sentences (see Lesson 8, 7 and Lesson 14, 7). It is often used in conversations.
+
+その　カレーライス[は]　おいしい？Is that curry and rice tasty?
+
+うん、からいけど、おいしい。 .. Yes, it's hot but tasty.
+
+すもうの　チケット[が]　あるけど、　いっしょに　いかないか？
+
+I have tickets for sumo. Won't you come with me?
+#

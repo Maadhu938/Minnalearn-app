@@ -1,0 +1,67 @@
+﻿
+1.1) Particle は
+
+The particle は indicates that the word before it is the topic of the sentence. You select a noun you want to talk about, add は to show that it is the topic and give a statement about the topic.
+
+わたしは　マイク　ミラー です。 I am Mike Miller.
+
+[Note] The particle は is read わ.
+#
+1.2) です
+
+Nouns used with です work as predicates. です indicates judgement or assertion. です also conveys that the speaker is being polite towards the listener. です inflects when the sentence is negative (see 2. below) or in the past tense.
+
+わたしは　エンジニア　です。 I am an engineer.
+#
+2.1) では　ありません / じゃ　ありません
+
+じゃ　ありません is the negative form of です. It is the form used in daily conversation. For formal speech or writing, では　ありません is used instead.
+
+サントさんは　がくせい　じゃ　ありません。 Mr. Santos is not a student.
+
+[Note] は in では is read わ.
+#
+3.1) か
+
+The particle か is used to express the speaker's doubt, question, uncertainty, etc. A question is formed by simply adding か to the end of the sentence. A question ends with a rising intonation.
+
+ミラーさんは　アメリカじん　ですか。 Is Mr. Miller an American?
+#
+3.2) Questions with interrogatives
+
+An interrogative replaces the part of the sentence that covers what you want to ask about. The word order does not change, and か is added at the end.
+
+あの　かたは　どなた　ですか。 Who is that man?
+
+[あの かたは]　ミラーさん　です。 - That's Mr. Miller.
+#
+4.1) も
+
+も is added after a topic instead of はwhen the statement about the topic is the same as the previous topic.
+
+ミラーさんは　かいしゃいん　です。 Mr. Miller is a company employee.
+
+グプタさんも　かいしゃいん　です。 Mr. Gupta is also a company employee.
+#
+5.1) AのB
+
+の is used to connect two nouns. B modifies A. In Lesson 1, A is an organization or some kind of group to which B belongs.
+
+ミラーさんは　IMCの　しゃいん　です。 Mr. Miller is an IMC employee.
+#
+6.1) -さん
+
+さん is added to the name of the listener or a third person to show the speaker'srespect to the person. It should never be used with the speaker's own name.
+
+あのかたは　ミラーさん　です。 That's Mr. Miller.
+
+When referring directly to the listener, the word あなた(you) is not commonly used if you know the listener's name. The listener's family name followed by -さん is usually used.
+
+鈴木：ミラーさんは　がくせい　ですか。
+
+ミラー： いいえ, かいしゃいん　です。
+
+Suzuki : Are you a student?
+
+Miller : No, I'm a company employee.
+#

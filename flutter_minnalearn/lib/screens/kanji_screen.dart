@@ -167,6 +167,11 @@ class _KanjiScreenState extends State<KanjiScreen> {
       _quizSelectedAnswer = answer;
       _quizAnswered = true;
     });
+
+    if (answer == _selectedKanji?.meaning) {
+      DatabaseService().markKanjiAsLearned(_selectedKanji!.character);
+      DatabaseService().updateStreak();
+    }
   }
 
   void _nextQuizQuestion() {

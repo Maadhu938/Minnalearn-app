@@ -1,0 +1,57 @@
+﻿
+1) Past tense of noun sentences and な-adjective sentences
+
+きのうは　あめでした。
+
+It was rainy yesterday.
+
+きのうの　しけんは　かんたんじゃ　ありませんでした。
+
+Yesterday's exam was not easy.
+#
+2) Past tense of い-adjective sentences
+
+きのうは　あつかったです。
+
+It was hot yesterday.
+
+きのうの　パーティーは　あまり　たのしくなかったです。
+
+I didn't enjoy yesterday's party very much.
+#
+3) AはBより adjective です
+
+より is roughly equivalent to "than" in English. When you want to compare some characteristic of one thing against another, より marks the thing you are comparing against. You can think of it as meaning "compared to".
+
+アジアは	アフリカより	おおきいです。
+
+Asia	compared to Africa is big.
+
+Translation: Asia is bigger than Africa.
+#
+4) AとBと　どちら adjective ですか
+
+···A/Bの　ほうが adjective です
+
+The question asks the listener to choose between two items. The interrogative used is always どちら if the comparison is made between two items.
+
+サッカーと　やきゅうと　どちらが　おもしろいですか。
+
+Which is more interesting, baseball or football?
+
+サッカーの　ほうが　おもしろいです。
+
+Football is.
+#
+5) いちばん adjective
+
+This question pattern is used to ask the listener to choose something that is the most "adjective." The choice is made from the group or category denoted by N1. The interrogative used is decided by the kind of category from which the choice is made.
+
+にほんりょうり[のなか]で　なにが　いちばん　おいしいですか。
+
+Among Japanese dishes, what is the most delicious?
+
+てんぷらが　いちばん　おいしいです。
+
+Tempura is.
+#

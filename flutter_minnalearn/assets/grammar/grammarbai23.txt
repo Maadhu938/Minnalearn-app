@@ -1,0 +1,75 @@
+﻿
+1) とき
+
+とき connects two sentences and expresses the time when the state or action described in the main sentence exists or occurs. As shown in the table above, the forms of verbs, い-adjectives, な-adjectives and nouns connected to とき are the same as the forms when modifying nouns.
+
+としょかんで　ほんを　かりる とき、カードが　いります。
+
+When you borrow books from the library, you need a card.
+
+つかいかた　わからないとき、わたしに　きて　ください。
+
+When you don't know how to use it, ask me.
+
+からだの　ちょうしが　わるい とき、「げんきちゃ」を　のみます。
+
+When I'm not in good shape, I drink "Genki-cha."
+
+ひまなとき、うちへ　あそぶに　きませんか。
+
+Won't you come to my place when you are free?
+
+つまが　びょうきのとき、かいしゃを　やすみます。
+
+When my wife is sick, I take a day off work.
+
+わかいとき、あまり　べんきょう　しません　でした。
+
+When I was young, I did not study much.
+#
+2) dict. form とき / た-form とき
+
+When the dictionary form of the predicate is put before とき, it indicates the non-completion of the action, and when the た-form of the predicate is put before とき, it indicates the completion of the action.
+
+くにへ　かえるとき、かばんを　かいました。
+
+I bought a bag when I was going back to my country.
+
+くにへ　かえったとき、かばんを　かいました。
+
+I bought a bag when I had went back to my country.
+
+In the first example, かえる indicates that the action had not been completed, that the speaker had not reached his country yet and that he bought a bag somewhere on his way. In the second example, かえった indicates that the action was completed and the speaker bought a bag after arriving.
+#
+3) dict. form と, then ...
+
+When as a result of a certain action, another action inevitably happens, と is used to connect the sentences.
+
+この　ボタンを　おすと、おつりが　でます。
+
+Press this button, and the change will come out.
+
+みぎへ　まがると、ゆうびんきょくが　あります。
+
+Tum to the right, and you will find the post office.
+
+Expressions of one's will, hope, invitation or request cannot be used in the sentence which follows と.
+
+In those cases, the conditional expression たら is used instead of と (see Lesson 25).
+#
+4) N(place)をV(verb of movement)
+
+The particle を is used to denote the place where a person or a thing passes. The verb of movement such as さんぽう　します, わたります, あるきます, etc. are used in this pattern:
+
+こうえんを　さんぽう　します。
+
+I take a walk in the park. (L. 13)
+
+みちを　わたります。
+
+I cross the road.
+
+こうさてんを　みぎへ　まがります。
+
+I tum to the right at the intersection.
+#

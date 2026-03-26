@@ -6,7 +6,7 @@ import '../widgets/stat_card.dart';
 import 'flashcards_screen.dart';
 import 'vocabulary_list_screen.dart';
 import 'quiz_screen.dart';
-import 'lesson_games_screen.dart';
+import 'grammar_screen.dart';
 import '../services/database_service.dart';
 
 class LessonDetailScreen extends StatefulWidget {
@@ -231,15 +231,15 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                       ),
                       _buildActivityCard(
                         context,
-                        'Games',
-                        LucideIcons.gamepad2,
+                        'Grammar',
+                        LucideIcons.book,
                         Colors.orange.shade50,
                         Colors.orange.shade500,
                         () async {
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LessonGamesScreen(lesson: _currentLesson),
+                              builder: (context) => GrammarScreen(lesson: _currentLesson),
                             ),
                           );
                           _refreshLesson();

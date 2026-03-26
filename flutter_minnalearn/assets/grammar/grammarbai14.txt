@@ -1,0 +1,55 @@
+﻿
+1) て-form(Imperative)
+
+The verb form which ends with て or で works as imperative. How to make the て-form of a verb depends on which group the verb belongs to as explained below. This separation into groups will be highly relevant in later chapters as well.
+#
+1.1) Group I verbs
+
+The last sound of the ます-form is that of the い-line. Depending on the last sound of the ます-form, the て-form of the verbs of this group is made as shown in the table. Note that theて-form of the verb いきます, いって, is an exception.
+#
+1.2) Group II verbs
+
+In most of the verbs of this group, the last sound of the ます-form is that of the え-line, but in some verbs the last sound of the ます-form is that of the い-line.
+#
+1.3) Group III verbs
+
+Group III consist only of きます, します and verbs that are variations of these two.
+#
+2) Vて-form います
+
+This sentence pattern indicates that a certain action or motion is in progress.
+
+ミラーさんは　いま　でんわを　かきて　います。
+
+Mr. Miller is making a phone call now.
+
+いま　あめが　ふって　いますか。
+
+Is it raining now?
+#
+3) Vます-form ましょうか - Shall I...?
+
+This expression is used when the speaker is offering to do something for the listener.
+
+あしたも　きましょうか。
+
+Shall I come tomorrow, too?
+#
+4) S が S - ..., but...
+
+しつれいですが、おなまえは？
+
+Excuse me, but may I have your name?
+
+すみませんが、しおを　とって　ください。
+
+Please pass me the salt.
+#
+5) NがN
+
+When describing a natural phenomenon, the subject is indicated by が.
+
+あめが　ふって　います。
+
+It is raining.
+#

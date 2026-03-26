@@ -1,0 +1,59 @@
+﻿
+1) Nが あります/います
+
+This sentence pattern is used to indicate the existence or presence of things or persons. They are treated as the subject and marked with the particle が.
+
+あります is used when what is present is inanimate, e.g. things, plants and places.
+
+こうえんが　あります。 There is a park.
+
+When what is present is animate, います is used.
+
+おそこに　ひとが　います There is a man over there.
+#
+2) A(place)に　Bが　あります/います
+
+The place where B is present is indicated by に.
+
+わたしの　へやに　つくえが　あります。 There is a desk in my room.
+
+じむしょに　ミラーさんが　います。 Mr. Miller is in the office.
+
+You can ask what or who is present at/in the place by using this pattern. なに is used for things and だれ is used for persons.
+
+ちかに　なにが　ありますか。What is there in the basement?
+
+うけつけに　だれが　いますか。Who is at the reception desk?
+#
+3) AはB(place)に あります/います
+
+In this sentence pattern, the speaker picks up A as the topic, and explains where it is. The particle attached to A is not が, which marks the subject, but は, which marks the topic.
+
+ミラーさんは　じむしょに　います。 Mr. Miller is in the office.
+#
+4) A(thing/person/place) の B(position)
+
+うえ、した、うしろ、みぎ、ひだり、なか、そと、となり、ちかく are nouns denoting position.
+
+つくえの　うえに　しゃしんが　あります。There is a picture on the desk.
+#
+5) AやB
+
+Nouns are connected in coordinate relation by the particle や. While と enumerates all the items, や shows a few representative items. Sometimes など is put after the last noun to explicitly express that there are also some other things of the kind.
+
+はこの　なかに　てがみや　しゃしんが　あります。There are letters and pictures in the box.
+
+はこの　なかに　てがみや　しゃしんなどが　あります。There are letters, pictures and so on in the box.
+#
+6) ですか
+
+か has the function to confirm. The speaker picks up a word or words he/she wants to confirm and confirms it (them) using this pattern.
+
+すみません。ストアは　どこですか。 Excuse me, but where is the Store?
+
+ストアですか？あの　ビルの　なかです。 The Store? It's in that building.
+#
+7) A ありませんか
+
+By using the negative form ありませんか instead of ありますか you can be indirect and polite, showing that you are prepared for a negative answer.
+#

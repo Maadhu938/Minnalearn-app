@@ -1,0 +1,77 @@
+﻿
+1) 時(じ), 分(ふん/ぷん)
+
+To express time, the counter suffixes 時 (じ/o'clock) and 分 (ふん/minutes) are used.
+
+分 is read ふん after 2, 5, 7 or 9 and ぷん after 1, 3, 4, 6, 8 or 10.
+
+ 1, 6, 8 and 10 are read いっぷん, ろっぷん, はっぷん and じゅっぷん
+
+なんじ (or sometimes なんぷん) is used to ask the time.
+
+いま　なんじですか。What time is it now?
+
+ 7じ　10ぷん　です。 It's seven ten.
+#
+2) ます
+
+ます is used when a sentence expresses a habitual thing or a truth. It is also used when a sentence expresses a thing that will occur in the future.
+
+まいあさ　６じに　おきます。 I get up at six every morning.
+
+あした　６じに　おきます。 I'll get up at six tomorrow morning.
+
+けさ　６じに　おきました。 I got up at six this morning.
+
+For questions, the word order remains the same and か is added to the end of the sentence. In answering such questions, the verbs in the questions are repeated. そう　です or そう　じゃ　ありません cannot be used.
+
+きのう　べんきょうしましたか。 Did you study yesterday?
+
+はい、べんきょうしました。Yes, I did.
+#
+3) に
+
+When a verb denotes a momentary action or movement, the time when it occurs is marked with the particle に.
+
+ 6じはんに　おきます。 I get up at six thirty.
+#
+4) AからBまで
+
+から indicates the starting time or place, and まで indicates the finishing time or place.
+
+ ９じから　５じまで　はたらきます。 I work from nine to five.
+
+から and まで are not always used together.
+
+ ９じから　はたらきます。 I work from nine.
+
+AからBまで is sometimes used with です added directly after either.
+
+ぎんこうは　９じから　３じまで　です。 The bank is open from nine to three.
+#
+5) AとB
+
+The particle と connects two nouns in coordinate relation.
+
+ぎんこうの　やすみは　どようびと　にちようび　です。 The bank is closed on Saturdays and Sundays.
+
+When you do something with a person or animal, the person or animal is also marked with the particle と .
+
+かぞくと　にほんへ　きました。 I came to Japan with my family.
+#
+6) ね
+
+ね is attached to the end of a sentence to add feeling to what the speaker says. It shows the speaker's sympathy or the speaker's expectation that the listener will agree. In the latter usage, it is often used to confirm something. A translation could be "isn't it?".
+
+まいにち　１０じまで　べんきょうします。 I study till about ten every day.
+
+たいへん　ですね。That must be hard.
+
+やまださんの　でんわばんごうは　8713の6813です。
+
+ 8713の6813ですね。
+
+Mr. Yamada's telephone number is 871-6813.
+
+#871-6813, right?
+#

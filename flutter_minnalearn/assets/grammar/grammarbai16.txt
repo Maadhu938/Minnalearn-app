@@ -1,0 +1,89 @@
+﻿
+1) Vて-form, V て-form
+
+When two or more actions take place in succession, the actions are mentioned in the order of occurrence by using the て-form. The tense of the sentence is determined by the tense form of the last verb in the sentence.
+
+あさ　ジョギングを　して、シャワーを　あびて、かいしゃへ　いきます。
+
+In the morning, I jog, take a shower and go to the office.
+#
+2) い-adj -> ~くて
+
+When joining an い-adjective sentence to another sentence, take away the い-form and attach -くて.
+
+おおきい -> おおきくて big
+
+ちいさい -> ちいさくて small
+
+いい -> よくて good
+
+ミラさんは　わかくて、げんきです。
+
+Mr. Miller is young and lively.
+#
+3) な-adj -> ~で
+
+When joining noun sentences or な-adjective sentences, です is changed to で.
+
+カリナさんは　インドネシアじんで、きょうとの　りゅうがくせい　です。
+
+Ms. Karina is an Indonesian and a student of Kyoto University.
+
+ミラさんは　はんさむで、しんせつです。
+
+Mr. Miller is handsome and kind.
+
+The above structures can be used for sentences with different topics.
+
+カリンさんは　がくせいで、マリアさんは　しゅふ です。
+
+Ms. Karina is a student and Maria is a housewife.
+
+This method cannot connect sentences of contradictory notion. In that case, が is used (see Lesson 8, 7).
+
+X この へやは　せまくて、 きれい　です。
+
+O この へやは　せまい　ですが、 きれい　です。
+
+This room is small but clean.
+#
+4) V1て-formから,V2
+
+This sentence pattern indicates that upon completion of the action denoted by V1, the action of V2 is to be conducted.
+
+くにへ　かえってから、ちちの　かいしゃで　はたらきます。
+
+I will work for my father's company after going back to my country.
+#
+5) N1は N2が adjective です
+
+This sentence pattern is used to describe an attribute of a thing or a person. The topic of the sentence is denoted by は, N1 is the topic of the sentence. N2 is the subject of the adjective's description.
+
+おおさかは　たべものが　おいしい　です。 Food is tasty in Osaka.
+
+マリアさんは　かみが　ながい　です。 Maria has long hair.
+#
+6) どうやって
+
+どうやって is used to ask the way or the method of doing something. To answer such a question, the pattern learned in 1) is used.
+
+だいがくまで　どうやって　いきますか。
+
+。。きょうと　えきから　１６ばんのバスに　のって、だいがくまえで　おります。
+
+How do you go to your university?
+
+... I take a No.16 bus from Kyoto Station and get off at Daigaku-mae.
+#
+7) どの N
+
+You learned in Lesson 2 that この, その and あの modify nouns. The interrogative word used in this system is どの. どの is used to ask the listener to define one among more than two which are concretely presented.
+
+サントスさんは　どの　ひと　ですか。
+
+。。あの　せが　たかくて、かみが　くろい　ひと　です。
+
+Which one is Mr. Santos?
+
+···That tall man with black hair is.
+#

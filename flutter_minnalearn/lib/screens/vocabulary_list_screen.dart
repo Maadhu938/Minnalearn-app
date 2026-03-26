@@ -56,6 +56,10 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
       didSpeak = await SpeechService().speakJapanese(text);
     }
 
+    if (didSpeak) {
+      DatabaseService().updateStreak();
+    }
+
     if (!mounted || didSpeak) {
       return;
     }

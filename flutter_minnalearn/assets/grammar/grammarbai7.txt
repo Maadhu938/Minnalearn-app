@@ -1,0 +1,51 @@
+﻿
+1) N (tool/means)でV
+
+The particle で indicates a method or a means used for an action.
+
+はしで　たべます。I eat with chopsticks.
+
+にほんごで　レポートを　かきます。 I write a report in Japanese.
+
+でんしゃで　いきます。 I'll go by train.
+#
+2.1) N (person)にV
+
+Verbs like あげます, かします, おしえます, etc., require persons to whom you give, lend, teach, etc. These persons are marked with に.
+
+やまださんは　きむらさんに　はなを　あげました。
+
+Mr. Yamada gave flowers to Ms. Kimura.
+
+[Note] With verbs like おくリます, でんわを かけます, etc., place nouns can be used instead of persons. In this case, へ is sometimes used instead of Iこ.
+
+かいしゃ[に/へ]　でんわを　かけます。I'l call my office.
+#
+2.2) N (person)にV
+
+Verbs like もらいます，かりますand ならいます express actions from the receiving side. The persons from whom you receive those actions are also marked with に.
+
+きむらさんは　やまださんに　はなを　もらいました。 Ms. Kimura received flowers from Mr. Yamada.
+
+わんさんに　ちゅうごくごを　ならいます。I learn Chinese from Mr. Wang.
+
+から is sometimes used instead of に in this sentence pattern. When you receive something from an organization like a school or a company, only から is used.
+
+ぎんこうから　おかねを　かりました。I borrowed some money from the bank.
+#
+3) もう　Vました
+
+もう means “already" and is used with Vました. In this case, Vました means that the action has been finished. The answer to the question
+
+もう　Vましたか？
+
+is はい、もう　Vました
+
+or いいえ、まだ　です.
+
+もう　にもつを　おくりましたか。Have you sent the parcel yet?
+
+-はい，[もう]　おくりました。 - Yes, I have sent it [already].
+
+-いいえ、まだ　です。 - No, not yet.
+#

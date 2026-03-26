@@ -29,7 +29,7 @@ class DatabaseService {
     String path = p.join(await getDatabasesPath(), 'minnalearn.db');
     return await openDatabase(
       path,
-      version: 7,
+      version: 8,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -84,6 +84,7 @@ class DatabaseService {
     await _createStudySessionsTable(db);
     await _createGameScoresTable(db);
     await _createBookmarksTable(db);
+    await _createLearnedKanjiTable(db);
     
     // Seed initial lesson data from the bundled vocabulary file.
     await _seedInitialData(db);
@@ -110,6 +111,9 @@ class DatabaseService {
     }
     if (oldVersion < 7) {
       await _createBookmarksTable(db);
+    }
+    if (oldVersion < 8) {
+      await _createLearnedKanjiTable(db);
     }
   }
 
@@ -270,6 +274,15 @@ class DatabaseService {
     ''');
   }
 
+  Future<void> _createLearnedKanjiTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS learned_kanji (
+        character TEXT PRIMARY KEY,
+        learned_at TEXT
+      )
+    ''');
+  }
+
   // Stats Operations
   Future<void> addStudyTime(int seconds) async {
     final db = await database;
@@ -339,11 +352,17 @@ class DatabaseService {
     DateTime todayDT = DateTime.parse(today);
     if (lastDate != '') {
       DateTime lastDateDT = DateTime.parse(lastDate);
+      // Use difference in days ignoring time
       int diff = todayDT.difference(lastDateDT).inDays;
       
       if (diff == 1) {
         streak += 1;
-      } else if (diff > 1) {
+      } else if (diff == 2) {
+        // Freeze logic: 1 missed day (gap of 2 days between studies)
+        // Keep current streak and add today
+        streak += 1;
+      } else if (diff > 2) {
+        // Reset logic: 2+ missed days
         streak = 1;
       }
     } else {
@@ -500,12 +519,15 @@ class DatabaseService {
     final vocabProgress = await db.rawQuery('SELECT AVG(progress) as avg FROM lessons');
     final vMastery = (vocabProgress.first['avg'] as num?)?.toDouble() ?? 0.0;
 
-    // Kanji mastery: (similar logic or based on completed lessons)
-    // For now, let's use the average progress across all lessons as a proxy
+    // Kanji mastery: unique learned count / total count
+    final totalKanji = await getTotalKanjiCount();
+    final learnedKanji = await getLearnedKanjiCount();
+    final kMastery = totalKanji > 0 ? learnedKanji / totalKanji : 0.0;
+
     return {
       'vocabulary': vMastery,
-      'kanji': vMastery, // Placeholder: ideally separate tracking per item
-      'grammar': vMastery * 0.8, // Placeholder
+      'kanji': kMastery,
+      'grammar': vMastery * 0.8, // Grammar placeholder based on vocab progress
     };
   }
 
@@ -600,10 +622,21 @@ class DatabaseService {
   }
 
   Future<int> getLearnedKanjiCount() async {
-    final lessons = await getLessons();
-    return lessons.fold<int>(
-      0,
-      (total, lesson) => total + (lesson.kanji.length * lesson.progress).round(),
+    final db = await database;
+    final result = await db.rawQuery('SELECT COUNT(*) as count FROM learned_kanji');
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<void> markKanjiAsLearned(String character) async {
+    final db = await database;
+    await db.insert(
+      'learned_kanji',
+      {
+        'character': character,
+        'learned_at': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.ignore,
     );
+    notifyDataChanged();
   }
 }
