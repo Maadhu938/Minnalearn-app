@@ -7,6 +7,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../models/lesson.dart';
 import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
+import '../services/audio_service.dart';
+import '../widgets/kanji_drawing_board.dart';
 
 enum _KanjiPracticeMode {
   flashcards,
@@ -40,6 +42,9 @@ class _KanjiScreenState extends State<KanjiScreen> {
   List<String> _quizOptions = [];
   String? _quizSelectedAnswer;
   bool _quizAnswered = false;
+
+  final GlobalKey<KanjiDrawingBoardState> _drawingBoardKey = GlobalKey<KanjiDrawingBoardState>();
+  bool _isDrawing = false;
 
   @override
   void initState() {
@@ -122,6 +127,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
       if (_practiceMode == _KanjiPracticeMode.quiz) {
         _prepareQuiz();
       }
+      _drawingBoardKey.currentState?.clear(); // Clear drawing board when changing kanji
+      AudioService().playClick();
     });
   }
 
@@ -169,8 +176,11 @@ class _KanjiScreenState extends State<KanjiScreen> {
     });
 
     if (answer == _selectedKanji?.meaning) {
+      AudioService().playCorrect();
       DatabaseService().markKanjiAsLearned(_selectedKanji!.character);
       DatabaseService().updateStreak();
+    } else {
+      AudioService().playWrong();
     }
   }
 
@@ -288,6 +298,9 @@ class _KanjiScreenState extends State<KanjiScreen> {
 
     return SingleChildScrollView(
       key: const ValueKey('content'),
+      physics: _isDrawing
+          ? const NeverScrollableScrollPhysics()
+          : const AlwaysScrollableScrollPhysics(),
       child: Column(
         children: [
           Padding(
@@ -521,8 +534,6 @@ class _KanjiScreenState extends State<KanjiScreen> {
                   _buildKanjiInfoRow('On Reading', kanji.onReading, Colors.pink),
                   const SizedBox(height: 12),
                   _buildKanjiInfoRow('Kun Reading', kanji.kunReading, Colors.purple),
-                  const SizedBox(height: 12),
-                  _buildKanjiInfoRow('Used In', 'Lesson ${kanji.lessonId ?? '-'}', Colors.blue),
                 ] else
                   Text(
                     'Tap to reveal meaning and readings',
@@ -562,24 +573,62 @@ class _KanjiScreenState extends State<KanjiScreen> {
               ),
               const SizedBox(height: 18),
               Center(
-                child: SizedBox(
-                  width: 220,
-                  height: 220,
-                  child: GridPaper(
-                    divisions: 2,
-                    subdivisions: 4,
-                    color: const Color(0xFFFBCFE8),
-                    child: Center(
-                      child: Text(
-                        kanji.character,
-                        style: GoogleFonts.inter(
-                          fontSize: 110,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1F2937),
-                        ),
+                child: Container(
+                  width: 260,
+                  height: 260,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: const Color(0xFFFBCFE8), width: 2),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(22),
+                    child: GridPaper(
+                      divisions: 2,
+                      subdivisions: 4,
+                      color: const Color(0xFFFDF2F8),
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Text(
+                              kanji.character,
+                              style: GoogleFonts.inter(
+                                fontSize: 130,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFFE5E7EB), // Light gray for tracing
+                              ),
+                            ),
+                          ),
+                          KanjiDrawingBoard(
+                            key: _drawingBoardKey,
+                            strokeGuide: kanji.character,
+                            onStrokeStart: () {
+                              setState(() {
+                                _isDrawing = true;
+                              });
+                            },
+                            onStrokeComplete: () {
+                              setState(() {
+                                _isDrawing = false;
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: () {
+                    _drawingBoardKey.currentState?.clear();
+                    AudioService().playClick();
+                  },
+                  icon: const Icon(LucideIcons.eraser, size: 18, color: Colors.pink),
+                  label: Text('Clear', style: GoogleFonts.inter(color: Colors.pink)),
                 ),
               ),
               const SizedBox(height: 20),

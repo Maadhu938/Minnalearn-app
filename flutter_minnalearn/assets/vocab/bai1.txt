@@ -4,7 +4,7 @@
 # Paul Denisowski (pdenisowski@nc.rr.com)
 わたし [わたし] /I/
 わたしたち [わたしたち] /We/
-あなた [あんた] /you/
+あなた [あなた] /you/
 あの人 [あのひと] /that person/
 あの方 [あのかた] /that person, he,she (more polite)/
 皆さん [みなさん] /ladies and gentlemen, all of you/

@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../models/lesson.dart';
 import '../services/database_service.dart';
 import '../services/speech_service.dart';
+import '../services/audio_service.dart';
 import '../services/study_timer_service.dart';
 import '../utils/vocabulary_display.dart';
 
@@ -44,7 +45,7 @@ class _MemoryCardsScreenState extends State<MemoryCardsScreen> {
 
   void _setupGame() {
     final vocabulary = List<Vocabulary>.from(widget.lesson.vocabulary)..shuffle(_random);
-    final pairCount = math.min(4, vocabulary.length);
+    final pairCount = math.min(6, vocabulary.length);
     final selectedWords = vocabulary.take(pairCount).toList();
 
     final cards = <_MemoryCard>[];
@@ -99,6 +100,7 @@ class _MemoryCardsScreenState extends State<MemoryCardsScreen> {
       });
 
       if (_matchedPairIds.length == _cards.length ~/ 2) {
+        AudioService().playLevelComplete();
         await _saveScoreIfNeeded();
       }
       return;
@@ -135,7 +137,7 @@ class _MemoryCardsScreenState extends State<MemoryCardsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final notEnoughWords = _cards.length < 4;
+    final notEnoughWords = widget.lesson.vocabulary.length < 3;
     final completed = _matchedPairIds.length == _cards.length ~/ 2 && _cards.isNotEmpty;
 
     return Scaffold(
@@ -218,10 +220,10 @@ class _MemoryCardsScreenState extends State<MemoryCardsScreen> {
                     : GridView.builder(
                         itemCount: _cards.length,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 1.05,
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 1.0,
                         ),
                         itemBuilder: (context, index) {
                           final card = _cards[index];

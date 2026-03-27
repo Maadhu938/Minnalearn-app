@@ -3,9 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../services/database_service.dart';
 import '../services/auth_service.dart';
+import '../services/cloud_service.dart';
 import 'main_screen.dart';
 import 'onboarding_screen.dart';
 import 'auth_screen.dart';
+import '../services/notification_service.dart';
 
 class StartupScreen extends StatefulWidget {
   const StartupScreen({Key? key}) : super(key: key);
@@ -27,6 +29,14 @@ class _StartupScreenState extends State<StartupScreen> {
     try {
       final dbService = DatabaseService();
       await dbService.initialize();
+      
+      // Schedule notifications securely after DB is initialized
+      try {
+        await NotificationService().scheduleAllNotifications();
+      } catch (e) {
+        debugPrint('Failed to schedule notifications: $e');
+      }
+
       final hasSeenOnboarding = await dbService.hasSeenOnboarding();
       final currentUser = AuthService().currentUser;
 
@@ -37,6 +47,8 @@ class _StartupScreenState extends State<StartupScreen> {
       Widget nextScreen;
       
       if (currentUser != null) {
+        // Fire and forget, don't block startup
+        Future.microtask(() => CloudService().syncAll());
         nextScreen = const MainScreen();
       } else if (hasSeenOnboarding) {
         nextScreen = const AuthScreen();

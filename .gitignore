@@ -63,10 +63,13 @@ gradle-wrapper.jar
 /local.properties
 GeneratedPluginRegistrant.java
 
-# Never publish signing keys
+# Never publish signing keys or configuration secrets
 key.properties
 **/*.keystore
 **/*.jks
+**/google-services.json
+**/GoogleService-Info.plist
+**/firebase_options.dart
 
 # iOS / XCode
 **/ios/**/*.mode1v3

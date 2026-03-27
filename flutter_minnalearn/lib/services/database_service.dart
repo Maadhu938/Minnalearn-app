@@ -3,6 +3,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 import '../models/lesson.dart';
 import 'data_seeder.dart';
+import 'cloud_service.dart';
+import 'achievement_service.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -29,7 +31,7 @@ class DatabaseService {
     String path = p.join(await getDatabasesPath(), 'minnalearn.db');
     return await openDatabase(
       path,
-      version: 8,
+      version: 9,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -85,6 +87,7 @@ class DatabaseService {
     await _createGameScoresTable(db);
     await _createBookmarksTable(db);
     await _createLearnedKanjiTable(db);
+    await _createAchievementsTable(db);
     
     // Seed initial lesson data from the bundled vocabulary file.
     await _seedInitialData(db);
@@ -114,6 +117,9 @@ class DatabaseService {
     }
     if (oldVersion < 8) {
       await _createLearnedKanjiTable(db);
+    }
+    if (oldVersion < 9) {
+      await _createAchievementsTable(db);
     }
   }
 
@@ -283,6 +289,15 @@ class DatabaseService {
     ''');
   }
 
+  Future<void> _createAchievementsTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS achievements (
+        id TEXT PRIMARY KEY,
+        unlocked_at TEXT
+      )
+    ''');
+  }
+
   // Stats Operations
   Future<void> addStudyTime(int seconds) async {
     final db = await database;
@@ -319,6 +334,33 @@ class DatabaseService {
     
     await updateStreak();
     notifyDataChanged();
+    
+    // Sync to cloud
+    final streak = await getStreak();
+    final totalTime = await getTotalStudyTime();
+    CloudService().pushStats(streak, totalTime);
+  }
+
+  Future<int> getTodayStudySeconds() async {
+    final db = await database;
+    String today = DateTime.now().toIso8601String().split('T')[0];
+    final result = await db.query(
+      'study_sessions',
+      columns: ['duration_seconds'],
+      where: 'date = ?',
+      whereArgs: [today],
+    );
+    
+    int total = 0;
+    for (var row in result) {
+      total += (row['duration_seconds'] as int);
+    }
+    return total;
+  }
+
+  Future<int> getDailyGoalMinutes() async {
+    // Default 10 minutes, could be stored in user_stats
+    return 10; 
   }
 
   Future<int> getTotalStudyTime() async {
@@ -352,19 +394,15 @@ class DatabaseService {
     DateTime todayDT = DateTime.parse(today);
     if (lastDate != '') {
       DateTime lastDateDT = DateTime.parse(lastDate);
-      // Use difference in days ignoring time
       int diff = todayDT.difference(lastDateDT).inDays;
       
       if (diff == 1) {
         streak += 1;
-      } else if (diff == 2) {
-        // Freeze logic: 1 missed day (gap of 2 days between studies)
-        // Keep current streak and add today
-        streak += 1;
-      } else if (diff > 2) {
-        // Reset logic: 2+ missed days
+      } else if (diff > 1) {
+        // Gap of 2+ days: reset streak
         streak = 1;
       }
+      // if diff == 0, keep same streak
     } else {
       streak = 1;
     }
@@ -450,6 +488,7 @@ class DatabaseService {
       'score': score,
       'date': DateTime.now().toIso8601String(),
     });
+    CloudService().pushAllLocalData(); // Push game scores via all data push for now
   }
 
   Future<List<Map<String, dynamic>>> getRecentGameScores(int limit) async {
@@ -485,6 +524,22 @@ class DatabaseService {
         .toSet();
   }
 
+  Future<void> setVocabularyBookmark(String vocabularyId, bool isBookmarked) async {
+    final db = await database;
+    if (isBookmarked) {
+      await db.insert('bookmarked_vocabulary', {
+        'vocabulary_id': vocabularyId,
+        'created_at': DateTime.now().toIso8601String(),
+      }, conflictAlgorithm: ConflictAlgorithm.ignore);
+    } else {
+      await db.delete(
+        'bookmarked_vocabulary',
+        where: 'vocabulary_id = ?',
+        whereArgs: [vocabularyId],
+      );
+    }
+  }
+
   Future<bool> toggleVocabularyBookmark(String vocabularyId) async {
     final db = await database;
     final existing = await db.query(
@@ -508,6 +563,11 @@ class DatabaseService {
       'vocabulary_id': vocabularyId,
       'created_at': DateTime.now().toIso8601String(),
     });
+    
+    // Sync bookmarks
+    final bookmarks = await getBookmarkedVocabularyIds();
+    CloudService().pushBookmarks(bookmarks.toList());
+    
     return true;
   }
 
@@ -585,6 +645,7 @@ class DatabaseService {
       whereArgs: [id],
     );
     notifyDataChanged();
+    CloudService().pushSingleLessonProgress(id, progress);
   }
 
   // Seed Helper
@@ -638,5 +699,46 @@ class DatabaseService {
       conflictAlgorithm: ConflictAlgorithm.ignore,
     );
     notifyDataChanged();
+    
+    final allKanji = await getAllLearnedKanjiChars();
+    CloudService().pushLearnedKanji(allKanji);
+  }
+
+  Future<List<String>> getAllLearnedKanjiChars() async {
+    final db = await database;
+    final result = await db.query('learned_kanji', columns: ['character']);
+    return result.map((row) => row['character'] as String).toList();
+  }
+
+  Future<void> updateStat(String key, dynamic value) async {
+    final db = await database;
+    if (value is int) {
+      await db.update('user_stats', {'value_int': value}, where: 'key = ?', whereArgs: [key]);
+    } else if (value is double) {
+      await db.update('user_stats', {'value_real': value}, where: 'key = ?', whereArgs: [key]);
+    } else if (value is String) {
+      await db.update('user_stats', {'value_text': value}, where: 'key = ?', whereArgs: [key]);
+    }
+  }
+
+  Future<bool> isAchievementUnlocked(String id) async {
+    final db = await database;
+    final result = await db.query('achievements', where: 'id = ?', whereArgs: [id]);
+    return result.isNotEmpty;
+  }
+
+  Future<void> markAchievementUnlocked(String id) async {
+    final db = await database;
+    await db.insert(
+      'achievements', 
+      {'id': id, 'unlocked_at': DateTime.now().toIso8601String()},
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
+  }
+
+  Future<List<String>> getUnlockedAchievementIds() async {
+    final db = await database;
+    final result = await db.query('achievements', columns: ['id']);
+    return result.map((r) => r['id'] as String).toList();
   }
 }

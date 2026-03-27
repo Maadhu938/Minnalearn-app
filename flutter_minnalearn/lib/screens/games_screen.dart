@@ -8,7 +8,7 @@ import '../services/database_service.dart';
 import 'memory_cards_screen.dart';
 import 'matching_game_screen.dart';
 import 'typing_test_screen.dart';
-import 'word_catch_screen.dart';
+import 'kana_puzzle_screen.dart';
 
 class GamesScreen extends StatefulWidget {
   const GamesScreen({Key? key}) : super(key: key);
@@ -205,11 +205,11 @@ class _GamesScreenState extends State<GamesScreen> {
                               },
                       ),
                       _buildGameCard(
-                        'Word Catch',
+                        'Kana Puzzle',
                         _gameLesson == null
                             ? 'Add more vocabulary to unlock'
-                            : 'Tap the right falling kana in time',
-                        LucideIcons.sparkles,
+                            : 'Build the Kana from meaning',
+                        LucideIcons.puzzle,
                         const [Color(0xFFFB923C), Color(0xFFF97316)],
                         isLocked: _gameLesson == null,
                         onTap: _gameLesson == null
@@ -218,7 +218,7 @@ class _GamesScreenState extends State<GamesScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => WordCatchScreen(
+                                    builder: (context) => KanaPuzzleScreen(
                                       lesson: _gameLesson!,
                                     ),
                                   ),

@@ -6,6 +6,7 @@ import '../models/lesson.dart';
 import '../services/quiz_engine.dart';
 import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
+import '../services/audio_service.dart';
 
 class QuizScreen extends StatefulWidget {
   final Lesson lesson;
@@ -45,6 +46,9 @@ class _QuizScreenState extends State<QuizScreen> {
       _selectedOptionIndex = optionIndex;
       if (_questions[_currentIndex].options[optionIndex] == _questions[_currentIndex].correctAnswer) {
         _score++;
+        AudioService().playCorrect();
+      } else {
+        AudioService().playWrong();
       }
     });
 
@@ -62,6 +66,7 @@ class _QuizScreenState extends State<QuizScreen> {
       setState(() {
         _showResults = true;
       });
+      AudioService().playLevelComplete();
       Future(() => _updateLessonProgress());
     }
   }

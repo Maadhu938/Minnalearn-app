@@ -179,7 +179,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                     crossAxisCount: 2,
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 1.2,
+                    childAspectRatio: 1.0, // Increased height to prevent text overflow
                     children: [
                       _buildActivityCard(
                         context,

@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:io';
+import 'audio_service.dart';
 
 class SpeechService {
   SpeechService._internal();
@@ -93,18 +94,10 @@ class SpeechService {
   }
 
   Future<void> playWrongAnswer() async {
-    try {
-      await _channel.invokeMethod('playWrongTone');
-    } catch (_) {
-      try { SystemSound.play(SystemSoundType.alert); } catch (_) {}
-    }
+    await AudioService().playWrong();
   }
 
   Future<void> playCorrectAnswer() async {
-    try {
-      await _channel.invokeMethod('playCorrectTone');
-    } catch (_) {
-      try { SystemSound.play(SystemSoundType.click); } catch (_) {}
-    }
+    await AudioService().playCorrect();
   }
 }

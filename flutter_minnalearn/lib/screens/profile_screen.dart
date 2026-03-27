@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
 import '../services/auth_service.dart';
+import '../services/achievement_service.dart';
 import 'auth_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -22,57 +23,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _streak = 0;
   String _studyTime = '0m';
   bool _isLoading = false;
+  Set<String> _unlockedAchievementIds = {};
 
-  final List<_AchievementDefinition> _achievements = const [
-    _AchievementDefinition(
-      title: 'First Lesson',
-      description: 'Finish your first lesson to unlock this badge.',
-      icon: LucideIcons.flag,
-      goal: 1,
-      color: Color(0xFF3B82F6),
-      kind: _AchievementKind.lessons,
-    ),
-    _AchievementDefinition(
-      title: 'Week Warrior',
-      description: 'Build a 7 day streak.',
-      icon: LucideIcons.flame,
-      goal: 7,
-      color: Color(0xFFF97316),
-      kind: _AchievementKind.streak,
-    ),
-    _AchievementDefinition(
-      title: 'Vocab Master',
-      description: 'Learn 100 vocabulary items.',
-      icon: LucideIcons.bookOpen,
-      goal: 100,
-      color: Color(0xFFEC4899),
-      kind: _AchievementKind.vocabulary,
-    ),
-    _AchievementDefinition(
-      title: 'Kanji Learner',
-      description: 'Study 25 kanji cards.',
-      icon: LucideIcons.sparkles,
-      goal: 25,
-      color: Color(0xFF8B5CF6),
-      kind: _AchievementKind.kanji,
-    ),
-    _AchievementDefinition(
-      title: 'Grammar Goal',
-      description: 'Complete 5 lessons.',
-      icon: LucideIcons.target,
-      goal: 5,
-      color: Color(0xFF22C55E),
-      kind: _AchievementKind.lessons,
-    ),
-    _AchievementDefinition(
-      title: 'Halfway There',
-      description: 'Reach 12 completed lessons.',
-      icon: LucideIcons.award,
-      goal: 12,
-      color: Color(0xFF14B8A6),
-      kind: _AchievementKind.lessons,
-    ),
-  ];
+  final List<Achievement> _achievements = AchievementService().allAchievements;
 
   @override
   void initState() {
@@ -94,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final lessons = await db.getCompletedLessonsCount();
     final streak = await db.getStreak();
     final time = await StudyTimerService().getFormattedStudyTime();
+    final unlockedIds = (await db.getUnlockedAchievementIds()).toSet();
 
     if (!mounted) {
       return;
@@ -105,27 +59,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _completedLessons = lessons;
       _streak = streak;
       _studyTime = time;
+      _unlockedAchievementIds = unlockedIds;
       _isLoading = false;
     });
   }
 
-  int _currentValueFor(_AchievementKind kind) {
-    switch (kind) {
-      case _AchievementKind.vocabulary:
-        return _vocabCount;
-      case _AchievementKind.kanji:
-        return _kanjiCount;
-      case _AchievementKind.lessons:
-        return _completedLessons;
-      case _AchievementKind.streak:
-        return _streak;
-    }
+  int _currentValueFor(Achievement ach) {
+    // We can rely on stats for current progress
+    return 0; // The UI logic below will be updated to useUnlockedIds
   }
 
   @override
   Widget build(BuildContext context) {
 
-    final unlockedCount = _achievements.where((item) => _currentValueFor(item.kind) >= item.goal).length;
+    final unlockedCount = _unlockedAchievementIds.length;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
@@ -336,19 +283,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 20),
                           ..._achievements.map((achievement) {
-                            final current = _currentValueFor(achievement.kind);
-                            final unlocked = current >= achievement.goal;
-                            final progress = (current / achievement.goal).clamp(0.0, 1.0);
+                            final unlocked = _unlockedAchievementIds.contains(achievement.id);
+                            final Color cardColor = achievement.color;
+                            final progress = unlocked ? 1.0 : 0.0;
+                            // For a truly dynamic display, we could query the Current Value
+                            // but for now, we'll show "Goal / Goal" if unlocked, or "0 / Goal" if locked
+                            final current = unlocked ? achievement.goal : 0;
 
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 14),
                               child: Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: unlocked ? achievement.color.withOpacity(0.08) : const Color(0xFFF9FAFB),
+                                  color: unlocked ? cardColor.withOpacity(0.08) : const Color(0xFFF9FAFB),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: unlocked ? achievement.color.withOpacity(0.35) : const Color(0xFFE5E7EB),
+                                    color: unlocked ? cardColor.withOpacity(0.35) : const Color(0xFFE5E7EB),
                                   ),
                                 ),
                                 child: Row(
@@ -358,12 +308,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       width: 46,
                                       height: 46,
                                       decoration: BoxDecoration(
-                                        color: achievement.color.withOpacity(unlocked ? 0.18 : 0.08),
+                                        color: cardColor.withOpacity(unlocked ? 0.18 : 0.08),
                                         borderRadius: BorderRadius.circular(14),
                                       ),
                                       child: Icon(
                                         achievement.icon,
-                                        color: achievement.color,
+                                        color: cardColor,
                                         size: 22,
                                       ),
                                     ),
@@ -391,7 +341,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 style: GoogleFonts.inter(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700,
-                                                  color: unlocked ? achievement.color : const Color(0xFF6B7280),
+                                                  color: unlocked ? cardColor : const Color(0xFF6B7280),
                                                 ),
                                               ),
                                             ],
@@ -412,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               value: progress,
                                               minHeight: 8,
                                               backgroundColor: const Color(0xFFE5E7EB),
-                                              color: achievement.color,
+                                              color: cardColor,
                                             ),
                                           ),
                                         ],
@@ -424,6 +374,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           }),
                         ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: const Icon(LucideIcons.shieldCheck, color: Color(0xFF6B7280)),
+                        title: Text(
+                          'Privacy Policy',
+                          style: GoogleFonts.inter(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF1F2937),
+                          ),
+                        ),
+                        trailing: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF9CA3AF)),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text(
+                                'Privacy Policy',
+                                style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                              ),
+                              content: SingleChildScrollView(
+                                child: Text(
+                                  'Last updated: March 2026\n\n'
+                                  'MinnaLearn is a Japanese language learning app. We value your privacy and are committed to protecting your personal data.\n\n'
+                                  '1. Data We Collect\n'
+                                  '- Account info: email address and authentication credentials (via Firebase Authentication, including Google Sign-In).\n'
+                                  '- Study progress: lesson completion, study time, streaks, game scores, bookmarked vocabulary, learned kanji, and achievements.\n'
+                                  '- All progress data is stored locally on your device using SQLite.\n\n'
+                                  '2. How We Use Your Data\n'
+                                  '- To sync your study progress across devices via Firebase Cloud Firestore.\n'
+                                  '- To track your learning streak and display statistics.\n'
+                                  '- To save and restore game scores and achievements.\n\n'
+                                  '3. Data Storage & Security\n'
+                                  '- Your data is stored locally on your device and in Google Firebase Cloud Firestore.\n'
+                                  '- Firebase provides industry-standard encryption and security for data in transit and at rest.\n'
+                                  '- We do not sell, rent, or share your personal data with third parties.\n\n'
+                                  '4. Third-Party Services\n'
+                                  '- Firebase Authentication (Google): for sign-in functionality.\n'
+                                  '- Firebase Cloud Firestore: for cloud sync of your progress.\n'
+                                  '- These services are governed by Google\'s Privacy Policy.\n\n'
+                                  '5. Data Deletion\n'
+                                  '- You can delete your account and all associated data by contacting us.\n'
+                                  '- Uninstalling the app removes all locally stored data.\n\n'
+                                  '6. Contact Us\n'
+                                  '- For questions or data deletion requests, contact us at maadhuavati7@gmail.com.',
+                                  style: GoogleFonts.inter(fontSize: 13, height: 1.5),
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Close'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -530,29 +552,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: _buildStatItem(icon, value, label, bgColor, iconColor),
     );
   }
-}
-
-enum _AchievementKind {
-  vocabulary,
-  kanji,
-  lessons,
-  streak,
-}
-
-class _AchievementDefinition {
-  final String title;
-  final String description;
-  final IconData icon;
-  final int goal;
-  final Color color;
-  final _AchievementKind kind;
-
-  const _AchievementDefinition({
-    required this.title,
-    required this.description,
-    required this.icon,
-    required this.goal,
-    required this.color,
-    required this.kind,
-  });
 }

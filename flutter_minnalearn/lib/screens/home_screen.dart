@@ -140,13 +140,14 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
 
+
             // Feature cards
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 24),
                   Column(
                     children: [
                       Row(

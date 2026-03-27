@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../models/lesson.dart';
 import '../services/database_service.dart';
 import '../services/speech_service.dart';
+import '../services/audio_service.dart';
 import '../services/study_timer_service.dart';
 import '../utils/vocabulary_display.dart';
 
@@ -80,6 +81,7 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
     }
 
     if (_currentIndex == _questions.length - 1) {
+      AudioService().playLevelComplete();
       await _saveScoreIfNeeded();
     }
   }

@@ -264,20 +264,16 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _buildNavButton(LucideIcons.chevronLeft, _currentIndex > 0, _handlePrevious),
-                          Row(
-                            children: List.generate(
-                              (vocabulary.length > 5 ? 5 : vocabulary.length),
-                              (index) => Container(
-                                width: 32,
-                                height: 6,
-                                margin: const EdgeInsets.symmetric(horizontal: 2),
-                                decoration: BoxDecoration(
-                                  color: index == (_currentIndex % 5) ? Colors.pink : Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
-                              ),
+                          const Spacer(),
+                          Text(
+                            '${_currentIndex + 1} / ${vocabulary.length}',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF9CA3AF),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
+                          const Spacer(),
                           _buildNavButton(LucideIcons.chevronRight, _currentIndex < vocabulary.length - 1, _handleNext),
                         ],
                       ),
