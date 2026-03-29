@@ -7,7 +7,7 @@
 ## Features
 
 ### 25 Structured Lessons
-- Vocabulary from *Minna no Nihongo* textbook (Bai 1-25)
+- Vocabulary from *Minna no Nihongo* textbook
 - 4 kanji per lesson with readings (on/kun)
 - Grammar points loaded from lesson-specific files
 - Progress tracking per lesson (0-100%)
