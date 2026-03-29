@@ -5,7 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../models/lesson.dart';
 import '../services/database_service.dart';
-import 'memory_cards_screen.dart';
+import 'true_or_false_screen.dart';
 import 'matching_game_screen.dart';
 import 'typing_test_screen.dart';
 import 'kana_puzzle_screen.dart';
@@ -163,11 +163,11 @@ class _GamesScreenState extends State<GamesScreen> {
                               },
                       ),
                       _buildGameCard(
-                        'Memory Cards',
+                        'True or False',
                         _gameLesson == null
                             ? 'Add more vocabulary to unlock'
-                            : 'Match kana cards and clear the board',
-                        LucideIcons.brain,
+                            : 'Is this kana and meaning a match?',
+                        LucideIcons.checkCircle,
                         const [Color(0xFFC084FC), Color(0xFFA855F7)],
                         isLocked: _gameLesson == null,
                         onTap: _gameLesson == null
@@ -176,7 +176,7 @@ class _GamesScreenState extends State<GamesScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => MemoryCardsScreen(
+                                    builder: (context) => TrueOrFalseScreen(
                                       lesson: _gameLesson!,
                                     ),
                                   ),
