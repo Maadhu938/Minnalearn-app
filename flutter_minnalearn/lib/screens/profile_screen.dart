@@ -64,11 +64,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  int _currentValueFor(Achievement ach) {
-    // We can rely on stats for current progress
-    return 0; // The UI logic below will be updated to useUnlockedIds
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -429,10 +424,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   '- Firebase Authentication (Google): for sign-in functionality.\n'
                                   '- Firebase Cloud Firestore: for cloud sync of your progress.\n'
                                   '- These services are governed by Google\'s Privacy Policy.\n\n'
-                                  '5. Data Deletion\n'
+                                  '5. Children\'s Privacy\n'
+                                  '- MinnaLearn does not knowingly collect personal information from children under 13.\n'
+                                  '- If you believe a child has provided personal data, please contact us.\n\n'
+                                  '6. Data Deletion\n'
                                   '- You can delete your account and all associated data by contacting us.\n'
                                   '- Uninstalling the app removes all locally stored data.\n\n'
-                                  '6. Contact Us\n'
+                                  '7. Contact Us\n'
                                   '- For questions or data deletion requests, contact us at maadhuavati7@gmail.com.',
                                   style: GoogleFonts.inter(fontSize: 13, height: 1.5),
                                 ),
@@ -464,15 +462,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(height: 6),
                           Text(
                             'Made with ${String.fromCharCodes([0x2764, 0xFE0F])} by Maadhu',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.inter(
-                              fontSize: 13,
-                              color: const Color(0xFF9CA3AF),
-                            ),
-                          ),
-                          if (false)
-                          Text(
-                            'Made with ❤️ by Maadhu',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.inter(
                               fontSize: 13,
