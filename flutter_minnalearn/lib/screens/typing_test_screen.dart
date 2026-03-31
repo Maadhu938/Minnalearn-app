@@ -111,12 +111,17 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
 
   Set<String> _candidateAnswers(String meaning) {
     final values = <String>{};
-    final segments = meaning
-        .toLowerCase()
-        .replaceAll('(', ',')
-        .replaceAll(')', ',')
-        .replaceAll(' or ', ',')
-        .split(RegExp(r'[,/;]'));
+
+    // Strip parenthetical content - it's explanatory, not an alternative answer
+    // e.g., "to walk (go on foot)" → only "to walk" is accepted
+    final cleaned = meaning
+        .replaceAll(RegExp(r'\([^)]*\)'), '')
+        .replaceAll(RegExp(r'（[^）]*）'), '')
+        .trim();
+
+    // Split by comma, slash, semicolon for alternative meanings
+    // e.g., "he, she" → both "he" and "she" accepted
+    final segments = cleaned.split(RegExp(r'[,/]'));
 
     for (final segment in segments) {
       final normalized = _normalize(segment);
@@ -126,6 +131,7 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
 
       values.add(normalized);
 
+      // Strip common prefixes: "to walk" also accepts "walk"
       for (final prefix in ['to ', 'a ', 'an ', 'the ']) {
         if (normalized.startsWith(prefix)) {
           final trimmed = _normalize(normalized.substring(prefix.length));
@@ -142,7 +148,7 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
   String _normalize(String value) {
     return value
         .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9\s-]'), ' ')
+        .replaceAll(RegExp(r'[^a-z0-9\s~-]'), ' ')
         .replaceAll(RegExp(r'\s+'), ' ')
         .trim();
   }
