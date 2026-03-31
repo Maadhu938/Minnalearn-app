@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
@@ -560,57 +561,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _deleteAccount() async {
-    setState(() => _isLoading = true);
+    final messenger = ScaffoldMessenger.of(context);
 
     try {
-      final uid = _authService.currentUser?.uid;
+      final user = _authService.currentUser;
+      if (user == null) return;
 
-      // Delete from Firestore
-      if (uid != null) {
-        try {
-          await CloudService().deleteUserData(uid);
-        } catch (e) {
-          // Firestore delete failed, continue
+      // Step 1: Try to delete Firebase Auth account (requires recent login)
+      try {
+        await user.delete();
+      }       on FirebaseAuthException catch (e) {
+        if (e.code == 'requires-recent-login') {
+          if (!mounted) return;
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(
+                'Please sign out and sign in again, then try deleting your account.',
+                style: GoogleFonts.inter(),
+              ),
+              backgroundColor: const Color(0xFFF59E0B),
+              duration: const Duration(seconds: 5),
+            ),
+          );
+          return;
         }
+        rethrow;
       }
 
-      // Delete from local database
+      // Step 2: Delete from Firestore
+      try {
+        await CloudService().deleteUserData(user.uid);
+      } catch (_) {}
+
+      // Step 3: Delete from local database
       try {
         await DatabaseService().deleteAllUserData();
-      } catch (e) {
-        // Local delete failed, continue
-      }
+      } catch (_) {}
 
-      // Delete Firebase Auth account
-      try {
-        await _authService.currentUser?.delete();
-      } catch (e) {
-        // Auth delete may require recent login
-      }
-
+      // Step 4: Sign out and navigate
       await _authService.signOut();
 
       if (!mounted) return;
-      Navigator.of(context, rootNavigator: true).pushReplacement(
-        MaterialPageRoute(builder: (_) => const AuthScreen()),
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(
           content: Text('Account deleted successfully', style: GoogleFonts.inter()),
           backgroundColor: const Color(0xFF10B981),
         ),
       );
+      Navigator.of(context, rootNavigator: true).pushReplacement(
+        MaterialPageRoute(builder: (_) => const AuthScreen()),
+      );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(
           content: Text('Failed to delete account. Please try again.', style: GoogleFonts.inter()),
           backgroundColor: const Color(0xFFEF4444),
         ),
       );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
     }
   }
 
