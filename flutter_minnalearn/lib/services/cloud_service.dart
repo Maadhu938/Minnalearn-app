@@ -85,6 +85,17 @@ class CloudService {
           await db.setVocabularyBookmark(vocabId, true);
         }
       }
+
+      // 5. Sync Achievements
+      if (data.containsKey('achievements')) {
+        final cloudAchievements = List<String>.from(data['achievements']);
+        final localAchievements = await db.getUnlockedAchievementIds();
+        for (var id in cloudAchievements) {
+          if (!localAchievements.contains(id)) {
+            await db.markAchievementUnlocked(id);
+          }
+        }
+      }
       
       db.notifyDataChanged();
     } catch (e) {
@@ -119,8 +130,8 @@ class CloudService {
           }
         },
         'bookmarks': bookmarks.toList(),
-        'learned_kanji': FieldValue.arrayUnion(learnedKanji),
-        'achievements': FieldValue.arrayUnion(await db.getUnlockedAchievementIds()),
+        'learned_kanji': learnedKanji.toList(),
+        'achievements': await db.getUnlockedAchievementIds(),
       }, SetOptions(merge: true));
     } catch (e) {
       debugPrint('Error pushing all data to cloud: $e');
@@ -188,7 +199,7 @@ class CloudService {
     if (uid == null || fs == null) return;
     try {
       await fs.collection('users').doc(uid).update({
-        'achievements': FieldValue.arrayUnion(ids),
+        'achievements': ids,
       });
     } catch (e) {
       await pushAllLocalData();
