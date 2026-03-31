@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
 import '../services/cloud_service.dart';
+import '../services/database_service.dart';
 import 'main_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -79,7 +79,9 @@ class _AuthScreenState extends State<AuthScreen> {
       }
       
       if (!mounted) return;
-      CloudService().syncAll(); // Sync after successful sign in
+      // Clear local data and pull from cloud for this account
+      await DatabaseService().deleteAllUserData();
+      await CloudService().syncAll();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const MainScreen()),
       );
@@ -97,7 +99,9 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       final userCreds = await _authService.signInWithGoogle();
       if (userCreds != null && mounted) {
-        CloudService().syncAll(); // Sync after google sign in
+        // Clear local data and pull from cloud for this account
+        await DatabaseService().deleteAllUserData();
+        await CloudService().syncAll();
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const MainScreen()),
         );

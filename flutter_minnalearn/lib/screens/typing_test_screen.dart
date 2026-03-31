@@ -125,26 +125,30 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
       }
 
       values.add(normalized);
-
-      for (final prefix in ['to ', 'a ', 'an ', 'the ']) {
-        if (normalized.startsWith(prefix)) {
-          final trimmed = _normalize(normalized.substring(prefix.length));
-          if (trimmed.isNotEmpty) {
-            values.add(trimmed);
-          }
-        }
-      }
     }
 
     return values;
   }
 
   String _normalize(String value) {
-    return value
+    var result = value
         .toLowerCase()
         .replaceAll(RegExp(r'[^a-z0-9\s-]'), ' ')
         .replaceAll(RegExp(r'\s+'), ' ')
         .trim();
+
+    // Strip common prefixes so "to walk" matches "walk"
+    for (final prefix in ['to ', 'a ', 'an ', 'the ']) {
+      if (result.startsWith(prefix)) {
+        final stripped = result.substring(prefix.length).trim();
+        if (stripped.isNotEmpty) {
+          result = stripped;
+          break;
+        }
+      }
+    }
+
+    return result;
   }
 
   Future<void> _saveScoreIfNeeded() async {
@@ -225,7 +229,7 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
                               child: Column(
                                 children: [
                                   Text(
-                                    'Type the English meaning',
+                                    'Type English meaning of kana',
                                     style: GoogleFonts.inter(
                                       color: Colors.white.withOpacity(0.92),
                                       fontSize: 14,

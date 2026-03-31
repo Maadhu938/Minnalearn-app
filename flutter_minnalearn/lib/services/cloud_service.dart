@@ -30,6 +30,7 @@ class CloudService {
     } catch (e) {
       debugPrint('Cloud sync skipped: database not configured ($e)');
     }
+    DatabaseService().notifyDataChanged();
   }
 
   Future<void> pullFromCloud() async {
