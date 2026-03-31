@@ -524,9 +524,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         content: Text(
           'This will permanently delete your account and all data including:\n\n'
-          '• Study progress and streaks\n'
-          '• Learned vocabulary and kanji\n'
-          '• Bookmarks and achievements\n\n'
+          '• Account (email and display name)\n'
+          '• Lesson progress and quiz scores\n'
+          '• Study time, streaks, and sessions\n'
+          '• Learned kanji and bookmarks\n'
+          '• Achievements and game scores\n\n'
           'This action cannot be undone.',
           style: GoogleFonts.inter(fontSize: 14, height: 1.5),
         ),
