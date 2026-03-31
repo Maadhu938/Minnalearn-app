@@ -381,7 +381,10 @@ class DatabaseService {
     String today = DateTime.now().toIso8601String().split('T')[0];
     
     final lastStudyResult = await db.query('user_stats', where: 'key = ?', whereArgs: ['last_study_date']);
-    String lastDate = lastStudyResult.isNotEmpty ? (lastStudyResult.first['value_text'] as String? ?? '') : '';
+    String lastDateRaw = lastStudyResult.isNotEmpty ? (lastStudyResult.first['value_text'] as String? ?? '') : '';
+
+    // Normalize: extract just the date part (handles both "2026-03-28" and "2026-03-28T19:59:04.123")
+    String lastDate = lastDateRaw.contains('T') ? lastDateRaw.split('T')[0] : lastDateRaw;
 
     if (lastDate == today) return; // Already updated today
 
@@ -391,8 +394,8 @@ class DatabaseService {
       streak = (streakResult.first['value_int'] as int);
     }
 
-    DateTime todayDT = DateTime.parse(today);
     if (lastDate != '') {
+      DateTime todayDT = DateTime.parse(today);
       DateTime lastDateDT = DateTime.parse(lastDate);
       int diff = todayDT.difference(lastDateDT).inDays;
       
@@ -670,7 +673,7 @@ class DatabaseService {
 
   Future<int> getTotalKanjiCount() async {
     final db = await database;
-    final result = await db.rawQuery('SELECT COUNT(*) as count FROM kanji');
+    final result = await db.rawQuery('SELECT COUNT(DISTINCT character) as count FROM kanji');
     return Sqflite.firstIntValue(result) ?? 0;
   }
 
@@ -740,5 +743,15 @@ class DatabaseService {
     final db = await database;
     final result = await db.query('achievements', columns: ['id']);
     return result.map((r) => r['id'] as String).toList();
+  }
+
+  Future<void> deleteAllUserData() async {
+    final db = await database;
+    await db.delete('user_stats');
+    await db.delete('lesson_progress');
+    await db.delete('learned_kanji');
+    await db.delete('bookmarks');
+    await db.delete('achievements');
+    notifyDataChanged();
   }
 }

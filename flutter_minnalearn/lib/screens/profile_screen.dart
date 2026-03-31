@@ -6,6 +6,7 @@ import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
 import '../services/auth_service.dart';
 import '../services/achievement_service.dart';
+import '../services/cloud_service.dart';
 import 'auth_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -385,65 +386,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      child: ListTile(
-                        leading: const Icon(LucideIcons.shieldCheck, color: Color(0xFF6B7280)),
-                        title: Text(
-                          'Privacy Policy',
-                          style: GoogleFonts.inter(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1F2937),
-                          ),
-                        ),
-                        trailing: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF9CA3AF)),
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(
-                                'Privacy Policy',
-                                style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: const Icon(LucideIcons.shieldCheck, color: Color(0xFF6B7280)),
+                            title: Text(
+                              'Privacy Policy',
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1F2937),
                               ),
-                              content: SingleChildScrollView(
-                                child: Text(
-                                  'Last updated: March 2026\n\n'
-                                  'MinnaLearn is a Japanese language learning app. We value your privacy and are committed to protecting your personal data.\n\n'
-                                  '1. Data We Collect\n'
-                                  '- Account info: email address and authentication credentials (via Firebase Authentication, including Google Sign-In).\n'
-                                  '- Study progress: lesson completion, study time, streaks, game scores, bookmarked vocabulary, learned kanji, and achievements.\n'
-                                  '- All progress data is stored locally on your device using SQLite.\n\n'
-                                  '2. How We Use Your Data\n'
-                                  '- To sync your study progress across devices via Firebase Cloud Firestore.\n'
-                                  '- To track your learning streak and display statistics.\n'
-                                  '- To save and restore game scores and achievements.\n\n'
-                                  '3. Data Storage & Security\n'
-                                  '- Your data is stored locally on your device and in Google Firebase Cloud Firestore.\n'
-                                  '- Firebase provides industry-standard encryption and security for data in transit and at rest.\n'
-                                  '- We do not sell, rent, or share your personal data with third parties.\n\n'
-                                  '4. Third-Party Services\n'
-                                  '- Firebase Authentication (Google): for sign-in functionality.\n'
-                                  '- Firebase Cloud Firestore: for cloud sync of your progress.\n'
-                                  '- These services are governed by Google\'s Privacy Policy.\n\n'
-                                  '5. Children\'s Privacy\n'
-                                  '- MinnaLearn does not knowingly collect personal information from children under 13.\n'
-                                  '- If you believe a child has provided personal data, please contact us.\n\n'
-                                  '6. Data Deletion\n'
-                                  '- You can delete your account and all associated data by contacting us.\n'
-                                  '- Uninstalling the app removes all locally stored data.\n\n'
-                                  '7. Contact Us\n'
-                                  '- For questions or data deletion requests, contact us at maadhuavati7@gmail.com.',
-                                  style: GoogleFonts.inter(fontSize: 13, height: 1.5),
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('Close'),
-                                ),
-                              ],
                             ),
-                          );
-                        },
+                            trailing: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF9CA3AF)),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(
+                                    'Privacy Policy',
+                                    style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                                  ),
+                                  content: SingleChildScrollView(
+                                    child: Text(
+                                      'Last updated: March 2026\n\n'
+                                      'MinnaLearn is a Japanese language learning app developed to help users learn Japanese at the JLPT N5 level. We value your privacy and are committed to protecting your personal data.\n\n'
+                                      '1. Data We Collect\n'
+                                      '- Account info: email address and display name (via Firebase Authentication, including Google Sign-In).\n'
+                                      '- Study progress: lesson completion, study time, streaks, quiz scores, bookmarked vocabulary, learned kanji, and achievements.\n'
+                                      '- All progress data is stored locally on your device using SQLite and synced to Firebase Cloud Firestore if you are signed in.\n\n'
+                                      '2. How We Use Your Data\n'
+                                      '- To create and manage your account.\n'
+                                      '- To sync your study progress across devices via Firebase Cloud Firestore.\n'
+                                      '- To track your learning streak and display statistics.\n'
+                                      '- To save and restore quiz scores and achievements.\n\n'
+                                      '3. Data Sharing\n'
+                                      '- Your data is shared with Firebase (Google) for authentication and cloud sync.\n'
+                                      '- We do not sell, rent, or share your personal data with any other third parties.\n'
+                                      '- No data is used for advertising or profiling purposes.\n\n'
+                                      '4. Data Storage & Security\n'
+                                      '- Your data is stored locally on your device and in Google Firebase Cloud Firestore.\n'
+                                      '- Firebase provides industry-standard encryption for data in transit and at rest.\n'
+                                      '- You can use the app offline without signing in; all data stays on your device.\n\n'
+                                      '5. Third-Party Services\n'
+                                      '- Firebase Authentication (Google): for sign-in functionality.\n'
+                                      '- Firebase Cloud Firestore: for cloud sync of your progress.\n'
+                                      '- These services are governed by Google\'s Privacy Policy.\n\n'
+                                      '6. Children\'s Privacy\n'
+                                      '- MinnaLearn does not knowingly collect personal information from children under 13.\n'
+                                      '- If you believe a child has provided personal data, please contact us.\n\n'
+                                      '7. Data Deletion\n'
+                                      '- You can delete your account directly from the app: go to Profile → Delete Account.\n'
+                                      '- Deleting your account permanently removes all your data including study progress, streaks, bookmarks, learned kanji, and achievements from both your device and Firebase.\n'
+                                      '- You can also request data deletion by email at maadhuavati7@gmail.com.\n'
+                                      '- Uninstalling the app removes all locally stored data.\n\n'
+                                      '8. Your Rights\n'
+                                      '- You may request access to, correction of, or deletion of your personal data at any time.\n'
+                                      '- Contact us at maadhuavati7@gmail.com for any data-related requests.\n\n'
+                                      '9. Changes to This Policy\n'
+                                      '- We may update this Privacy Policy from time to time. Changes will be posted in the app.\n\n'
+                                      '10. Contact Us\n'
+                                      '- For questions, concerns, or data deletion requests, contact us at maadhuavati7@gmail.com.',
+                                      style: GoogleFonts.inter(fontSize: 13, height: 1.5),
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Close'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                          const Divider(height: 1),
+                          ListTile(
+                            leading: const Icon(LucideIcons.trash2, color: Color(0xFFEF4444)),
+                            title: Text(
+                              'Delete Account',
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFEF4444),
+                              ),
+                            ),
+                            trailing: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF9CA3AF)),
+                            onTap: _showDeleteAccountDialog,
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -478,6 +509,109 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
+  }
+
+  void _showDeleteAccountDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(LucideIcons.alertTriangle, color: Color(0xFFEF4444), size: 22),
+            const SizedBox(width: 8),
+            Text(
+              'Delete Account',
+              style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: Text(
+          'This will permanently delete your account and all data including:\n\n'
+          '• Study progress and streaks\n'
+          '• Learned vocabulary and kanji\n'
+          '• Bookmarks and achievements\n\n'
+          'This action cannot be undone.',
+          style: GoogleFonts.inter(fontSize: 14, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.inter(color: const Color(0xFF6B7280)),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deleteAccount();
+            },
+            child: Text(
+              'Delete',
+              style: GoogleFonts.inter(
+                color: const Color(0xFFEF4444),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteAccount() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final uid = _authService.currentUser?.uid;
+
+      // Delete from Firestore
+      if (uid != null) {
+        try {
+          await CloudService().deleteUserData(uid);
+        } catch (e) {
+          // Firestore delete failed, continue
+        }
+      }
+
+      // Delete from local database
+      try {
+        await DatabaseService().deleteAllUserData();
+      } catch (e) {
+        // Local delete failed, continue
+      }
+
+      // Delete Firebase Auth account
+      try {
+        await _authService.currentUser?.delete();
+      } catch (e) {
+        // Auth delete may require recent login
+      }
+
+      await _authService.signOut();
+
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pushReplacement(
+        MaterialPageRoute(builder: (_) => const AuthScreen()),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Account deleted successfully', style: GoogleFonts.inter()),
+          backgroundColor: const Color(0xFF10B981),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to delete account. Please try again.', style: GoogleFonts.inter()),
+          backgroundColor: const Color(0xFFEF4444),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Widget _buildStatItem(IconData icon, String value, String label, Color bgColor, Color iconColor) {

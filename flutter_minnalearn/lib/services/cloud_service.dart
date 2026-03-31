@@ -63,7 +63,7 @@ class CloudService {
         for (var entry in lessons.entries) {
           final lessonId = int.tryParse(entry.key);
           if (lessonId != null) {
-            final progress = (entry.value['progress'] as num).toDouble();
+            final progress = (entry.value['progress'] as num?)?.toDouble() ?? 0.0;
             await db.updateLessonProgress(lessonId, progress);
           }
         }
@@ -87,7 +87,7 @@ class CloudService {
       
       db.notifyDataChanged();
     } catch (e) {
-      print('Error pulling from cloud: $e');
+      debugPrint('Error pulling from cloud: $e');
     }
   }
 
@@ -108,7 +108,7 @@ class CloudService {
         'stats': {
           'current_streak': streak,
           'total_study_time_seconds': totalTime,
-          'last_study_date': DateTime.now().toIso8601String(),
+          'last_study_date': DateTime.now().toIso8601String().split('T')[0],
           'last_sync': FieldValue.serverTimestamp(),
         },
         'lessons': {
@@ -122,7 +122,7 @@ class CloudService {
         'achievements': FieldValue.arrayUnion(await db.getUnlockedAchievementIds()),
       }, SetOptions(merge: true));
     } catch (e) {
-      print('Error pushing all data to cloud: $e');
+      debugPrint('Error pushing all data to cloud: $e');
     }
   }
 
@@ -191,6 +191,16 @@ class CloudService {
       });
     } catch (e) {
       await pushAllLocalData();
+    }
+  }
+
+  Future<void> deleteUserData(String userId) async {
+    final fs = _firestore;
+    if (fs == null) return;
+    try {
+      await fs.collection('users').doc(userId).delete();
+    } catch (e) {
+      debugPrint('Error deleting user data: $e');
     }
   }
 }
