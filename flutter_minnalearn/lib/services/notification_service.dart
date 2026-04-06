@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:flutter/material.dart';
 import 'database_service.dart';
 
@@ -10,9 +11,18 @@ class NotificationService {
   factory NotificationService() => _instance;
 
   final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  bool _notificationsGranted = false;
 
   Future<void> initialize() async {
     tz.initializeTimeZones();
+    
+    // Set the local timezone from the device
+    try {
+      final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+    } catch (e) {
+      debugPrint('Failed to get local timezone, using UTC: $e');
+    }
     
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -27,11 +37,19 @@ class NotificationService {
     final androidPlugin = _notifications.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
     if (androidPlugin != null) {
-      await androidPlugin.requestNotificationsPermission();
+      _notificationsGranted =
+          await androidPlugin.requestNotificationsPermission() ?? true;
+    } else {
+      _notificationsGranted = true;
     }
   }
 
   Future<void> scheduleAllNotifications() async {
+    if (!_notificationsGranted) {
+      debugPrint('Notification permission not granted; skipping scheduling.');
+      return;
+    }
+
     // 1. Always schedule Daily Reminder (6 PM)
     await _scheduleDailyReminder();
     
@@ -41,7 +59,9 @@ class NotificationService {
     String lastDateStr = lastStudyResult.isNotEmpty ? (lastStudyResult.first['value_text'] as String? ?? '') : '';
     
     if (lastDateStr.isNotEmpty) {
-      DateTime lastDate = DateTime.parse(lastDateStr);
+      // Normalize: extract just the date part (handles both "2026-03-28" and "2026-03-28T19:59:04.123")
+      String normalized = lastDateStr.contains('T') ? lastDateStr.split('T')[0] : lastDateStr;
+      DateTime lastDate = DateTime.parse(normalized);
       if (shouldSendStreakReminder(lastDate)) {
         await _scheduleStreakReminder();
       } else {
@@ -75,7 +95,7 @@ class NotificationService {
           priority: Priority.high,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
@@ -97,7 +117,7 @@ class NotificationService {
           color: Color(0xFFFF5252), // Fire red
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,

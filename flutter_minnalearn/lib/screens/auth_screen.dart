@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
 import '../services/cloud_service.dart';
 import '../services/database_service.dart';
 import 'main_screen.dart';
+import 'kanji_screen.dart';
+import '../services/analytics_service.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -17,9 +20,13 @@ class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isLogin = true;
   bool _isLoading = false;
+  bool _isResetting = false;
   bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+  bool _resetMode = false;
 
   final AuthService _authService = AuthService();
 
@@ -27,6 +34,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -60,7 +68,35 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
+  Future<void> _sendReset() async {
+    final email = _emailController.text.trim();
+    final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.[A-Za-z]{2,}$');
+    if (!emailRegex.hasMatch(email)) {
+      _showError('Enter a valid email to reset password');
+      return;
+    }
+    if (_isResetting) return;
+    setState(() => _isResetting = true);
+    try {
+      await _authService.sendPasswordReset(email);
+      await AnalyticsService().logPasswordResetRequested();
+      _showSuccess('Reset link sent to $email. If you don’t see it soon, check Spam/Promotions.');
+    } on FirebaseAuthException catch (_) {
+      // Firebase intentionally avoids revealing account existence.
+      _showError('Could not send reset link. Please try again.');
+    } catch (_) {
+      _showError('Could not send reset link. Please try again.');
+    } finally {
+      if (mounted) setState(() => _isResetting = false);
+    }
+  }
+
   Future<void> _submitEmail() async {
+    if (_resetMode) {
+      await _sendReset();
+      return;
+    }
+
     if (!_formKey.currentState!.validate()) return;
     
     setState(() => _isLoading = true);
@@ -71,19 +107,21 @@ class _AuthScreenState extends State<AuthScreen> {
           _emailController.text, 
           _passwordController.text,
         );
+        await AnalyticsService().logLogin('email');
       } else {
         await _authService.signUpWithEmail(
           _emailController.text, 
           _passwordController.text,
         );
+        await AnalyticsService().logSignUp('email');
       }
       
       if (!mounted) return;
-      // Clear local data and pull from cloud for this account
-      try {
-        await DatabaseService().deleteAllUserData();
-      } catch (_) {}
-      await CloudService().syncAll();
+      // Reset progress and pull cloud data for this account
+      await DatabaseService().resetProgress();
+      await CloudService().pullFromCloud();
+      KanjiScreen.clearCache();
+      DatabaseService().notifyDataChanged();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const MainScreen()),
       );
@@ -101,11 +139,12 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       final userCreds = await _authService.signInWithGoogle();
       if (userCreds != null && mounted) {
-        // Clear local data and pull from cloud for this account
-        try {
-          await DatabaseService().deleteAllUserData();
-        } catch (_) {}
-        await CloudService().syncAll();
+        await AnalyticsService().logLogin('google');
+        // Reset progress and pull cloud data for this account
+        await DatabaseService().resetProgress();
+        await CloudService().pullFromCloud();
+        KanjiScreen.clearCache();
+        DatabaseService().notifyDataChanged();
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const MainScreen()),
         );
@@ -137,46 +176,121 @@ class _AuthScreenState extends State<AuthScreen> {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           validator: (value) {
-            if (value == null || value.isEmpty || !value.contains('@')) {
-              return 'Please enter a valid email';
+            if (value == null || value.trim().isEmpty) {
+              return 'Email is required';
+            }
+            final email = value.trim();
+            final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.[A-Za-z]{2,}$');
+            if (!emailRegex.hasMatch(email)) {
+              return 'Enter a valid email address';
             }
             return null;
           },
         ),
-        const SizedBox(height: 16),
-        TextFormField(
-          controller: _passwordController,
-          decoration: InputDecoration(
-            hintText: 'Password',
-            prefixIcon: const Icon(LucideIcons.lock, color: Color(0xFF9CA3AF)),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye,
-                color: const Color(0xFF9CA3AF),
-              ),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 20),
+        if (_resetMode) ...[
+          const SizedBox(height: 12),
+          Text(
+            'We’ll email a reset link. If it doesn’t arrive soon, please check Spam/Promotions.',
+            style: GoogleFonts.inter(color: const Color(0xFF6B7280), fontSize: 12),
           ),
-          obscureText: _obscurePassword,
-          textInputAction: TextInputAction.done,
-          onFieldSubmitted: (_) => _submitEmail(),
-          validator: (value) {
-            if (value == null || value.length < 6) {
-              return 'Password must be at least 6 characters';
-            }
-            return null;
-          },
-        ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: _isLoading || _isResetting ? null : () => setState(() => _resetMode = false),
+              child: Text(
+                'Back to sign in',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF9CA3AF),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ] else ...[
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _passwordController,
+            decoration: InputDecoration(
+              hintText: 'Password',
+              prefixIcon: const Icon(LucideIcons.lock, color: Color(0xFF9CA3AF)),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye,
+                  color: const Color(0xFF9CA3AF),
+                ),
+                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 20),
+            ),
+            obscureText: _obscurePassword,
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (_) => _submitEmail(),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Password is required';
+              }
+              final strong = RegExp(r'^(?=.*[A-Za-z])(?=.*\d).{8,}$');
+              if (!strong.hasMatch(value)) {
+                return 'Min 8 chars with letters & numbers';
+              }
+              return null;
+            },
+          ),
+          if (_isLogin)
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: _isLoading || _isResetting ? null : () => setState(() => _resetMode = true),
+                child: Text(
+                  _isResetting ? 'Sending...' : 'Forgot password?',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFFEC4899),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+        ],
+        if (!_isLogin && !_resetMode) ...[
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _confirmPasswordController,
+            decoration: InputDecoration(
+              hintText: 'Confirm password',
+              prefixIcon: const Icon(LucideIcons.check, color: Color(0xFF9CA3AF)),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureConfirm ? LucideIcons.eyeOff : LucideIcons.eye,
+                  color: const Color(0xFF9CA3AF),
+                ),
+                onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 20),
+            ),
+            obscureText: _obscureConfirm,
+            validator: (value) {
+              if (!_isLogin && value != _passwordController.text) {
+                return 'Passwords do not match';
+              }
+              return null;
+            },
+          ),
+        ],
         const SizedBox(height: 32),
         ElevatedButton(
-          onPressed: _isLoading ? null : _submitEmail,
+          onPressed: (_isLoading || _isResetting) ? null : _submitEmail,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFEC4899),
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -191,7 +305,9 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                 )
               : Text(
-                  _isLogin ? 'Sign In' : 'Sign Up',
+                  _resetMode
+                      ? (_isResetting ? 'Sending...' : 'Send reset link')
+                      : (_isLogin ? 'Sign In' : 'Sign Up'),
                   style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -324,6 +440,12 @@ class _AuthScreenState extends State<AuthScreen> {
                         setState(() {
                           _isLogin = !_isLogin;
                           _formKey.currentState?.reset();
+                          _emailController.clear();
+                          _passwordController.clear();
+                          _confirmPasswordController.clear();
+                          _obscurePassword = true;
+                          _isResetting = false;
+                          _resetMode = false;
                         });
                       },
                       child: RichText(

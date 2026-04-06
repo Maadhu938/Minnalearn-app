@@ -6,6 +6,7 @@ import 'home_screen.dart';
 import 'lessons_screen.dart';
 import 'profile_screen.dart';
 import 'stats_screen.dart';
+import '../services/analytics_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -37,6 +38,9 @@ class _MainScreenState extends State<MainScreen> {
       const KeepAliveWrapper(child: StatsScreen()),
       const KeepAliveWrapper(child: ProfileScreen()),
     ];
+
+    // Log initial screen
+    _logScreen(_currentIndex);
   }
 
   void _changeTab(int index) {
@@ -56,6 +60,8 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _currentIndex = index;
     });
+
+    _logScreen(index);
   }
 
   @override
@@ -87,6 +93,8 @@ class _MainScreenState extends State<MainScreen> {
               setState(() {
                 _currentIndex = index;
               });
+
+              _logScreen(index);
             },
             children: _screens
                 .map(
@@ -258,6 +266,15 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
+  }
+
+  void _logScreen(int index) {
+    const names = ['Home', 'Lessons', 'Games', 'Stats', 'Profile'];
+    if (index >= 0 && index < names.length) {
+      final analytics = AnalyticsService();
+      analytics.logScreen(names[index]);
+      analytics.logTabView(names[index]);
+    }
   }
 }
 

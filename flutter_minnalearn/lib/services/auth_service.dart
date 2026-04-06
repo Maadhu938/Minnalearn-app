@@ -67,6 +67,12 @@ class AuthService {
     }
   }
 
+  // Send password reset email
+  Future<void> sendPasswordReset(String email) async {
+    final normalized = email.trim();
+    await _auth.sendPasswordResetEmail(email: normalized);
+  }
+
   // --- Removed Phone Auth Methods ---
 
   // Sign out
