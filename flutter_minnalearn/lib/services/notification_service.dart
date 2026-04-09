@@ -21,12 +21,16 @@ class NotificationService {
     tz.initializeTimeZones();
     try {
       final name = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(name));
-    } catch (_) {
-      tz.setLocalLocation(tz.getLocation('Etc/UTC'));
+      final location = tz.getLocation(name);
+      tz.setLocalLocation(location);
+    } catch (e) {
+      // Fallback to a guaranteed location constant; never let init throw.
+      tz.setLocalLocation(tz.UTC);
+      debugPrint('NotificationService: timezone fallback to UTC due to $e');
     }
 
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    // Use a dedicated monochrome small icon to ensure it renders in the status bar.
+    const android = AndroidInitializationSettings('ic_stat_minnalearn');
     const settings = InitializationSettings(android: android);
     await _notifications.initialize(settings);
   }

@@ -31,14 +31,25 @@ class _StartupScreenState extends State<StartupScreen> {
     try {
       final dbService = DatabaseService();
       await dbService.initialize();
-      await NotificationService().initialize();
+      try {
+        await NotificationService().initialize();
+        await NotificationService().rescheduleAll();
+      } catch (e, st) {
+        debugPrint('Notification init/schedule failed: $e');
+        debugPrintStack(stackTrace: st);
+      }
 
       final hasSeenOnboarding = await dbService.hasSeenOnboarding();
       if (!hasSeenOnboarding) {
         // First time - request notification permission during onboarding flow
-        final granted = await NotificationService().requestPermission();
-        if (granted) {
-          await NotificationService().rescheduleAll();
+        try {
+          final granted = await NotificationService().requestPermission();
+          if (granted) {
+            await NotificationService().rescheduleAll();
+          }
+        } catch (e, st) {
+          debugPrint('Notification permission/schedule failed: $e');
+          debugPrintStack(stackTrace: st);
         }
       } else {
         // Returning users: attempt scheduling (permission should already be set)
