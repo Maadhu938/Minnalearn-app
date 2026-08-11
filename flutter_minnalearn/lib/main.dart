@@ -15,15 +15,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Configure status bar to be transparent with light icons
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark, // For iOS
-    ),
-  );
-  
   try {
     if (Platform.isAndroid) {
       await Firebase.initializeApp(

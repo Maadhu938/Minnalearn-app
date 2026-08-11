@@ -39,4 +39,12 @@ class AudioService {
       debugPrint('Audio error: $e');
     }
   }
+
+  Future<void> playAsset(String path) async {
+    try {
+      await _player.play(AssetSource(path));
+    } catch (e) {
+      debugPrint('Audio error: $e');
+    }
+  }
 }

@@ -36,7 +36,8 @@ class FeatureCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Container(
               width: 40,
@@ -51,12 +52,14 @@ class FeatureCard extends StatelessWidget {
                 size: 20,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Text(
               title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
                 fontWeight: FontWeight.w600,
-                fontSize: 14,
+                fontSize: 13,
                 color: const Color(0xFF1F2937),
                 height: 1.2,
               ),

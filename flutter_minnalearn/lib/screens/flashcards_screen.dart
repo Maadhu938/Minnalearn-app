@@ -194,57 +194,57 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              if (!_isFlipped) ...[
-                                GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  onTap: _handleFlip,
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        promptText,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.inter(fontSize: 60, fontWeight: FontWeight.bold, color: const Color(0xFF1F2937)),
-                                      ),
-                                      const SizedBox(height: 24),
-                                      Text(
-                                        'Tap to reveal',
-                                        style: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 14),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'Swipe left for next, right for previous',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.inter(color: const Color(0xFFD1D5DB), fontSize: 12),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                               if (!_isFlipped) ...[
+                                 GestureDetector(
+                                   behavior: HitTestBehavior.opaque,
+                                   onTap: _handleFlip,
+                                   child: Column(
+                                     children: [
+                                       Text(
+                                         promptText,
+                                         textAlign: TextAlign.center,
+                                         style: GoogleFonts.inter(fontSize: 60, fontWeight: FontWeight.bold, color: const Color(0xFF1F2937)),
+                                       ),
+                                       const SizedBox(height: 24),
+                                       Text(
+                                         'Tap to reveal',
+                                         style: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 14),
+                                       ),
+                                       const SizedBox(height: 8),
+                                       Text(
+                                         'Swipe left for next, right for previous',
+                                         textAlign: TextAlign.center,
+                                         style: GoogleFonts.inter(color: const Color(0xFFD1D5DB), fontSize: 12),
+                                       ),
+                                     ],
+                                   ),
+                                 ),
                               ] else ...[
-                                GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  onTap: _handleFlip,
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        promptText,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.inter(fontSize: 40, fontWeight: FontWeight.bold, color: const Color(0xFF1F2937)),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        currentWord.meaning,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.inter(fontSize: 20, color: const Color(0xFF4B5563)),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        'Tap the card to flip back',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 12),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                 GestureDetector(
+                                   behavior: HitTestBehavior.opaque,
+                                   onTap: _handleFlip,
+                                   child: Column(
+                                     children: [
+                                       Text(
+                                         promptText,
+                                         textAlign: TextAlign.center,
+                                         style: GoogleFonts.inter(fontSize: 40, fontWeight: FontWeight.bold, color: const Color(0xFF1F2937)),
+                                       ),
+                                       const SizedBox(height: 16),
+                                       Text(
+                                         currentWord.meaning,
+                                         textAlign: TextAlign.center,
+                                         style: GoogleFonts.inter(fontSize: 20, color: const Color(0xFF4B5563)),
+                                       ),
+                                       const SizedBox(height: 12),
+                                       Text(
+                                         'Tap the card to flip back',
+                                         textAlign: TextAlign.center,
+                                         style: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 12),
+                                       ),
+                                     ],
+                                   ),
+                                 ),
                                 const SizedBox(height: 20),
                                 TextButton.icon(
                                   onPressed: () => _handleSpeak(promptText),

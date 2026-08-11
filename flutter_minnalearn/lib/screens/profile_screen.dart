@@ -518,7 +518,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (_appInfo != null) ...[
                             const SizedBox(height: 4),
                             Text(
-                              'Version ${_appInfo!.version} (${_appInfo!.buildNumber})',
+                              'Version ${_appInfo!.version}',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.inter(
                                 fontSize: 11,
