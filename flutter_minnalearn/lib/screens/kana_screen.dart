@@ -273,7 +273,6 @@ class _KanaScreenState extends State<KanaScreen>
   late final FlutterTts _tts;
 
   int _groupIndex = 0;
-  bool _showRomaji = true;
   final Set<String> _revealed = {};
 
   @override
@@ -441,54 +440,72 @@ class _KanaScreenState extends State<KanaScreen>
   Widget _buildKanaPage({required bool isHiragana}) {
     final group = _kanaGroups[_groupIndex];
     final chars = isHiragana ? group.hiragana : group.katakana;
-    final scriptLabel = isHiragana ? 'Hiragana' : 'Katakana';
 
     return CustomScrollView(
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(24, 18, 24, 12),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
           sliver: SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    _buildInfoChip(
-                      LucideIcons.layers,
-                      '$scriptLabel ${group.title}',
-                      const Color(0xFFFCE7F3),
-                      const Color(0xFFBE185D),
+            child: Row(
+              children: List.generate(_kanaGroups.length, (index) {
+                final g = _kanaGroups[index];
+                final isSelected = _groupIndex == index;
+                return Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: index == _kanaGroups.length - 1 ? 0 : 8,
                     ),
-                    const SizedBox(width: 8),
-                    _buildInfoChip(
-                      LucideIcons.bookOpen,
-                      '${chars.length} kana',
-                      const Color(0xFFEFF6FF),
-                      const Color(0xFF2563EB),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _groupIndex = index),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 160),
+                        height: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSelected ? const Color(0xFFEC4899) : Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isSelected ? const Color(0xFFEC4899) : const Color(0xFFE5E7EB),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(isSelected ? 0.08 : 0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          g.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            color: isSelected ? Colors.white : const Color(0xFF374151),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                _buildGroupSelector(),
-                const SizedBox(height: 12),
-                _buildRomajiToggle(),
-              ],
+                  ),
+                );
+              }),
             ),
           ),
         ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(
-            14,
+            10,
             4,
-            14,
+            10,
             MediaQuery.of(context).padding.bottom + 24,
           ),
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: MediaQuery.of(context).size.width > 640 ? 8 : 5,
-              childAspectRatio: 0.82,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+              crossAxisCount: MediaQuery.of(context).size.width > 640 ? 7 : 4,
+              childAspectRatio: 0.85,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -505,179 +522,8 @@ class _KanaScreenState extends State<KanaScreen>
     );
   }
 
-  Widget _buildGroupSelector() {
-    return Row(
-      children: List.generate(_kanaGroups.length, (index) {
-        final group = _kanaGroups[index];
-        return Expanded(
-          child: Padding(
-            padding:
-                EdgeInsets.only(right: index == _kanaGroups.length - 1 ? 0 : 8),
-            child: _buildSegmentButton(
-              label: group.title,
-              isSelected: _groupIndex == index,
-              onTap: () {
-                setState(() {
-                  _groupIndex = index;
-                });
-              },
-            ),
-          ),
-        );
-      }),
-    );
-  }
-
-  Widget _buildSegmentButton({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        height: 42,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFEC4899) : Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color:
-                isSelected ? const Color(0xFFEC4899) : const Color(0xFFE5E7EB),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(isSelected ? 0.08 : 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.inter(
-            color: isSelected ? Colors.white : const Color(0xFF374151),
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRomajiToggle() {
-    final group = _kanaGroups[_groupIndex];
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF7ED),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              LucideIcons.volume2,
-              color: Color(0xFFF97316),
-              size: 19,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  group.subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF1F2937),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Tap a card to reveal, speaker to hear it',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF6B7280),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Switch(
-            value: _showRomaji,
-            activeColor: const Color(0xFFEC4899),
-            onChanged: (value) => setState(() => _showRomaji = value),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoChip(
-    IconData icon,
-    String label,
-    Color bgColor,
-    Color iconColor,
-  ) {
-    return Expanded(
-      child: Container(
-        height: 42,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: iconColor.withOpacity(0.14)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: iconColor, size: 16),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
-                  color: iconColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildKanaTile(KanaChar char, {required String keyId}) {
-    final isRevealed = _showRomaji || _revealed.contains(keyId);
+    final isRevealed = _revealed.contains(keyId);
 
     return GestureDetector(
       onTap: () {
@@ -691,19 +537,17 @@ class _KanaScreenState extends State<KanaScreen>
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color:
-                isRevealed ? const Color(0xFFF9A8D4) : const Color(0xFFE5E7EB),
+            color: isRevealed ? const Color(0xFFF9A8D4) : const Color(0xFFE5E7EB),
             width: 1.4,
           ),
           boxShadow: [
             BoxShadow(
-              color:
-                  const Color(0xFFEC4899).withOpacity(isRevealed ? 0.12 : 0.04),
+              color: const Color(0xFFEC4899).withOpacity(isRevealed ? 0.12 : 0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -720,7 +564,7 @@ class _KanaScreenState extends State<KanaScreen>
                     char.kana,
                     style: GoogleFonts.notoSansJp(
                       color: const Color(0xFFBE185D),
-                      fontSize: char.kana.length > 1 ? 28 : 34,
+                      fontSize: char.kana.length > 1 ? 44 : 52,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -736,15 +580,15 @@ class _KanaScreenState extends State<KanaScreen>
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF6B7280),
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ),
             const SizedBox(height: 4),
             SizedBox(
-              width: 30,
-              height: 30,
+              width: 34,
+              height: 34,
               child: IconButton(
                 padding: EdgeInsets.zero,
                 visualDensity: VisualDensity.compact,
@@ -752,7 +596,7 @@ class _KanaScreenState extends State<KanaScreen>
                 icon: const Icon(
                   LucideIcons.volume2,
                   color: Color(0xFFF97316),
-                  size: 15,
+                  size: 17,
                 ),
               ),
             ),

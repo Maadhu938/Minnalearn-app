@@ -104,20 +104,6 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                     ),
                   ],
                   const SizedBox(height: 32),
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        LucideIcons.bookOpen,
-                        color: Colors.white,
-                        size: 64,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),

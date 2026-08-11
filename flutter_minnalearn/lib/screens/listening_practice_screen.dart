@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -621,14 +622,14 @@ class _ListeningPracticeScreenState extends State<ListeningPracticeScreen> {
               Container(
                 padding: const EdgeInsets.all(28),
                 decoration: BoxDecoration(
-                  color:
-                      isPassed ? Colors.green.shade50 : Colors.orange.shade50,
+                  color: isPassed ? Colors.green.shade50 : Colors.orange.shade50,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  isPassed ? LucideIcons.trophy : LucideIcons.award,
-                  color: isPassed ? Colors.green : Colors.orange,
-                  size: 72,
+                child: SvgPicture.asset(
+                  isPassed ? 'assets/svg/Shiba Happy.svg' : 'assets/svg/Shiba Sad.svg',
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(height: 24),
