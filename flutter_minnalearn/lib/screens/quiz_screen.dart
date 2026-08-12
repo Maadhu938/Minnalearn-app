@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -358,10 +357,10 @@ class _QuizScreenState extends State<QuizScreen> {
                   color: isPassed ? Colors.green.shade50 : Colors.orange.shade50,
                   shape: BoxShape.circle,
                 ),
-                child: SvgPicture.asset(
-                  isPassed ? 'assets/svg/Shiba Happy.svg' : 'assets/svg/Shiba Sad.svg',
-                  width: 90,
-                  height: 90,
+                child: Image.asset(
+                  isPassed ? 'assets/gif/Shiba Happy.gif' : 'assets/gif/Shiba Sad.gif',
+                  width: 120,
+                  height: 120,
                   fit: BoxFit.contain,
                 ),
               ),

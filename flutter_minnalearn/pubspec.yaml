@@ -89,6 +89,7 @@ flutter:
     - assets/JLPTN5 audio/
     - assets/JLPTN5 audio/n5_1/
     - assets/JLPTN5 audio/n5_2/
+    - assets/gif/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

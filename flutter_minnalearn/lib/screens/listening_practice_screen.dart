@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -625,10 +624,10 @@ class _ListeningPracticeScreenState extends State<ListeningPracticeScreen> {
                   color: isPassed ? Colors.green.shade50 : Colors.orange.shade50,
                   shape: BoxShape.circle,
                 ),
-                child: SvgPicture.asset(
-                  isPassed ? 'assets/svg/Shiba Happy.svg' : 'assets/svg/Shiba Sad.svg',
-                  width: 80,
-                  height: 80,
+                child: Image.asset(
+                  isPassed ? 'assets/gif/Shiba Happy.gif' : 'assets/gif/Shiba Sad.gif',
+                  width: 120,
+                  height: 120,
                   fit: BoxFit.contain,
                 ),
               ),
