@@ -46,6 +46,9 @@ android {
 
     buildTypes {
         release {
+            ndk {
+                debugSymbolLevel 'SYMBOL_TABLE'
+            }
             minifyEnabled true
             shrinkResources true
             signingConfig = signingConfigs.release
