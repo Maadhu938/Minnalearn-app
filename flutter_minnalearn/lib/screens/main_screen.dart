@@ -20,11 +20,11 @@ class _MainScreenState extends State<MainScreen> {
   late final PageController _pageController;
   late final List<Widget> _screens;
   final List<List<Color>> _backgroundPalettes = const [
-    [Color(0xFFFFF4F7), Color(0xFFFFE4EC), Color(0xFFFDE7F3)],
-    [Color(0xFFF8F7FF), Color(0xFFEFE9FF), Color(0xFFE8F2FF)],
-    [Color(0xFFFFF8F1), Color(0xFFFFEAD9), Color(0xFFFFF1E2)],
-    [Color(0xFFF3FAFF), Color(0xFFE1F1FF), Color(0xFFE8ECFF)],
-    [Color(0xFFFFF7FA), Color(0xFFFCE7F3), Color(0xFFF5F3FF)],
+    [Color(0xFFFFF1F2), Color(0xFFFFF7F7), Color(0xFFF8FAFC)],
+    [Color(0xFFF0FDF4), Color(0xFFF8FAFC), Color(0xFFEFF6FF)],
+    [Color(0xFFFFFBEB), Color(0xFFFFF7ED), Color(0xFFF8FAFC)],
+    [Color(0xFFF0F9FF), Color(0xFFF8FAFC), Color(0xFFF1F5F9)],
+    [Color(0xFFFFF7ED), Color(0xFFFFF1F2), Color(0xFFF8FAFC)],
   ];
 
   @override
@@ -175,8 +175,8 @@ class _MainScreenState extends State<MainScreen> {
                 xShift: 18,
                 yShift: -8,
                 colors: [
-                  const Color(0xFFC7B8FF).withOpacity(0.38),
-                  const Color(0xFFE8E1FF).withOpacity(0.08),
+                  const Color(0xFFA7F3D0).withOpacity(0.38),
+                  const Color(0xFFD1FAE5).withOpacity(0.08),
                 ],
               ),
               _buildParallaxShape(

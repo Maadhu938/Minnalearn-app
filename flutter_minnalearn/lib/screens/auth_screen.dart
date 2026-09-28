@@ -8,6 +8,8 @@ import '../services/database_service.dart';
 import 'main_screen.dart';
 import 'kanji_screen.dart';
 import '../services/analytics_service.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -250,7 +252,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: Text(
                   _isResetting ? 'Sending...' : 'Forgot password?',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFFEC4899),
+                    color: AppColors.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -289,31 +291,41 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ],
         const SizedBox(height: 32),
-        ElevatedButton(
-          onPressed: (_isLoading || _isResetting) ? null : _submitEmail,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFEC4899),
+        BouncingWidget(
+          onTap: (_isLoading || _isResetting) ? null : _submitEmail,
+          child: Container(
+            width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
+            decoration: BoxDecoration(
+              gradient: AppGradients.primaryHeader,
               borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 0,
-          ),
-          child: _isLoading
-              ? const SizedBox(
-                  height: 24, width: 24,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                )
-              : Text(
-                  _resetMode
-                      ? (_isResetting ? 'Sending...' : 'Send reset link')
-                      : (_isLogin ? 'Sign In' : 'Sign Up'),
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
+              ],
+            ),
+            child: Center(
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    )
+                  : Text(
+                      _resetMode
+                          ? (_isResetting ? 'Sending...' : 'Send reset link')
+                          : (_isLogin ? 'Sign In' : 'Sign Up'),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
+          ),
         ),
       ],
     );
@@ -331,9 +343,9 @@ class _AuthScreenState extends State<AuthScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFFFF7FB),
-              Color(0xFFFCE7F3),
-              Color(0xFFF5F3FF),
+              Color(0xFFF8FAFC),
+              Color(0xFFFFF1F2),
+              Color(0xFFF8FAFC),
             ],
           ),
         ),
@@ -351,13 +363,13 @@ class _AuthScreenState extends State<AuthScreen> {
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: const BoxDecoration(
-                        color: Color(0x22EC4899),
+                        color: AppColors.primaryLight,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         LucideIcons.user,
                         size: 64,
-                        color: Color(0xFFEC4899), // Pink
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -407,28 +419,41 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     const SizedBox(height: 24),
                     
-                    OutlinedButton.icon(
-                      onPressed: _isLoading ? null : _signInWithGoogle,
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                    BouncingWidget(
+                      onTap: _isLoading ? null : _signInWithGoogle,
+                      child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: const BorderSide(color: Color(0xFFE5E7EB)),
-                        shape: RoundedRectangleBorder(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE5E7EB)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ),
-                      icon: Image.network(
-                        'https://developers.google.com/identity/images/g-logo.png',
-                        height: 24,
-                        errorBuilder: (context, error, stackTrace) => 
-                            const Icon(Icons.error_outline, size: 24),
-                      ),
-                      label: Text(
-                        'Continue with Google',
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF374151),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.network(
+                              'https://developers.google.com/identity/images/g-logo.png',
+                              height: 24,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.error_outline, size: 24),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Continue with Google',
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF374151),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -456,7 +481,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             TextSpan(
                               text: _isLogin ? 'Sign Up' : 'Sign In',
                               style: GoogleFonts.inter(
-                                color: const Color(0xFFEC4899),
+                                color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

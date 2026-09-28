@@ -11,6 +11,8 @@ import '../services/speech_service.dart';
 import '../services/study_timer_service.dart';
 import '../services/achievement_service.dart';
 import '../utils/vocabulary_display.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class TrueOrFalseScreen extends StatefulWidget {
   final Lesson lesson;
@@ -211,7 +213,7 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: _buildStat('Score', '$_score', const Color(0xFFEC4899))),
+              Expanded(child: _buildStat('Score', '$_score', AppColors.primary)),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildStat(
@@ -403,7 +405,7 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
   }) {
     final color = feedbackColor ?? baseColor;
 
-    return GestureDetector(
+    return BouncingWidget(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -452,7 +454,7 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: const BoxDecoration(
-                color: Color(0xFFEC4899),
+                color: AppColors.amber,
                 shape: BoxShape.circle,
               ),
               child: const Icon(LucideIcons.trophy, size: 64, color: Colors.white),
@@ -525,7 +527,7 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
               child: ElevatedButton(
                 onPressed: _startGame,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFEC4899),
+                  backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),

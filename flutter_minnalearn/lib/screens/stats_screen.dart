@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+
 import '../services/database_service.dart';
+import '../utils/app_theme.dart';
+import '../widgets/animated_progress_bar.dart';
+import '../widgets/bouncing_widget.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({Key? key}) : super(key: key);
@@ -13,8 +17,12 @@ class StatsScreen extends StatefulWidget {
 class _StatsScreenState extends State<StatsScreen> {
   int _streak = 0;
   List<Map<String, dynamic>> _weeklyTime = [];
-  Map<String, double> _mastery = {'vocabulary': 0.0, 'kanji': 0.0, 'grammar': 0.0};
-  bool _isLoading = false;
+  Map<String, double> _mastery = {
+    'vocabulary': 0.0,
+    'kanji': 0.0,
+    'grammar': 0.0,
+  };
+  bool _isLoading = true;
   bool _disposed = false;
 
   @override
@@ -49,215 +57,40 @@ class _StatsScreenState extends State<StatsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.scaffold,
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      );
+    }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.scaffold,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 60, bottom: 32, left: 24, right: 24),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFF472B6),
-                  Color(0xFFEC4899),
-                  Color(0xFFE11D48),
-                ],
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Progress',
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Your learning journey',
-                  style: GoogleFonts.inter(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _buildModernHeader(),
           Expanded(
             child: RefreshIndicator(
               onRefresh: _loadStats,
-              color: const Color(0xFFEC4899),
+              color: AppColors.primary,
               child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
                 children: [
-                    // Streak Banner
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFB923C), Color(0xFFF97316)],
-                        ),
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFF97316).withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(LucideIcons.flame, color: Colors.white, size: 20),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Study Streak',
-                                      style: GoogleFonts.inter(
-                                        color: Colors.white.withOpacity(0.9),
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  '$_streak days',
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  _streak > 0 ? 'Amazing! Keep it up!' : 'Start your streak today!',
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: 88,
-                            height: 88,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.16),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              LucideIcons.flame,
-                              color: Colors.white,
-                              size: 44,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(LucideIcons.barChart3, color: Color(0xFFEC4899), size: 20),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Weekly Study Time',
-                                style: GoogleFonts.inter(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF1F2937),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            height: 150,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: _weeklyTime.map((data) {
-                                return _buildBar(data['day'], data['percent']);
-                              }).toList(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(LucideIcons.lineChart, color: Color(0xFFEC4899), size: 20),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Mastery Progress',
-                                style: GoogleFonts.inter(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF1F2937),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          _buildMasteryItem('Vocabulary Mastery', _mastery['vocabulary'] ?? 0.0),
-                          const SizedBox(height: 16),
-                          _buildMasteryItem('Kanji Mastery', _mastery['kanji'] ?? 0.0),
-                          const SizedBox(height: 16),
-                          _buildMasteryItem('Grammar Mastery', _mastery['grammar'] ?? 0.0),
-                        ],
-                      ),
-                    ),
+                  // Streak Hero Banner
+                  _buildStreakBanner(),
+                  const SizedBox(height: 20),
+
+                  // Weekly Study Time Chart Card
+                  _buildWeeklyStudyCard(),
+                  const SizedBox(height: 20),
+
+                  // Mastery Progress Card
+                  _buildMasteryCard(),
                 ],
               ),
             ),
@@ -267,57 +100,428 @@ class _StatsScreenState extends State<StatsScreen> {
     );
   }
 
-  Widget _buildBar(String day, double percent) {
+  Widget _buildModernHeader() {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: AppGradients.primaryHeader,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -10,
+            bottom: -15,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.08,
+                child: Text(
+                  '進歩',
+                  style: GoogleFonts.notoSansJp(
+                    fontSize: 96,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 56,
+              bottom: 30,
+              left: 20,
+              right: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'Analytics & Mastery',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Your Progress',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Track consistency, study time, and skill mastery',
+                  style: GoogleFonts.inter(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStreakBanner() {
+    return BouncingWidget(
+      scaleFactor: 0.98,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(22),
+        decoration: BoxDecoration(
+          gradient: AppGradients.amber,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.amberDark.withOpacity(0.28),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        LucideIcons.flame,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Daily Study Streak',
+                        style: GoogleFonts.inter(
+                          color: Colors.white.withOpacity(0.92),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '$_streak ${_streak == 1 ? 'Day' : 'Days'}',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 34,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _streak > 0
+                        ? 'Consistency is king! Keep your habit alive!'
+                        : 'Study today to ignite your streak!',
+                    style: GoogleFonts.inter(
+                      color: Colors.white.withOpacity(0.92),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.35),
+                  width: 2,
+                ),
+              ),
+              child: const Center(
+                child: Icon(
+                  LucideIcons.flame,
+                  color: Colors.white,
+                  size: 38,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeeklyStudyCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: AppColors.ink200.withOpacity(0.8),
+          width: 1.2,
+        ),
+        boxShadow: AppShadows.card,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppColors.azureLight,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      LucideIcons.barChart3,
+                      color: AppColors.azureDark,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Weekly Study Time',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.ink900,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                'Last 7 Days',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.ink500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            height: 140,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: _weeklyTime.map((data) {
+                return _buildAnimatedBar(
+                  data['day']?.toString() ?? '',
+                  (data['percent'] as num?)?.toDouble() ?? 0.0,
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnimatedBar(String day, double percent) {
+    final clampedPercent = percent.clamp(0.0, 1.0);
+    final isMax = clampedPercent > 0.6;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Container(
-          width: 25,
-          height: (120 * percent).clamp(4.0, 120.0),
-          decoration: BoxDecoration(
-            color: const Color(0xFFEC4899),
-            borderRadius: BorderRadius.circular(6),
-          ),
+        TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.0, end: clampedPercent),
+          duration: const Duration(milliseconds: 700),
+          curve: Curves.easeOutCubic,
+          builder: (context, val, _) {
+            final barHeight = (val * 105).clamp(6.0, 105.0);
+            return Container(
+              width: 24,
+              height: barHeight,
+              decoration: BoxDecoration(
+                gradient: isMax
+                    ? AppGradients.primaryHeader
+                    : AppGradients.azure,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: isMax ? AppShadows.primaryGlow : AppShadows.subtle,
+              ),
+            );
+          },
         ),
         const SizedBox(height: 8),
         Text(
           day,
-          style: GoogleFonts.inter(fontSize: 10, color: const Color(0xFF6B7280)),
+          style: GoogleFonts.inter(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: AppColors.ink500,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildMasteryItem(String label, double percent) {
+  Widget _buildMasteryCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: AppColors.ink200.withOpacity(0.8),
+          width: 1.2,
+        ),
+        boxShadow: AppShadows.card,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.bambooLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  LucideIcons.lineChart,
+                  color: AppColors.bambooDark,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Skill Mastery Gauges',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.ink900,
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildMasteryItem(
+            label: 'Vocabulary Mastery',
+            percent: _mastery['vocabulary'] ?? 0.0,
+            icon: LucideIcons.bookOpen,
+            color: AppColors.azureDark,
+            gradient: AppGradients.azure,
+            bgColor: AppColors.azureLight,
+          ),
+          const SizedBox(height: 16),
+          _buildMasteryItem(
+            label: 'Kanji Mastery',
+            percent: _mastery['kanji'] ?? 0.0,
+            icon: LucideIcons.sparkles,
+            color: AppColors.amberDark,
+            gradient: AppGradients.amber,
+            bgColor: AppColors.amberLight,
+          ),
+          const SizedBox(height: 16),
+          _buildMasteryItem(
+            label: 'Grammar Mastery',
+            percent: _mastery['grammar'] ?? 0.0,
+            icon: LucideIcons.fileText,
+            color: AppColors.bambooDark,
+            gradient: AppGradients.bamboo,
+            bgColor: AppColors.bambooLight,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMasteryItem({
+    required String label,
+    required double percent,
+    required IconData icon,
+    required Color color,
+    required LinearGradient gradient,
+    required Color bgColor,
+  }) {
+    final percentInt = (percent.clamp(0.0, 1.0) * 100).toInt();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF4B5563)),
+            Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: color, size: 14),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  label,
+                  style: GoogleFonts.inter(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.ink700,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '${(percent * 100).toInt()}%',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF1F2937),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '$percentInt%',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: color,
+                ),
               ),
             ),
           ],
         ),
         const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: percent,
-            backgroundColor: Colors.grey.shade100,
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF3B82F6)),
-            minHeight: 8,
-          ),
+        AnimatedProgressBar(
+          value: percent,
+          height: 8,
+          gradient: gradient,
+          backgroundColor: AppColors.ink100,
         ),
       ],
     );

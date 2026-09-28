@@ -8,6 +8,8 @@
 *.swp
 .buildlog/
 .history
+nul
+/nul
 
 # Flutter repo-specific
 /bin/cache/

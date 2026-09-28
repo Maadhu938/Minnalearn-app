@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../models/lesson.dart';
+import '../utils/app_theme.dart';
 
 class GrammarScreen extends StatefulWidget {
   final Lesson lesson;
@@ -80,7 +81,7 @@ class _GrammarScreenState extends State<GrammarScreen> {
         centerTitle: true,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFFEC4899)))
+          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _error != null
               ? Center(child: Text(_error!, style: GoogleFonts.inter(color: Colors.grey)))
               : _grammarPoints.isEmpty

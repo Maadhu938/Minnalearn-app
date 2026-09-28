@@ -7,6 +7,8 @@ import '../services/database_service.dart';
 import '../services/speech_service.dart';
 import '../services/study_timer_service.dart';
 import '../utils/vocabulary_display.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class VocabularyListScreen extends StatefulWidget {
   final Lesson lesson;
@@ -107,22 +109,22 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
   Color _getTypeBgColor(VocabularyType type) {
     switch (type) {
       case VocabularyType.vocabulary:
-        return Colors.blue.shade50;
+        return AppColors.azureLight;
       case VocabularyType.expression:
-        return Colors.purple.shade50;
+        return AppColors.amberLight;
       case VocabularyType.additional:
-        return Colors.green.shade50;
+        return AppColors.bambooLight;
     }
   }
 
   Color _getTypeTextColor(VocabularyType type) {
     switch (type) {
       case VocabularyType.vocabulary:
-        return Colors.blue.shade700;
+        return AppColors.azureDark;
       case VocabularyType.expression:
-        return Colors.purple.shade700;
+        return AppColors.amberDark;
       case VocabularyType.additional:
-        return Colors.green.shade700;
+        return AppColors.bambooDark;
     }
   }
 
@@ -134,17 +136,9 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 60, bottom: 32, left: 24, right: 24),
+            padding: const EdgeInsets.only(top: 56, bottom: 28, left: 20, right: 20),
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFF472B6),
-                  Color(0xFFEC4899),
-                  Color(0xFFE11D48),
-                ],
-              ),
+              gradient: AppGradients.primaryHeader,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(32),
                 bottomRight: Radius.circular(32),
@@ -263,15 +257,15 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
                         children: [
                           _buildCircleButton(
                             LucideIcons.volume2,
-                            Colors.pink.shade50,
-                            Colors.pink,
+                            AppColors.primaryLight,
+                            AppColors.primary,
                             onTap: () => _handleSpeak(word.kanaText),
                           ),
                           const SizedBox(width: 8),
                           _buildCircleButton(
                             LucideIcons.bookmark,
-                            isBookmarked ? const Color(0xFFFCE7F3) : Colors.grey.shade50,
-                            isBookmarked ? const Color(0xFFDB2777) : Colors.grey.shade400,
+                            isBookmarked ? AppColors.amberLight : Colors.grey.shade50,
+                            isBookmarked ? AppColors.amberDark : Colors.grey.shade400,
                             onTap: _isLoadingBookmarks ? null : () => _toggleBookmark(word),
                           ),
                         ],
@@ -287,10 +281,10 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
-                    Colors.pink.shade50,
-                    Colors.purple.shade50,
+                    AppColors.primaryLight,
+                    AppColors.amberLight,
                   ],
                 ),
                 borderRadius: BorderRadius.circular(24),
@@ -329,7 +323,7 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
     Color iconColor, {
     VoidCallback? onTap,
   }) {
-    return GestureDetector(
+    return BouncingWidget(
       onTap: onTap,
       child: Container(
         width: 40,

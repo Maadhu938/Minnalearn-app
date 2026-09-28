@@ -8,8 +8,10 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../models/lesson.dart';
 import '../services/audio_service.dart';
 import '../services/database_service.dart';
-import '../services/achievement_service.dart';
 import '../services/study_timer_service.dart';
+import '../services/achievement_service.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class KanaPuzzleScreen extends StatefulWidget {
   final Lesson lesson;
@@ -216,7 +218,7 @@ class _KanaPuzzleScreenState extends State<KanaPuzzleScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildStat('Score', _score.toString(), const Color(0xFFEC4899)),
+          _buildStat('Score', _score.toString(), AppColors.primary),
           _buildStat(
             'Combo',
             'x$_combo',
@@ -335,7 +337,7 @@ class _KanaPuzzleScreenState extends State<KanaPuzzleScreen> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: candidateData.isNotEmpty
-                        ? const Color(0xFFEC4899)
+                        ? AppColors.primary
                         : const Color(0xFFE5E7EB),
                     width: 2,
                   ),
@@ -405,12 +407,12 @@ class _KanaPuzzleScreenState extends State<KanaPuzzleScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFEC4899).withOpacity(0.3),
+                color: AppColors.primary.withOpacity(0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
             ],
-            border: Border.all(color: const Color(0xFFEC4899), width: 2),
+            border: Border.all(color: AppColors.primary, width: 2),
           ),
           child: Center(
             child: Text(
@@ -473,7 +475,7 @@ class _KanaPuzzleScreenState extends State<KanaPuzzleScreen> {
   }
 
   Widget _buildSelectedTile(String char, int index) {
-    return GestureDetector(
+    return BouncingWidget(
       onTap: () => _onTileDeselected(char, index),
       child: Container(
         width: 50,
@@ -489,7 +491,7 @@ class _KanaPuzzleScreenState extends State<KanaPuzzleScreen> {
               offset: const Offset(0, 2),
             ),
           ],
-          border: Border.all(color: const Color(0xFFEC4899), width: 2),
+          border: Border.all(color: AppColors.primary, width: 2),
         ),
         child: Center(
           child: Text(
@@ -527,7 +529,7 @@ class _KanaPuzzleScreenState extends State<KanaPuzzleScreen> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: const BoxDecoration(
-                color: Color(0xFFEC4899),
+                color: AppColors.amber,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -559,7 +561,7 @@ class _KanaPuzzleScreenState extends State<KanaPuzzleScreen> {
               child: ElevatedButton(
                 onPressed: _startGame,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFEC4899),
+                  backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),

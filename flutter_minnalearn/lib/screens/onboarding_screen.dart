@@ -4,6 +4,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import 'auth_screen.dart';
 import '../services/database_service.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -22,19 +24,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'title': 'Learn Japanese\nEffortlessly',
       'description': 'Master JLPT N5 vocabulary and kanji with our interactive lessons.',
       'icon': LucideIcons.bookOpen,
-      'color': Colors.pink,
+      'color': AppColors.primary,
     },
     {
       'title': 'Interactive\nFlashcards',
       'description': 'Practice anytime, anywhere with our smart flashcard system designed for retention.',
       'icon': LucideIcons.sparkles,
-      'color': Colors.purple,
+      'color': AppColors.amberDark,
     },
     {
       'title': 'Track Your\nProgress',
       'description': 'Watch your skills grow with detailed statistics and achievements.',
       'icon': LucideIcons.barChart3,
-      'color': Colors.orange,
+      'color': AppColors.bambooDark,
     },
   ];
 
@@ -157,41 +159,48 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       width: _currentPage == index ? 24 : 8,
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
-                        color: _currentPage == index ? Colors.pink : Colors.grey.shade300,
+                        color: _currentPage == index ? AppColors.primary : AppColors.ink200,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 48),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _isFinishing ? null : _handlePrimaryAction,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
+                BouncingWidget(
+                  onTap: _isFinishing ? null : _handlePrimaryAction,
+                  child: Container(
+                    width: double.infinity,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      gradient: AppGradients.primaryHeader,
+                      borderRadius: BorderRadius.circular(28),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.35),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
-                    child: _isFinishing
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.4,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    child: Center(
+                      child: _isFinishing
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.4,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : Text(
+                              _currentPage == _pages.length - 1 ? 'Get Started' : 'Next',
+                              style: GoogleFonts.inter(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          )
-                        : Text(
-                            _currentPage == _pages.length - 1 ? 'Get Started' : 'Next',
-                            style: GoogleFonts.inter(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                    ),
                   ),
                 ),
               ],

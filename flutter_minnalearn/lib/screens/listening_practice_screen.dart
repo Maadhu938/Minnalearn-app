@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class ListeningQuestion {
   final String imageAsset;
@@ -172,7 +174,7 @@ class _ListeningPracticeScreenState extends State<ListeningPracticeScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Color(0xFFEC4899)),
+              child: CircularProgressIndicator(color: AppColors.primary),
             );
           }
 
@@ -255,11 +257,7 @@ class _ListeningPracticeScreenState extends State<ListeningPracticeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.only(top: 56, bottom: 20, left: 24, right: 24),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFF472B6), Color(0xFFEC4899), Color(0xFFE11D48)],
-        ),
+        gradient: AppGradients.primaryHeader,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(32),
           bottomRight: Radius.circular(32),
@@ -300,11 +298,7 @@ class _ListeningPracticeScreenState extends State<ListeningPracticeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.only(top: 56, bottom: 20, left: 24, right: 24),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFF472B6), Color(0xFFEC4899), Color(0xFFE11D48)],
-        ),
+        gradient: AppGradients.primaryHeader,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(32),
           bottomRight: Radius.circular(32),
@@ -441,15 +435,15 @@ class _ListeningPracticeScreenState extends State<ListeningPracticeScreen> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: isThisPlaying
-                ? [const Color(0xFF6366F1), const Color(0xFF4F46E5)]
-                : [const Color(0xFFEC4899), const Color(0xFFE11D48)],
+                ? [AppColors.azure, AppColors.azureDark]
+                : [AppColors.primary, AppColors.primaryDark],
           ),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
               color: ((isThisPlaying
-                      ? const Color(0xFF6366F1)
-                      : const Color(0xFFEC4899)))
+                      ? AppColors.azure
+                      : AppColors.primary))
                   .withOpacity(0.35),
               blurRadius: 16,
               offset: const Offset(0, 8),
@@ -557,32 +551,42 @@ class _ListeningPracticeScreenState extends State<ListeningPracticeScreen> {
   // ── Next button ────────────────────────────────────────────────────────────
   Widget _buildNextButton(int total) {
     final isLast = _currentIndex >= total - 1;
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () async {
-          await _stopAudio();
-          setState(() {
-            if (isLast) {
-              _showResults = true;
-            } else {
-              _currentIndex++;
-              _selectedAnswer = null;
-              _answered = false;
-            }
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFEC4899),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          elevation: 0,
+    return BouncingWidget(
+      onTap: () async {
+        await _stopAudio();
+        setState(() {
+          if (isLast) {
+            _showResults = true;
+          } else {
+            _currentIndex++;
+            _selectedAnswer = null;
+            _answered = false;
+          }
+        });
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        decoration: BoxDecoration(
+          gradient: AppGradients.primaryHeader,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Text(
-          isLast ? 'See Results' : 'Next Question',
-          style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
+        child: Center(
+          child: Text(
+            isLast ? 'See Results' : 'Next Question',
+            style: GoogleFonts.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );
@@ -675,7 +679,7 @@ class _ListeningPracticeScreenState extends State<ListeningPracticeScreen> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFEC4899),
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     shape: RoundedRectangleBorder(

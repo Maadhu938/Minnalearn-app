@@ -1,8 +1,11 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class KanaChar {
   final String kana;
@@ -260,6 +263,38 @@ const _kanaGroups = [
   ),
 ];
 
+class RotationYTransition extends AnimatedWidget {
+  const RotationYTransition({
+    super.key,
+    required Animation<double> turn,
+    required this.child,
+  }) : super(listenable: turn);
+
+  final Widget child;
+
+  static Widget _buildTransition(
+    BuildContext context,
+    Animation<double> animation,
+    Widget? child,
+  ) {
+    final rotation = Tween<double>(begin: -math.pi, end: 0.0).animate(animation);
+    return Transform(
+      transform: Matrix4.identity()..rotateY(rotation.value),
+      alignment: Alignment.center,
+      child: child,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: listenable,
+      builder: (context, child) => _buildTransition(context, listenable as Animation<double>, child),
+      child: child,
+    );
+  }
+}
+
 class KanaScreen extends StatefulWidget {
   const KanaScreen({Key? key}) : super(key: key);
 
@@ -273,7 +308,6 @@ class _KanaScreenState extends State<KanaScreen>
   late final FlutterTts _tts;
 
   int _groupIndex = 0;
-  final Set<String> _revealed = {};
 
   @override
   void initState() {
@@ -340,15 +374,7 @@ class _KanaScreenState extends State<KanaScreen>
         right: 24,
       ),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFF472B6),
-            Color(0xFFEC4899),
-            Color(0xFFE11D48),
-          ],
-        ),
+        gradient: AppGradients.primaryHeader,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(32),
           bottomRight: Radius.circular(32),
@@ -416,7 +442,7 @@ class _KanaScreenState extends State<KanaScreen>
               ),
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.transparent,
-              labelColor: const Color(0xFFBE185D),
+              labelColor: AppColors.primary,
               unselectedLabelColor: Colors.white,
               labelStyle: GoogleFonts.inter(
                 fontWeight: FontWeight.bold,
@@ -440,8 +466,11 @@ class _KanaScreenState extends State<KanaScreen>
   Widget _buildKanaPage({required bool isHiragana}) {
     final group = _kanaGroups[_groupIndex];
     final chars = isHiragana ? group.hiragana : group.katakana;
+    final int crossAxisCount = _groupIndex == 2 ? 3 : 5;
+    final double childAspectRatio = _groupIndex == 2 ? 1.05 : 0.82;
 
     return CustomScrollView(
+      physics: const ClampingScrollPhysics(),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
@@ -455,32 +484,30 @@ class _KanaScreenState extends State<KanaScreen>
                     padding: EdgeInsets.only(
                       right: index == _kanaGroups.length - 1 ? 0 : 8,
                     ),
-                    child: GestureDetector(
+                    child: BouncingWidget(
+                      scaleFactor: 0.94,
                       onTap: () => setState(() => _groupIndex = index),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 160),
-                        height: 44,
+                        height: 42,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFFEC4899) : Colors.white,
+                          color: isSelected ? AppColors.primary : Colors.white,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: isSelected ? const Color(0xFFEC4899) : const Color(0xFFE5E7EB),
+                            color: isSelected ? AppColors.primary : AppColors.ink200,
+                            width: 1.2,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(isSelected ? 0.08 : 0.04),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                          boxShadow: isSelected
+                              ? AppShadows.primaryGlow
+                              : AppShadows.subtle,
                         ),
                         child: Text(
                           g.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
-                            color: isSelected ? Colors.white : const Color(0xFF374151),
+                            color: isSelected ? Colors.white : AppColors.ink700,
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
                           ),
@@ -495,24 +522,21 @@ class _KanaScreenState extends State<KanaScreen>
         ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(
-            10,
+            12,
             4,
-            10,
+            12,
             MediaQuery.of(context).padding.bottom + 24,
           ),
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: MediaQuery.of(context).size.width > 640 ? 7 : 4,
-              childAspectRatio: 0.85,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: childAspectRatio,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return _buildKanaTile(
-                  chars[index],
-                  keyId: '${isHiragana ? 'h' : 'k'}-$_groupIndex-$index',
-                );
+                return _buildKanaTile(chars[index]);
               },
               childCount: chars.length,
             ),
@@ -522,82 +546,58 @@ class _KanaScreenState extends State<KanaScreen>
     );
   }
 
-  Widget _buildKanaTile(KanaChar char, {required String keyId}) {
-    final isRevealed = _revealed.contains(keyId);
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          if (_revealed.contains(keyId)) {
-            _revealed.remove(keyId);
-          } else {
-            _revealed.add(keyId);
-          }
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+  Widget _buildKanaTile(KanaChar char) {
+    return BouncingWidget(
+      scaleFactor: 0.92,
+      onTap: () => _speak(char.kana),
+      child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isRevealed ? const Color(0xFFF9A8D4) : const Color(0xFFE5E7EB),
-            width: 1.4,
+            color: AppColors.ink200.withOpacity(0.9),
+            width: 1.2,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFEC4899).withOpacity(isRevealed ? 0.12 : 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: AppShadows.subtle,
         ),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Center(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    char.kana,
-                    style: GoogleFonts.notoSansJp(
-                      color: const Color(0xFFBE185D),
-                      fontSize: char.kana.length > 1 ? 44 : 52,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            AnimatedOpacity(
-              opacity: isRevealed ? 1 : 0,
-              duration: const Duration(milliseconds: 140),
-              child: Text(
-                char.romaji,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
-                  color: const Color(0xFF6B7280),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            SizedBox(
-              width: 34,
-              height: 34,
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-                onPressed: () => _speak(char.kana),
-                icon: const Icon(
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 2),
+                child: Icon(
                   LucideIcons.volume2,
-                  color: Color(0xFFF97316),
-                  size: 17,
+                  color: AppColors.amberDark.withOpacity(0.7),
+                  size: 11,
                 ),
+              ),
+            ),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                char.kana,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.ink900,
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                  fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
+                ),
+              ),
+            ),
+            Text(
+              char.romaji,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.inter(
+                color: AppColors.ink500,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.1,
               ),
             ),
           ],

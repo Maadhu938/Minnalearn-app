@@ -8,6 +8,8 @@ import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
 import '../services/audio_service.dart';
 import '../services/achievement_service.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class QuizScreen extends StatefulWidget {
   final Lesson lesson;
@@ -215,8 +217,8 @@ class _QuizScreenState extends State<QuizScreen> {
                     padding: EdgeInsets.zero,
                     lineHeight: 8.0,
                     percent: progress,
-                    backgroundColor: Colors.grey.shade200,
-                    progressColor: Colors.pink,
+                    backgroundColor: AppColors.ink100,
+                    progressColor: AppColors.primary,
                     barRadius: const Radius.circular(10),
                   ),
                 ],
@@ -302,7 +304,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: GestureDetector(
+      child: BouncingWidget(
         onTap: () => _handleAnswer(index),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -391,7 +393,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pink,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

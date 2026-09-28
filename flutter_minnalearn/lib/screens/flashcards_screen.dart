@@ -6,6 +6,8 @@ import '../services/database_service.dart';
 import '../services/speech_service.dart';
 import '../services/study_timer_service.dart';
 import '../utils/vocabulary_display.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class FlashcardsScreen extends StatefulWidget {
   final Lesson lesson;
@@ -115,7 +117,7 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFF1F2), Color(0xFFF5F3FF)], // Pink-50 to Purple-50
+            colors: [Color(0xFFFFF1F2), Color(0xFFFFFBEB)],
           ),
         ),
         child: Column(
@@ -248,8 +250,14 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
                                 const SizedBox(height: 20),
                                 TextButton.icon(
                                   onPressed: () => _handleSpeak(promptText),
-                                  icon: const Icon(LucideIcons.volume2, color: Colors.pink, size: 20),
-                                  label: Text('Listen', style: GoogleFonts.inter(color: Colors.pink)),
+                                  icon: const Icon(LucideIcons.volume2, color: AppColors.primary, size: 20),
+                                  label: Text(
+                                    'Listen',
+                                    style: GoogleFonts.inter(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                 ),
                                 Text(
                                   'Swipe left for next, right for previous',
@@ -294,7 +302,7 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
   }
 
   Widget _buildNavButton(IconData icon, bool enabled, VoidCallback onTap) {
-    return GestureDetector(
+    return BouncingWidget(
       onTap: enabled ? onTap : null,
       child: Container(
         width: 48,

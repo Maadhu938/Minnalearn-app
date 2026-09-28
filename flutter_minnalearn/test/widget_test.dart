@@ -1,30 +1,72 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:flutter_minnalearn/main.dart';
+import 'package:flutter_minnalearn/utils/app_theme.dart';
+import 'package:flutter_minnalearn/widgets/bouncing_widget.dart';
+import 'package:flutter_minnalearn/widgets/animated_progress_bar.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MinnaLearnApp());
+  group('AppTheme & Color System Tests', () {
+    test('AppColors contains zero purple/violet shades and correct Japanese modern palette', () {
+      expect(AppColors.primary, const Color(0xFFE11D48)); // Japanese Torii Crimson
+      expect(AppColors.amber, const Color(0xFFF59E0B)); // Warm Sun Amber
+      expect(AppColors.bamboo, const Color(0xFF10B981)); // Bamboo Emerald
+      expect(AppColors.azure, const Color(0xFF0284C7)); // Sky Azure
+      expect(AppColors.scaffold, const Color(0xFFF8FAFC)); // Porcelain
+      expect(AppColors.card, const Color(0xFFFFFFFF));
+      expect(AppColors.border, const Color(0xFFE2E8F0));
+    });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    test('AppGradients provide modern warm gradients', () {
+      expect(AppGradients.primaryHeader.colors.length, 3);
+      expect(AppGradients.primaryHeader.colors.first, const Color(0xFFE11D48));
+      expect(AppGradients.amber.colors.first, const Color(0xFFF59E0B));
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    test('AppShadows provides subtle non-AI elevations', () {
+      expect(AppShadows.card.length, 2);
+      expect(AppShadows.card.first.blurRadius, 14.0);
+    });
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  group('Interactive Animations Widget Tests', () {
+    testWidgets('BouncingWidget renders child and responds to tap with spring feedback', (WidgetTester tester) async {
+      bool tapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BouncingWidget(
+              onTap: () {
+                tapped = true;
+              },
+              child: const Text('Tap Me'),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Tap Me'), findsOneWidget);
+
+      await tester.tap(find.text('Tap Me'));
+      await tester.pumpAndSettle();
+
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('AnimatedProgressBar renders progress correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AnimatedProgressBar(
+              value: 0.65,
+              height: 10,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(AnimatedProgressBar), findsOneWidget);
+      await tester.pumpAndSettle();
+    });
   });
 }

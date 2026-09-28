@@ -8,6 +8,7 @@ import 'main_screen.dart';
 import 'onboarding_screen.dart';
 import 'auth_screen.dart';
 import '../services/notification_service.dart';
+import '../utils/app_theme.dart';
 
 class StartupScreen extends StatefulWidget {
   const StartupScreen({Key? key}) : super(key: key);
@@ -131,9 +132,9 @@ class _StartupScreenState extends State<StartupScreen> {
               child: Container(
                 width: 230,
                 height: 230,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0x22EC4899),
+                  color: AppColors.primary.withOpacity(0.08),
                 ),
               ),
             ),
@@ -143,9 +144,9 @@ class _StartupScreenState extends State<StartupScreen> {
               child: Container(
                 width: 260,
                 height: 260,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0x1A8B5CF6),
+                  color: AppColors.amber.withOpacity(0.08),
                 ),
               ),
             ),
@@ -188,11 +189,11 @@ class _StartupScreenState extends State<StartupScreen> {
                         width: 120,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(999),
-                          child: const LinearProgressIndicator(
+                          child: LinearProgressIndicator(
                             minHeight: 6,
-                            backgroundColor: Color(0x33EC4899),
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Color(0xFFEC4899),
+                            backgroundColor: AppColors.primaryLight,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              AppColors.primary,
                             ),
                           ),
                         ),
@@ -201,7 +202,7 @@ class _StartupScreenState extends State<StartupScreen> {
                       ElevatedButton(
                         onPressed: _bootstrapApp,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFEC4899),
+                          backgroundColor: AppColors.primary,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 14,

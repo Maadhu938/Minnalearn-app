@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../main.dart';
+import '../utils/app_theme.dart';
 import 'database_service.dart';
 import 'cloud_service.dart';
 import 'audio_service.dart';
@@ -87,7 +88,7 @@ class AchievementService {
       description: 'Learn 10 distinct Kanji.',
       icon: LucideIcons.sparkles,
       goal: 10,
-      color: const Color(0xFF8B5CF6),
+      color: const Color(0xFFF59E0B),
       type: _AchievementType.kanji,
     ),
     Achievement(
@@ -96,7 +97,7 @@ class AchievementService {
       description: 'Study 25 kanji cards.',
       icon: LucideIcons.sparkles,
       goal: 25,
-      color: const Color(0xFF6366F1),
+      color: const Color(0xFFD97706),
       type: _AchievementType.kanji,
     ),
     Achievement(
@@ -105,7 +106,7 @@ class AchievementService {
       description: 'Learn 50 vocabulary items.',
       icon: LucideIcons.bookOpen,
       goal: 50,
-      color: const Color(0xFFEC4899),
+      color: const Color(0xFF0284C7),
       type: _AchievementType.vocabulary,
     ),
     Achievement(
@@ -250,7 +251,7 @@ class AchievementService {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pink,
+                    backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),

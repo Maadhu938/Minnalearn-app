@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+
 import '../models/lesson.dart';
+import '../services/database_service.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 import '../widgets/stat_card.dart';
 import 'flashcards_screen.dart';
 import 'vocabulary_list_screen.dart';
 import 'quiz_screen.dart';
 import 'grammar_screen.dart';
-import '../services/database_service.dart';
 
 class LessonDetailScreen extends StatefulWidget {
   final Lesson lesson;
@@ -29,7 +32,10 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
 
   Future<void> _refreshLesson() async {
     final lessons = await DatabaseService().getLessons();
-    final updated = lessons.firstWhere((l) => l.id == _currentLesson.id, orElse: () => _currentLesson);
+    final updated = lessons.firstWhere(
+      (l) => l.id == _currentLesson.id,
+      orElse: () => _currentLesson,
+    );
     if (mounted) {
       setState(() {
         _currentLesson = updated;
@@ -44,292 +50,384 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
         : (_currentLesson.vocabulary.length * 2).clamp(10, 45).toInt();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Pink gradient header
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.only(top: 60, bottom: 80, left: 24, right: 24),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFF472B6),
-                    Color(0xFFEC4899),
-                    Color(0xFFE11D48),
-                  ],
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(48),
-                  bottomRight: Radius.circular(48),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Back',
-                          style: GoogleFonts.inter(color: Colors.white.withOpacity(0.9)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Lesson ${_currentLesson.id}',
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (_currentLesson.title.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      _currentLesson.title,
-                      style: GoogleFonts.inter(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
+      backgroundColor: AppColors.scaffold,
+      body: Column(
+        children: [
+          // ── Pinned Fixed Header ──────────────────────────────────────────────
+          _buildPinnedHeader(),
 
-            // Stats cards
-            Transform.translate(
-              offset: const Offset(0, -40),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
+          // ── Scrollable Body with ClampingPhysics (Zero White Space Gaps) ──────
+          Expanded(
+            child: ListView(
+              physics: const ClampingScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+              children: [
+                // Quick Metrics Row
+                Row(
                   children: [
                     Expanded(
                       child: StatCard(
                         value: '${_currentLesson.vocabulary.length}',
                         label: 'Words',
-                        bgColor: Colors.blue.shade50,
+                        icon: LucideIcons.bookOpen,
+                        bgColor: AppColors.azureLight,
+                        accentColor: AppColors.azureDark,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: StatCard(
                         value: '${(_currentLesson.progress * 100).round()}%',
                         label: 'Progress',
-                        bgColor: Colors.purple.shade50,
+                        icon: LucideIcons.award,
+                        bgColor: AppColors.amberLight,
+                        accentColor: AppColors.amberDark,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: StatCard(
                         value: estimatedMinutes == 0 ? '--' : '${estimatedMinutes}m',
                         label: 'Est. Time',
-                        bgColor: Colors.pink.shade50,
+                        icon: LucideIcons.clock,
+                        bgColor: AppColors.primaryLight,
+                        accentColor: AppColors.primaryDark,
                       ),
                     ),
                   ],
                 ),
-              ),
-            ),
+                const SizedBox(height: 22),
 
-            // Activity cards
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Learning Activities',
-                    style: GoogleFonts.inter(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1F2937),
+                // Section Title
+                Text(
+                  'Study Activities',
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.ink900,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // 2x2 Activity Cards Grid
+                GridView.count(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.98,
+                  children: [
+                    _buildActivityCard(
+                      context: context,
+                      title: 'Flashcards',
+                      subtitle: 'Swipe & Audio',
+                      icon: LucideIcons.layers,
+                      bgColor: AppColors.azureLight,
+                      iconColor: AppColors.azureDark,
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                FlashcardsScreen(lesson: _currentLesson),
+                          ),
+                        );
+                        _refreshLesson();
+                      },
+                    ),
+                    _buildActivityCard(
+                      context: context,
+                      title: 'Learn Mode',
+                      subtitle: 'Vocabulary List',
+                      icon: LucideIcons.bookOpen,
+                      bgColor: AppColors.amberLight,
+                      iconColor: AppColors.amberDark,
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                VocabularyListScreen(lesson: _currentLesson),
+                          ),
+                        );
+                        _refreshLesson();
+                      },
+                    ),
+                    _buildActivityCard(
+                      context: context,
+                      title: 'Test Mode',
+                      subtitle: '10 Questions',
+                      icon: LucideIcons.target,
+                      bgColor: AppColors.bambooLight,
+                      iconColor: AppColors.bambooDark,
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                QuizScreen(lesson: _currentLesson),
+                          ),
+                        );
+                        _refreshLesson();
+                      },
+                    ),
+                    _buildActivityCard(
+                      context: context,
+                      title: 'Grammar',
+                      subtitle: 'Key Patterns',
+                      icon: LucideIcons.fileText,
+                      bgColor: AppColors.coralLight,
+                      iconColor: AppColors.coralDark,
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                GrammarScreen(lesson: _currentLesson),
+                          ),
+                        );
+                        _refreshLesson();
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 22),
+
+                // Primary Start Button
+                BouncingWidget(
+                  scaleFactor: 0.96,
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            FlashcardsScreen(lesson: _currentLesson),
+                      ),
+                    );
+                    _refreshLesson();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      gradient: AppGradients.primaryHeader,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: AppShadows.primaryGlow,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          LucideIcons.play,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Start Study Session',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.1,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  GridView.count(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 1.0, // Increased height to prevent text overflow
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPinnedHeader() {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: AppGradients.primaryHeader,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(28),
+          bottomRight: Radius.circular(28),
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              BouncingWidget(
+                scaleFactor: 0.94,
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildActivityCard(
-                        context,
-                        'Flashcards',
-                        LucideIcons.bookOpen,
-                        Colors.blue.shade50,
-                        Colors.blue.shade500,
-                        () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FlashcardsScreen(lesson: _currentLesson),
-                            ),
-                          );
-                          _refreshLesson();
-                        },
+                      const Icon(
+                        LucideIcons.arrowLeft,
+                        color: Colors.white,
+                        size: 16,
                       ),
-                      _buildActivityCard(
-                        context,
-                        'Learn Mode',
-                        LucideIcons.sparkles,
-                        Colors.purple.shade50,
-                        Colors.purple.shade500,
-                        () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => VocabularyListScreen(lesson: _currentLesson),
-                            ),
-                          );
-                          _refreshLesson();
-                        },
-                      ),
-                      _buildActivityCard(
-                        context,
-                        'Test Mode',
-                        LucideIcons.target,
-                        Colors.green.shade50,
-                        Colors.green.shade500,
-                        () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => QuizScreen(lesson: _currentLesson),
-                            ),
-                          );
-                          _refreshLesson();
-                        },
-                      ),
-                      _buildActivityCard(
-                        context,
-                        'Grammar',
-                        LucideIcons.book,
-                        Colors.orange.shade50,
-                        Colors.orange.shade500,
-                        () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GrammarScreen(lesson: _currentLesson),
-                            ),
-                          );
-                          _refreshLesson();
-                        },
+                      const SizedBox(width: 6),
+                      Text(
+                        'Lessons',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 32),
-                  
-                  // Start lesson button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFEC4899), Color(0xFFE11D48)],
+                ),
+              ),
+              const SizedBox(height: 14),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Lesson ${_currentLesson.id}',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.pink.withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                        if (_currentLesson.title.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            _currentLesson.title,
+                            style: GoogleFonts.inter(
+                              color: Colors.white.withOpacity(0.92),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FlashcardsScreen(lesson: _currentLesson),
-                            ),
-                          );
-                          _refreshLesson();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-                        ),
-                        child: Text(
-                          'Start Lesson',
-                          style: GoogleFonts.inter(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.22),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'JLPT N5',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 48),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildActivityCard(BuildContext context, String title, IconData icon, Color bgColor, Color iconColor, VoidCallback onTap) {
-    return GestureDetector(
+  Widget _buildActivityCard({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color bgColor,
+    required Color iconColor,
+    required VoidCallback onTap,
+  }) {
+    return BouncingWidget(
+      scaleFactor: 0.95,
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppColors.ink200.withOpacity(0.8),
+            width: 1.2,
+          ),
+          boxShadow: AppShadows.card,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                icon,
-                color: iconColor,
-                size: 24,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(13),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: iconColor,
+                    size: 21,
+                  ),
+                ),
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: const BoxDecoration(
+                    color: AppColors.ink100,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    LucideIcons.arrowUpRight,
+                    size: 13,
+                    color: AppColors.ink500,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
+            const Spacer(),
             Text(
               title,
               style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: const Color(0xFF1F2937),
-                height: 1.2,
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+                color: AppColors.ink900,
+                letterSpacing: -0.2,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: GoogleFonts.inter(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: AppColors.ink500,
               ),
             ),
           ],

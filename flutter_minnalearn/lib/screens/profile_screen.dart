@@ -9,6 +9,8 @@ import '../services/study_timer_service.dart';
 import '../services/auth_service.dart';
 import '../services/achievement_service.dart';
 import '../services/cloud_service.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 import 'auth_screen.dart';
 import 'kanji_screen.dart';
 
@@ -26,7 +28,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _completedLessons = 0;
   int _streak = 0;
   String _studyTime = '0m';
-  bool _isLoading = false;
   Set<String> _unlockedAchievementIds = {};
   bool _disposed = false;
   PackageInfo? _appInfo;
@@ -77,7 +78,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _streak = streak;
       _studyTime = time;
       _unlockedAchievementIds = unlockedIds;
-      _isLoading = false;
     });
   }
 
@@ -87,22 +87,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final unlockedCount = _unlockedAchievementIds.length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.scaffold,
       body: Column(
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 60, bottom: 32, left: 24, right: 24),
+            padding: const EdgeInsets.only(top: 56, bottom: 32, left: 20, right: 20),
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFF472B6),
-                  Color(0xFFEC4899),
-                  Color(0xFFE11D48),
-                ],
-              ),
+              gradient: AppGradients.primaryHeader,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(32),
                 bottomRight: Radius.circular(32),
@@ -111,24 +103,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Row(
               children: [
                 Container(
-                  width: 72,
-                  height: 72,
-                  decoration: const BoxDecoration(
+                  width: 68,
+                  height: 68,
+                  decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
+                    boxShadow: AppShadows.card,
                   ),
                   child: const Center(
                     child: Icon(
                       LucideIcons.user,
-                      color: Colors.pink,
-                      size: 34,
+                      color: AppColors.primary,
+                      size: 32,
                     ),
                   ),
                 ),
@@ -141,18 +127,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         _authService.currentUser?.email?.split('@')[0] ?? 'Learner',
                         style: GoogleFonts.inter(
                           color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.3,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       Text(
                         _authService.currentUser?.email ?? 'Japanese N5 Journey',
                         style: GoogleFonts.inter(
                           color: Colors.white.withOpacity(0.9),
-                          fontSize: 14,
+                          fontSize: 13,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -160,9 +147,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(LucideIcons.logOut, color: Colors.white),
-                  onPressed: () async {
+                BouncingWidget(
+                  onTap: () async {
                     KanjiScreen.clearCache();
                     await _authService.signOut();
                     if (!mounted) return;
@@ -170,6 +156,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       MaterialPageRoute(builder: (_) => const AuthScreen()),
                     );
                   },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(LucideIcons.logOut, color: Colors.white, size: 18),
+                  ),
                 ),
               ],
             ),
@@ -177,10 +171,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _loadStats,
-              color: const Color(0xFFEC4899),
+              color: AppColors.primary,
               child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
                 children: [
                     Row(
                       children: [
@@ -188,24 +184,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           LucideIcons.bookOpen,
                           _vocabCount.toString(),
                           'Vocab',
-                          Colors.blue.shade50,
-                          Colors.blue,
+                          AppColors.azureLight,
+                          AppColors.azureDark,
                         ),
                         const SizedBox(width: 8),
                         _buildStatItemExpanded(
                           LucideIcons.sparkles,
                           _kanjiCount.toString(),
                           'Kanji',
-                          Colors.purple.shade50,
-                          Colors.purple,
+                          AppColors.amberLight,
+                          AppColors.amberDark,
                         ),
                         const SizedBox(width: 8),
                         _buildStatItemExpanded(
                           LucideIcons.flame,
                           _streak.toString(),
                           'Streak',
-                          Colors.orange.shade50,
-                          Colors.orange,
+                          AppColors.coralLight,
+                          AppColors.coralDark,
                         ),
                       ],
                     ),
@@ -265,22 +261,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               Row(
                                 children: [
-                                  const Icon(LucideIcons.award, color: Colors.pink, size: 20),
+                                  const Icon(LucideIcons.award, color: AppColors.primary, size: 20),
                                   const SizedBox(width: 8),
                                   Text(
                                     'Achievements',
                                     style: GoogleFonts.inter(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color(0xFF1F2937),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.ink900,
+                                      letterSpacing: -0.2,
                                     ),
                                   ),
                                 ],
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFCE7F3),
+                                  color: AppColors.amberLight,
                                   borderRadius: BorderRadius.circular(999),
                                 ),
                                 child: Text(
@@ -288,7 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   style: GoogleFonts.inter(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
-                                    color: const Color(0xFFBE185D),
+                                    color: AppColors.amberDark,
                                   ),
                                 ),
                               ),

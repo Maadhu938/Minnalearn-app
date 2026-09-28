@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'listening_practice_screen.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class ListeningSet {
   final String id;
@@ -74,7 +76,7 @@ class _ListeningSetSelectionScreenState
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFEC4899)),
+                    child: CircularProgressIndicator(color: AppColors.primary),
                   );
                 }
 
@@ -135,11 +137,7 @@ class _ListeningSetSelectionScreenState
       width: double.infinity,
       padding: const EdgeInsets.only(top: 56, bottom: 20, left: 24, right: 24),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFF472B6), Color(0xFFEC4899), Color(0xFFE11D48)],
-        ),
+        gradient: AppGradients.primaryHeader,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(32),
           bottomRight: Radius.circular(32),
@@ -175,7 +173,7 @@ class _ListeningSetSelectionScreenState
   }
 
   Widget _buildSetCard(ListeningSet set) {
-    return GestureDetector(
+    return BouncingWidget(
       onTap: () {
         Navigator.push(
           context,
@@ -204,9 +202,7 @@ class _ListeningSetSelectionScreenState
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFEC4899), Color(0xFFE11D48)],
-                ),
+                gradient: AppGradients.primaryHeader,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: const Icon(LucideIcons.headphones,

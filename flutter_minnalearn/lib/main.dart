@@ -1,14 +1,13 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 import 'screens/startup_screen.dart';
 import 'services/notification_service.dart';
 import 'services/analytics_service.dart';
+import 'utils/app_theme.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -47,16 +46,7 @@ class MinnaLearnApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       title: 'MinnaLearn',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.pink,
-          primary: Colors.pink,
-          secondary: Colors.pinkAccent,
-        ),
-        useMaterial3: true,
-        textTheme: GoogleFonts.interTextTheme(),
-        scaffoldBackgroundColor: const Color(0xFFF9FAFB),
-      ),
+      theme: AppTheme.lightTheme,
       navigatorObservers: [AnalyticsService().observer],
       home: const StartupScreen(),
     );

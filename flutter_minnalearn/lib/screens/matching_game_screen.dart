@@ -11,6 +11,8 @@ import '../services/audio_service.dart';
 import '../services/study_timer_service.dart';
 import '../services/achievement_service.dart';
 import '../utils/vocabulary_display.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
 
 class MatchingGameScreen extends StatefulWidget {
   final Lesson lesson;
@@ -291,7 +293,7 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
                       setState(_initGame);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink,
+                      backgroundColor: AppColors.primary,
                       padding: const EdgeInsets.symmetric(vertical: 18),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     ),
@@ -391,7 +393,7 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 12),
-        child: GestureDetector(
+        child: BouncingWidget(
           onTap: () => isKanaColumn ? _onKanaTap(option.id) : _onMeaningTap(option.id),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
