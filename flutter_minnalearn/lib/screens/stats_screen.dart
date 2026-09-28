@@ -442,7 +442,7 @@ class _StatsScreenState extends State<StatsScreen> {
           _buildMasteryItem(
             label: 'Kanji Mastery',
             percent: _mastery['kanji'] ?? 0.0,
-            icon: LucideIcons.sparkles,
+            icon: LucideIcons.languages,
             color: AppColors.amberDark,
             gradient: AppGradients.amber,
             bgColor: AppColors.amberLight,

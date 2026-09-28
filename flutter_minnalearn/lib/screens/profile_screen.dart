@@ -246,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(width: 8),
                         _buildStatItemExpanded(
-                          LucideIcons.sparkles,
+                          LucideIcons.languages,
                           _kanjiCount.toString(),
                           'Kanji',
                           AppColors.amberLight,

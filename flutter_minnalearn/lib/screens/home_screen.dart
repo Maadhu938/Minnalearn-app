@@ -189,15 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: StatCard(
                               value: kanjiCount.toString(),
                               label: 'Kanji',
-                              customIcon: const Text(
-                                '漢',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w900,
-                                  color: AppColors.amberDark,
-                                  fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
-                                ),
-                              ),
+                              icon: LucideIcons.languages,
                               bgColor: AppColors.amberLight,
                               accentColor: AppColors.amberDark,
                               onTap: () async {
@@ -294,15 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: FeatureCard(
                                       title: 'Learn Kanji',
                                       subtitle: '100+ Characters',
-                                      customIcon: const Text(
-                                        '漢',
-                                        style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w900,
-                                          color: AppColors.amberDark,
-                                          fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
-                                        ),
-                                      ),
+                                      icon: LucideIcons.languages,
                                       bgColor: AppColors.amberLight,
                                       iconColor: AppColors.amberDark,
                                       onTap: () async {
