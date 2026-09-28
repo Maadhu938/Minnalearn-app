@@ -8,7 +8,8 @@ import 'bouncing_widget.dart';
 class FeatureCard extends StatelessWidget {
   final String title;
   final String? subtitle;
-  final IconData icon;
+  final IconData? icon;
+  final Widget? customIcon;
   final Color bgColor;
   final Color iconColor;
   final VoidCallback onTap;
@@ -17,7 +18,8 @@ class FeatureCard extends StatelessWidget {
     Key? key,
     required this.title,
     this.subtitle,
-    required this.icon,
+    this.icon,
+    this.customIcon,
     required this.bgColor,
     required this.iconColor,
     required this.onTap,
@@ -53,10 +55,15 @@ class FeatureCard extends StatelessWidget {
                     color: bgColor,
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: Icon(
-                    icon,
-                    color: iconColor,
-                    size: 22,
+                  child: Center(
+                    child: customIcon ??
+                        (icon != null
+                            ? Icon(
+                                icon,
+                                color: iconColor,
+                                size: 22,
+                              )
+                            : const SizedBox.shrink()),
                   ),
                 ),
                 Container(

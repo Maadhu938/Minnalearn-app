@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -31,6 +34,74 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Set<String> _unlockedAchievementIds = {};
   bool _disposed = false;
   PackageInfo? _appInfo;
+  String? _avatarValue;
+
+  static const List<Map<String, dynamic>> _kPresetAvatars = [
+    {
+      'id': 'crest:gaku',
+      'kanji': '学',
+      'reading': 'Gaku',
+      'label': 'Learning',
+      'bg': Color(0xFF0F172A),
+      'fg': Colors.white,
+    },
+    {
+      'id': 'crest:nichi',
+      'kanji': '日',
+      'reading': 'Nichi',
+      'label': 'Japan',
+      'bg': Color(0xFFE11D48),
+      'fg': Colors.white,
+    },
+    {
+      'id': 'crest:wa',
+      'kanji': '和',
+      'reading': 'Wa',
+      'label': 'Harmony',
+      'bg': Color(0xFF047857),
+      'fg': Colors.white,
+    },
+    {
+      'id': 'crest:dou',
+      'kanji': '道',
+      'reading': 'Dō',
+      'label': 'The Way',
+      'bg': Color(0xFF1D4ED8),
+      'fg': Colors.white,
+    },
+    {
+      'id': 'crest:shin',
+      'kanji': '心',
+      'reading': 'Kokoro',
+      'label': 'Spirit',
+      'bg': Color(0xFFB45309),
+      'fg': Colors.white,
+    },
+    {
+      'id': 'crest:shi',
+      'kanji': '志',
+      'reading': 'Aspiration',
+      'label': 'Resolve',
+      'bg': Color(0xFF475569),
+      'fg': Colors.white,
+    },
+    {
+      'id': 'crest:hikari',
+      'kanji': '光',
+      'reading': 'Hikari',
+      'label': 'Clarity',
+      'bg': Color(0xFF0369A1),
+      'fg': Colors.white,
+    },
+    {
+      'id': 'crest:tomo',
+      'kanji': '友',
+      'reading': 'Tomo',
+      'label': 'Friendship',
+      'bg': Color(0xFF9F1239),
+      'fg': Colors.white,
+    },
+  ];
 
   final List<Achievement> _achievements = AchievementService().allAchievements;
 
@@ -66,6 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final streak = await db.getStreak();
     final time = await StudyTimerService().getFormattedStudyTime();
     final unlockedIds = (await db.getUnlockedAchievementIds()).toSet();
+    final avatar = await db.getProfileAvatar();
 
     if (!mounted || _disposed) {
       return;
@@ -78,12 +150,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _streak = streak;
       _studyTime = time;
       _unlockedAchievementIds = unlockedIds;
+      _avatarValue = avatar;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     final unlockedCount = _unlockedAchievementIds.length;
 
     return Scaffold(
@@ -102,22 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             child: Row(
               children: [
-                Container(
-                  width: 68,
-                  height: 68,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: AppShadows.card,
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      LucideIcons.user,
-                      color: AppColors.primary,
-                      size: 32,
-                    ),
-                  ),
-                ),
+                _buildAvatarWidget(),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -173,7 +230,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onRefresh: _loadStats,
               color: AppColors.primary,
               child: ListView(
-                physics: const BouncingScrollPhysics(
+                physics: const ClampingScrollPhysics(
                   parent: AlwaysScrollableScrollPhysics(),
                 ),
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
@@ -722,4 +779,333 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: _buildStatItem(icon, value, label, bgColor, iconColor),
     );
   }
+
+  Widget _buildAvatarWidget() {
+    return BouncingWidget(
+      scaleFactor: 0.94,
+      onTap: _showAvatarPicker,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 68,
+            height: 68,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: AppShadows.card,
+              border: Border.all(color: Colors.white, width: 2.5),
+            ),
+            child: ClipOval(
+              child: _buildAvatarContent(),
+            ),
+          ),
+          Positioned(
+            bottom: -2,
+            right: -2,
+            child: Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.8),
+                boxShadow: AppShadows.subtle,
+              ),
+              child: const Icon(
+                LucideIcons.camera,
+                size: 12,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatarContent() {
+    if (_avatarValue != null && _avatarValue!.startsWith('file:')) {
+      final path = _avatarValue!.substring(5);
+      final file = File(path);
+      if (file.existsSync()) {
+        return Image.file(
+          file,
+          width: 68,
+          height: 68,
+          fit: BoxFit.cover,
+        );
+      }
+    }
+
+    if (_avatarValue != null && _avatarValue!.startsWith('crest:')) {
+      final preset = _kPresetAvatars.firstWhere(
+        (p) => p['id'] == _avatarValue,
+        orElse: () => _kPresetAvatars[0],
+      );
+      return Container(
+        color: preset['bg'] as Color,
+        alignment: Alignment.center,
+        child: Text(
+          preset['kanji'] as String,
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            color: preset['fg'] as Color,
+            fontFamilyFallback: const ['Noto Sans CJK JP', 'sans-serif'],
+          ),
+        ),
+      );
+    }
+
+    final initial = (_authService.currentUser?.email?.isNotEmpty == true)
+        ? _authService.currentUser!.email![0].toUpperCase()
+        : 'M';
+
+    return Container(
+      color: AppColors.primaryLight,
+      alignment: Alignment.center,
+      child: Text(
+        initial,
+        style: GoogleFonts.inter(
+          fontSize: 26,
+          fontWeight: FontWeight.w800,
+          color: AppColors.primary,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 85,
+      );
+      if (image != null) {
+        await DatabaseService().setProfileAvatar('file:${image.path}');
+        if (mounted) {
+          setState(() {
+            _avatarValue = 'file:${image.path}';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
+
+  void _showAvatarPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 36),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.ink200,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Profile Avatar',
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.ink900,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Upload custom photo or select a Japanese learner crest',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: AppColors.ink500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (_avatarValue != null && _avatarValue!.isNotEmpty)
+                    TextButton(
+                      onPressed: () async {
+                        await DatabaseService().setProfileAvatar('');
+                        setState(() => _avatarValue = null);
+                        if (ctx.mounted) Navigator.pop(ctx);
+                      },
+                      child: Text(
+                        'Reset',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              // Photo Upload Options
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildUploadOptionButton(
+                      icon: LucideIcons.image,
+                      label: 'Choose Photo',
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _pickImage(ImageSource.gallery);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildUploadOptionButton(
+                      icon: LucideIcons.camera,
+                      label: 'Take Photo',
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _pickImage(ImageSource.camera);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Japanese Learner Crests (家紋)',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.ink900,
+                ),
+              ),
+              const SizedBox(height: 14),
+              // Grid of Preset Kanji Crests
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _kPresetAvatars.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.85,
+                ),
+                itemBuilder: (context, index) {
+                  final preset = _kPresetAvatars[index];
+                  final isSelected = _avatarValue == preset['id'];
+
+                  return BouncingWidget(
+                    scaleFactor: 0.90,
+                    onTap: () async {
+                      HapticFeedback.lightImpact();
+                      await DatabaseService().setProfileAvatar(preset['id'] as String);
+                      setState(() => _avatarValue = preset['id'] as String);
+                      if (ctx.mounted) Navigator.pop(ctx);
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: preset['bg'] as Color,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected ? AppColors.primary : Colors.transparent,
+                              width: isSelected ? 3.0 : 0.0,
+                            ),
+                            boxShadow: AppShadows.subtle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            preset['kanji'] as String,
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                              color: preset['fg'] as Color,
+                              fontFamilyFallback: const ['Noto Sans CJK JP', 'sans-serif'],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          '${preset['reading']} • ${preset['label']}',
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                            color: isSelected ? AppColors.primary : AppColors.ink500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildUploadOptionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return BouncingWidget(
+      scaleFactor: 0.95,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.cardAlt,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.ink200),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 18, color: AppColors.primary),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppColors.ink900,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
+

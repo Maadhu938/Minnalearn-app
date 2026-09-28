@@ -486,6 +486,34 @@ class DatabaseService {
     );
   }
 
+  Future<String?> getProfileAvatar() async {
+    final db = await database;
+    final result = await db.query(
+      'user_stats',
+      columns: ['value_text'],
+      where: 'key = ?',
+      whereArgs: ['profile_avatar'],
+      limit: 1,
+    );
+    if (result.isNotEmpty) {
+      final val = result.first['value_text'] as String?;
+      if (val != null && val.trim().isNotEmpty) {
+        return val.trim();
+      }
+    }
+    return null;
+  }
+
+  Future<void> setProfileAvatar(String? avatar) async {
+    final db = await database;
+    await db.insert(
+      'user_stats',
+      {'key': 'profile_avatar', 'value_text': avatar ?? ''},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    notifyDataChanged();
+  }
+
   Future<List<Map<String, dynamic>>> getWeeklyStudyTime() async {
     final db = await database;
     // Get last 7 days

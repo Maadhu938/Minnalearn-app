@@ -12,6 +12,84 @@ import 'kana_screen.dart';
 import 'listening_set_selection_screen.dart';
 import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
+import '../services/speech_service.dart';
+
+class _ProverbItem {
+  final String kanji;
+  final String romaji;
+  final String english;
+  final String tip;
+
+  const _ProverbItem({
+    required this.kanji,
+    required this.romaji,
+    required this.english,
+    required this.tip,
+  });
+}
+
+const List<_ProverbItem> _kProverbs = [
+  _ProverbItem(
+    kanji: '継続は力なり',
+    romaji: 'Keizoku wa chikara nari',
+    english: 'Perseverance is power.',
+    tip: 'Daily small practice leads to effortless fluency.',
+  ),
+  _ProverbItem(
+    kanji: '七転び八起き',
+    romaji: 'Nana korobi ya oki',
+    english: 'Fall seven times, stand up eight.',
+    tip: 'Mistakes are simply stepping stones to mastery.',
+  ),
+  _ProverbItem(
+    kanji: '千里の道も一歩から',
+    romaji: 'Senri no michi mo ippo kara',
+    english: 'A journey of a thousand miles begins with a single step.',
+    tip: 'Every lesson completed brings you closer to N5 proficiency.',
+  ),
+  _ProverbItem(
+    kanji: '一期一会',
+    romaji: 'Ichigo ichie',
+    english: 'Once-in-a-lifetime encounter.',
+    tip: 'Treasure every moment of learning and discovery.',
+  ),
+  _ProverbItem(
+    kanji: '初心忘るべからず',
+    romaji: 'Shoshin wasuru bekarazu',
+    english: 'Never forget your beginner\'s humble spirit.',
+    tip: 'Stay curious and open to new Japanese grammar concepts.',
+  ),
+  _ProverbItem(
+    kanji: '石の上にも三年',
+    romaji: 'Ishi no ue ni mo san nen',
+    english: 'Three years on a cold stone.',
+    tip: 'Patience and dedicated consistency conquer any obstacle.',
+  ),
+  _ProverbItem(
+    kanji: '笑う門には福来たる',
+    romaji: 'Warau kado ni wa fuku kitaru',
+    english: 'Fortune enters a smiling gate.',
+    tip: 'Have fun while learning—enjoy the Japanese language journey!',
+  ),
+  _ProverbItem(
+    kanji: '雨降って地固まる',
+    romaji: 'Ame futte ji katamaru',
+    english: 'After rain, the earth hardens.',
+    tip: 'Tackling difficult kanji today builds unbreakable confidence tomorrow.',
+  ),
+  _ProverbItem(
+    kanji: '猿も木から落ちる',
+    romaji: 'Saru mo ki kara ochiru',
+    english: 'Even monkeys fall from trees.',
+    tip: 'Even native speakers make mistakes. Keep going forward!',
+  ),
+  _ProverbItem(
+    kanji: '花より団子',
+    romaji: 'Hana yori dango',
+    english: 'Dumplings over flowers.',
+    tip: 'Practical daily vocabulary matters more than theoretical study.',
+  ),
+];
 
 class HomeScreen extends StatefulWidget {
   final Function(int)? onTabChange;
@@ -23,10 +101,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<Map<String, dynamic>> _statsFuture;
+  int _proverbIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    final dayOfYear = DateTime.now().difference(DateTime(DateTime.now().year, 1, 1)).inDays;
+    _proverbIndex = dayOfYear % _kProverbs.length;
     _statsFuture = _fetchStats();
     DatabaseService.refreshNotifier.addListener(_refresh);
     KanjiScreen.prefetch();
@@ -108,7 +189,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: StatCard(
                               value: kanjiCount.toString(),
                               label: 'Kanji',
-                              icon: LucideIcons.sparkles,
+                              customIcon: const Text(
+                                '漢',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.amberDark,
+                                  fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
+                                ),
+                              ),
                               bgColor: AppColors.amberLight,
                               accentColor: AppColors.amberDark,
                               onTap: () async {
@@ -205,7 +294,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: FeatureCard(
                                       title: 'Learn Kanji',
                                       subtitle: '100+ Characters',
-                                      icon: LucideIcons.sparkles,
+                                      customIcon: const Text(
+                                        '漢',
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w900,
+                                          color: AppColors.amberDark,
+                                          fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
+                                        ),
+                                      ),
                                       bgColor: AppColors.amberLight,
                                       iconColor: AppColors.amberDark,
                                       onTap: () async {
@@ -565,65 +662,150 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDailyProverbCard() {
+    final proverb = _kProverbs[_proverbIndex % _kProverbs.length];
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: AppColors.card,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(color: AppColors.ink200.withOpacity(0.8), width: 1.2),
         boxShadow: AppShadows.subtle,
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: AppColors.bambooLight,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              LucideIcons.lightbulb,
-              color: AppColors.bambooDark,
-              size: 18,
+          Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: AppColors.bambooLight,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Center(
+                  child: Text(
+                    '諺',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.bambooDark,
+                      fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Kotowaza • Japanese Wisdom',
+                      style: GoogleFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.bambooDark,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    Text(
+                      '${_proverbIndex + 1} of ${_kProverbs.length} • Tap for next',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.ink500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Pronounce Audio Button
+              BouncingWidget(
+                scaleFactor: 0.90,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  SpeechService().speakJapanese(proverb.kanji);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.amberLight,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.amberBorder, width: 0.8),
+                  ),
+                  child: const Icon(
+                    LucideIcons.volume2,
+                    size: 15,
+                    color: AppColors.amberDark,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              // Shuffle / Next Button
+              BouncingWidget(
+                scaleFactor: 0.90,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  setState(() {
+                    _proverbIndex = (_proverbIndex + 1) % _kProverbs.length;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.cardAlt,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.ink200, width: 0.8),
+                  ),
+                  child: const Icon(
+                    LucideIcons.refreshCw,
+                    size: 15,
+                    color: AppColors.ink700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            proverb.kanji,
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: AppColors.ink900,
+              letterSpacing: 0.2,
             ),
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Kotowaza • Japanese Proverb',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.bambooDark,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '継続は力なり (Keizoku wa chikara nari)',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.ink900,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Perseverance is power. Daily practice leads to fluency.',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.ink500,
-                    height: 1.3,
-                  ),
-                ),
-              ],
+          const SizedBox(height: 3),
+          Text(
+            proverb.romaji,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.primary,
+              letterSpacing: 0.1,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '"${proverb.english}"',
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.ink900,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            proverb.tip,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: AppColors.ink500,
+              height: 1.35,
             ),
           ),
         ],

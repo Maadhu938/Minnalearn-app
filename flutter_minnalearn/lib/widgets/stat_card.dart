@@ -9,6 +9,7 @@ class StatCard extends StatelessWidget {
   final String label;
   final Color bgColor;
   final IconData? icon;
+  final Widget? customIcon;
   final Color? accentColor;
   final VoidCallback? onTap;
 
@@ -18,6 +19,7 @@ class StatCard extends StatelessWidget {
     required this.label,
     required this.bgColor,
     this.icon,
+    this.customIcon,
     this.accentColor,
     this.onTap,
   }) : super(key: key);
@@ -43,7 +45,7 @@ class StatCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[
+            if (customIcon != null || icon != null) ...[
               Container(
                 width: 32,
                 height: 32,
@@ -51,10 +53,13 @@ class StatCard extends StatelessWidget {
                   color: bgColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  icon,
-                  size: 16,
-                  color: effectiveAccent,
+                child: Center(
+                  child: customIcon ??
+                      Icon(
+                        icon,
+                        size: 16,
+                        color: effectiveAccent,
+                      ),
                 ),
               ),
               const SizedBox(height: 8),
