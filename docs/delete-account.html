@@ -1,120 +1,470 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Account & Data Deletion - MinnaLearn</title>
+  <title>Account & Data Deletion — MinnaLearn</title>
+  <meta name="description" content="Request account and data deletion for MinnaLearn: Japanese N5 mobile app.">
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Google Fonts: Bubbly, Friendly, Modern EdTech Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --duo-pink: #F12A5A;
+      --duo-pink-shadow: #B8183E;
+      --duo-pink-light: #FFEBF0;
+
+      --duo-green: #58CC02;
+      --duo-green-shadow: #46A302;
+      --duo-green-light: #EBFBD5;
+
+      --duo-blue: #1CB0F6;
+      --duo-blue-shadow: #1899D6;
+      --duo-blue-light: #E5F6FD;
+
+      --duo-orange: #FF9600;
+      --duo-orange-shadow: #CC7800;
+      --duo-orange-light: #FFF2E0;
+
+      --duo-red: #EF4444;
+      --duo-red-shadow: #DC2626;
+      --duo-red-light: #FEF2F2;
+
+      --bg-page: #F7F9FA;
+      --text-main: #3C3C3C;
+      --text-dark: #1F2937;
+      --text-muted: #6B7280;
+      --border-gray: #E5E7EB;
+      --border-shadow: #D1D5DB;
+
+      --radius-sm: 14px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --radius-pill: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #F9FAFB;
-      color: #1F2937;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text-main);
+      background-color: var(--bg-page);
       line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-    .container { max-width: 720px; margin: 0 auto; padding: 40px 20px; }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 40px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+    h1, h2, h3, .font-bubbly {
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-dark);
+      letter-spacing: -0.02em;
     }
-    h1 { font-size: 28px; margin-bottom: 4px; }
-    .updated { color: #6B7280; font-size: 14px; margin-bottom: 32px; }
-    h2 {
-      font-size: 20px;
-      margin-top: 28px;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #eee;
-    }
-    p { margin: 8px 0; }
-    a { color: #EC4899; }
-    ul, ol { padding-left: 24px; margin-bottom: 12px; }
-    li { margin-bottom: 6px; font-size: 15px; }
-    .deleted-data li { color: #DC2626; }
-    .note {
-      background: #F0F9FF;
-      border-left: 4px solid #3B82F6;
-      padding: 16px 20px;
-      border-radius: 0 8px 8px 0;
-      margin: 16px 0;
-      font-size: 15px;
-    }
-    .warning {
-      background: #FFF7ED;
-      border-left: 4px solid #F59E0B;
-      padding: 16px 20px;
-      border-radius: 0 8px 8px 0;
-      margin: 16px 0;
-      font-size: 15px;
-    }
-    .email-link {
-      display: inline-block;
-      background: #EC4899;
-      color: #fff;
-      padding: 12px 28px;
-      border-radius: 8px;
+
+    a {
+      color: var(--duo-pink);
       text-decoration: none;
-      font-size: 15px;
-      font-weight: 500;
-      margin: 12px 0;
-      transition: background 0.2s;
+      font-weight: 700;
+      transition: color 0.15s ease;
     }
-    .email-link:hover { background: #DB2777; }
-    .footer { text-align: center; margin-top: 32px; color: #999; font-size: 13px; }
-    .back-link { display: inline-block; margin-bottom: 20px; font-size: 14px; }
-    
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* 3D Pushable Buttons */
+    .btn-3d {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: var(--radius-md);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      transition: all 0.1s ease;
+      cursor: pointer;
+      user-select: none;
+      text-decoration: none !important;
+    }
+
+    .btn-3d-pink {
+      background: var(--duo-pink);
+      color: #FFFFFF;
+      border: 2px solid var(--duo-pink-shadow);
+      border-bottom: 5px solid var(--duo-pink-shadow);
+    }
+    .btn-3d-pink:hover {
+      filter: brightness(1.06);
+    }
+    .btn-3d-pink:active {
+      transform: translateY(3px);
+      border-bottom-width: 2px;
+    }
+
+    .btn-3d-white {
+      background: #FFFFFF;
+      color: var(--duo-pink);
+      border: 2px solid var(--border-gray);
+      border-bottom: 4px solid var(--border-shadow);
+    }
+    .btn-3d-white:hover {
+      background: #F9FAFB;
+      border-color: #D1D5DB;
+    }
+    .btn-3d-white:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+    }
+
+    .btn-3d-sm {
+      padding: 8px 16px;
+      font-size: 13px;
+      border-radius: var(--radius-sm);
+      border-bottom-width: 3px;
+    }
+
+    /* Top Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #FFFFFF;
+      border-bottom: 2px solid var(--border-gray);
+      padding: 12px 24px;
+    }
+
+    .navbar-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none !important;
+    }
+
+    .nav-brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(241, 42, 90, 0.25);
+    }
+
+    .nav-brand-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text-dark);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .nav-brand-title span {
+      color: var(--duo-pink);
+    }
+
+    /* Language Switcher */
     .lang-toggle {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 20px;
-      padding: 6px 12px;
-      border: 1.5px solid rgba(236, 72, 153, .25);
-      border-radius: 999px;
-      background: rgba(236, 72, 153, .08);
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 700;
-      color: #BE185D;
-      width: fit-content;
-      transition: all .2s;
+      border: 2px solid var(--border-gray);
+      border-radius: var(--radius-pill);
+      background: var(--bg-page);
+      padding: 3px;
     }
 
-    .lang-toggle:hover {
-      background: rgba(236, 72, 153, .15);
-    }
-
-    .lang-toggle .lang-btn {
+    .lang-btn {
       padding: 4px 10px;
-      border-radius: 999px;
-      transition: all .2s;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
     }
 
-    .lang-toggle .lang-btn.active {
-      background: #EC4899;
-      color: #fff;
+    .lang-btn.active {
+      background: var(--duo-pink);
+      color: #FFFFFF;
     }
 
-    @media (max-width: 600px) {
-      .card { padding: 24px 20px; }
-      h1 { font-size: 24px; }
+    /* Content Layout */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    .policy-card {
+      background: #FFFFFF;
+      border: 2px solid var(--border-gray);
+      border-bottom: 6px solid var(--border-shadow);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+    }
+
+    .badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: var(--duo-pink-light);
+      color: var(--duo-pink);
+      border: 2px solid #FECDD3;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .updated-date {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--border-gray);
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-top: 36px;
+      margin-bottom: 14px;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    p {
+      margin-bottom: 14px;
+      font-size: 16px;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    /* Steps List */
+    ol {
+      list-style: none;
+      counter-reset: step-counter;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    ol li {
+      counter-increment: step-counter;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      background: var(--bg-page);
+      border: 2px solid var(--border-gray);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+    }
+
+    ol li::before {
+      content: counter(step-counter);
+      background: var(--duo-pink);
+      color: #FFFFFF;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    /* Deleted Data List */
+    ul.deleted-data {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    ul.deleted-data li {
+      position: relative;
+      padding-left: 28px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #991B1B;
+    }
+
+    ul.deleted-data li::before {
+      content: '✕';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--duo-red);
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    /* Callout Boxes */
+    .note-box {
+      background: var(--duo-blue-light);
+      border: 2px solid #BAE6FD;
+      border-left: 6px solid var(--duo-blue);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 18px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #0369A1;
+    }
+
+    .warning-box {
+      background: var(--duo-red-light);
+      border: 2px solid #FECACA;
+      border-left: 6px solid var(--duo-red);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 18px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #991B1B;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Mobile Responsive Polish */
+    @media (max-width: 640px) {
+      .navbar {
+        padding: 10px 14px;
+      }
+
+      .nav-brand img {
+        width: 34px;
+        height: 34px;
+      }
+
+      .nav-brand-title {
+        font-size: 18px;
+      }
+
+      .container {
+        padding: 20px 14px 40px;
+      }
+
+      .policy-card {
+        padding: 28px 18px;
+        border-radius: var(--radius-md);
+        border-bottom-width: 4px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      h2 {
+        font-size: 19px;
+        margin-top: 28px;
+      }
+
+      p, li {
+        font-size: 14px;
+      }
+
+      ol li {
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+
+      .btn-3d {
+        width: 100%;
+        padding: 14px 18px;
+        font-size: 14px;
+      }
+
+      .btn-3d-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+        width: auto;
+      }
+
+      .lang-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <div class="card">
-      <a class="back-link" href="index.html" data-i18n="back_home">&larr; Home</a>
-      
-      <div class="lang-toggle" id="langToggle">
-        <span class="lang-btn active" data-lang="en">EN</span>
-        <span class="lang-btn" data-lang="ja">JP</span>
-      </div>
 
+<body>
+  <!-- Header Navbar -->
+  <nav class="navbar" aria-label="Main Navigation">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-brand" aria-label="MinnaLearn">
+        <img src="logo.png" alt="MinnaLearn Logo">
+        <div class="nav-brand-title">Minna<span>Learn</span></div>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="lang-toggle" id="langToggle" role="group" aria-label="Language selector">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ja">日本語</button>
+        </div>
+
+        <a class="btn-3d btn-3d-white btn-3d-sm" href="privacy-policy.html" data-i18n="nav_privacy">
+          Privacy Policy
+        </a>
+
+        <a class="btn-3d btn-3d-white btn-3d-sm" href="index.html" data-i18n="back_home">
+          ← Home
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="policy-card">
+      <div class="badge-tag">🗑️ Account Management</div>
       <h1 data-i18n="title">Account & Data Deletion</h1>
-      <p class="updated" data-i18n="updated">Last updated: April 8, 2026</p>
+      <p class="updated-date" data-i18n="updated">Last updated: April 8, 2026</p>
 
       <p data-i18n="intro">This page applies to the <strong>MinnaLearn: Japanese N5</strong> mobile application available on Google Play.</p>
 
@@ -125,8 +475,13 @@
         <li data-i18n="step3">Tap <strong>Delete Account</strong></li>
         <li data-i18n="step4">Confirm the deletion in the dialog</li>
       </ol>
-      <p data-i18n="email_alt">You can also send a deletion request by email:</p>
-      <a class="email-link" href="mailto:maadhuavati7@gmail.com?subject=Account%20Deletion%20Request&body=Hello%20MinnaLearn%20team%2C%20I%20would%20like%20to%20delete%20my%20account%20and%20all%20associated%20data.%20My%20account%20email%20is%3A%20" data-i18n="email_btn">Send Deletion Request Email</a>
+
+      <p data-i18n="email_alt" style="margin-top: 20px;">You can also send a deletion request by email:</p>
+      <div style="margin-bottom: 24px;">
+        <a class="btn-3d btn-3d-pink" href="mailto:maadhuavati7@gmail.com?subject=Account%20Deletion%20Request&body=Hello%20MinnaLearn%20team%2C%20I%20would%20like%20to%20delete%20my%20account%20and%20all%20associated%20data.%20My%20account%20email%20is%3A%20" data-i18n="email_btn">
+          ✉️ Send Deletion Request Email
+        </a>
+      </div>
 
       <h2 data-i18n="deleted_title">Data That Will Be Deleted</h2>
       <ul class="deleted-data">
@@ -143,20 +498,23 @@
       <p data-i18n="retained_desc">No personal data is retained after account deletion. Firebase may retain anonymized analytics data for up to 60 days as part of their standard processing.</p>
 
       <h2 data-i18n="processing_title">Processing Time</h2>
-      <div class="note" data-i18n="processing_note">
+      <div class="note-box" data-i18n="processing_note">
         Deletion requests are processed <strong>immediately</strong> when done through the app. Email requests are processed within <strong>7 business days</strong>.
       </div>
 
       <h2 data-i18n="important_title">Important</h2>
-      <div class="warning" data-i18n="important_note">
+      <div class="warning-box" data-i18n="important_note">
         Account deletion is <strong>permanent and cannot be undone</strong>. All your learning progress, streaks, bookmarks, and achievements will be permanently lost.
       </div>
 
       <h2 data-i18n="contact_title">Contact</h2>
       <p data-i18n="contact_desc">For any questions or data-related requests, contact us at:</p>
-      <p><strong data-i18n="email_label">Email:</strong> maadhuavati7@gmail.com</p>
+      <p><strong data-i18n="email_label">Email:</strong> <a href="mailto:maadhuavati7@gmail.com">maadhuavati7@gmail.com</a></p>
     </div>
-    <p class="footer">&copy; 2026 MinnaLearn. <span data-i18n="footer_rights">All rights reserved.</span></p>
+
+    <footer>
+      <p>&copy; 2026 MinnaLearn. <span data-i18n="footer_rights">All rights reserved.</span> • <a href="privacy-policy.html">Privacy Policy</a></p>
+    </footer>
   </div>
 
   <script>
@@ -172,7 +530,7 @@
         step3: "Tap <strong>Delete Account</strong>",
         step4: "Confirm the deletion in the dialog",
         email_alt: "You can also send a deletion request by email:",
-        email_btn: "Send Deletion Request Email",
+        email_btn: "✉️ Send Deletion Request Email",
         deleted_title: "Data That Will Be Deleted",
         del1: "Your account email and display name (Firebase Authentication)",
         del2: "Study progress (lesson completion, quiz scores, streaks, study time)",
@@ -203,7 +561,7 @@
         step3: "<strong>アカウント削除</strong>をタップ",
         step4: "ダイアログで削除を確認",
         email_alt: "メールで削除リクエストを送信することもできます：",
-        email_btn: "削除リクエストメールを送信",
+        email_btn: "✉️ 削除リクエストメールを送信",
         deleted_title: "削除されるデータ",
         del1: "アカウントのメールアドレスと表示名（Firebase認証）",
         del2: "学習進捗（レッスン完了、クイズスコア、連続記録、学習時間）",
@@ -253,4 +611,5 @@
     updateLanguage(currentLang);
   </script>
 </body>
+
 </html>
