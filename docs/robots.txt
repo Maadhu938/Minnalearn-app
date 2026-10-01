@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maadhu938.github.io/Minnalearn-app/sitemap.xml
