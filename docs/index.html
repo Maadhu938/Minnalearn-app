@@ -4,36 +4,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MinnaLearn — The Fun & Colorful Way to Master Japanese JLPT N5!</title>
-  <meta name="description" content="Learn Japanese JLPT N5 the fun, gamified way! 25 structured Minna no Nihongo lessons, 1000+ native audio vocabulary, Kanji stroke practice, and daily streaks.">
-  <meta name="keywords" content="MinnaLearn, JLPT N5, Learn Japanese, Duolingo Japanese, Minna no Nihongo, Kanji, Hiragana, Katakana">
+  <title>MinnaLearn: Japanese JLPT N5 App | Official Website</title>
+  <meta name="description" content="Official website of MinnaLearn — the fun, gamified Japanese JLPT N5 learning app on Google Play. Master 25 Minna no Nihongo lessons, Kanji stroke order, 1,000+ native audio vocabulary, and quizzes.">
+  <meta name="keywords" content="MinnaLearn, MinnaLearn app, Minna Learn, MinnaLearn Japanese, JLPT N5, Minna no Nihongo, Japanese learning app, getminnalearn">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://getminnalearn.xyz/">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
-  <link rel="apple-touch-icon" href="logo.png">
 
-  <!-- Schema.org Structured Data -->
+  <!-- Favicons for Google Search & Browsers (48x48+ required by Google Search) -->
+  <link rel="icon" type="image/x-icon" href="https://getminnalearn.xyz/favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="https://getminnalearn.xyz/favicon.ico">
+  <link rel="icon" type="image/png" sizes="48x48" href="https://getminnalearn.xyz/favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://getminnalearn.xyz/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://getminnalearn.xyz/favicon-192x192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://getminnalearn.xyz/apple-touch-icon.png">
+
+  <!-- Schema.org Structured Data for Google Knowledge Graph & Search Cards -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "MinnaLearn",
-    "alternateName": "MinnaLearn: Japanese JLPT N5",
-    "operatingSystem": "Android",
-    "applicationCategory": "EducationalApplication",
-    "url": "https://getminnalearn.xyz/",
-    "image": "https://getminnalearn.xyz/logo.png",
-    "description": "Learn Japanese JLPT N5 the fun, gamified way! 25 structured Minna no Nihongo lessons, 1000+ native audio vocabulary, Kanji stroke practice, and daily streaks.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "publisher": {
-      "@type": "Person",
-      "name": "Maadhu"
-    }
+    "@graph": [
+      {
+        "@type": ["SoftwareApplication", "MobileApplication"],
+        "@id": "https://getminnalearn.xyz/#app",
+        "name": "MinnaLearn",
+        "alternateName": [
+          "MinnaLearn App",
+          "Minna Learn",
+          "MinnaLearn Japanese",
+          "MinnaLearn: Japanese JLPT N5",
+          "GetMinnaLearn"
+        ],
+        "applicationCategory": "EducationalApplication",
+        "applicationSubCategory": "LanguageLearningApplication",
+        "operatingSystem": "Android",
+        "url": "https://getminnalearn.xyz/",
+        "downloadUrl": "https://play.google.com/store/apps/details?id=com.maadhu.minnalearn",
+        "installUrl": "https://play.google.com/store/apps/details?id=com.maadhu.minnalearn",
+        "image": "https://getminnalearn.xyz/logo.png",
+        "screenshot": "https://getminnalearn.xyz/app-preview.png",
+        "description": "MinnaLearn is a dedicated Japanese language learning mobile app for Android based on the 25 Minna no Nihongo lessons, Kanji stroke order tracing, 1000+ native Japanese audio vocabulary, and JLPT N5 quizzes.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "Maadhu",
+          "url": "https://github.com/Maadhu938"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://getminnalearn.xyz/#website",
+        "url": "https://getminnalearn.xyz/",
+        "name": "MinnaLearn",
+        "alternateName": "MinnaLearn Official",
+        "description": "Official site of MinnaLearn - Japanese JLPT N5 Learning App",
+        "publisher": {
+          "@id": "https://getminnalearn.xyz/#app"
+        }
+      }
+    ]
   }
   </script>
 
@@ -1840,7 +1872,7 @@
         </div>
 
         <h1 class="hero-title">
-          <span data-i18n="hero_title_1">The Fun & Easy Way to</span><br>
+          MinnaLearn: <span data-i18n="hero_title_1">The Fun & Easy Way to</span><br>
           <span class="highlight-pink" data-i18n="hero_title_2">Master Japanese N5!</span>
         </h1>
 
@@ -2106,6 +2138,16 @@
 
       <div class="faq-wrapper">
         <div class="faq-card open">
+          <button class="faq-question-btn" onclick="toggleFaq(this)">
+            <span>What is MinnaLearn and what does it teach?</span>
+            <div class="faq-icon-bubble">▼</div>
+          </button>
+          <div class="faq-answer-box">
+            <p><strong>MinnaLearn</strong> is a dedicated Japanese language learning mobile app for Android available on Google Play. Inspired by <em>Minna no Nihongo</em> ("Japanese for Everyone"), MinnaLearn is designed specifically to help learners master the Japanese JLPT N5 curriculum with 25 structured lessons, interactive Kanji stroke tracing, 1,000+ native audio vocabulary, and gamified quizzes.</p>
+          </div>
+        </div>
+
+        <div class="faq-card">
           <button class="faq-question-btn" onclick="toggleFaq(this)">
             <span data-i18n="q1">Is MinnaLearn really 100% free?</span>
             <div class="faq-icon-bubble">▼</div>
