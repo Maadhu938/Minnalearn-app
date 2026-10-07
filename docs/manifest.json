@@ -1,0 +1,23 @@
+{
+  "name": "MinnaLearn: Japanese JLPT N5",
+  "short_name": "MinnaLearn",
+  "description": "Learn Japanese JLPT N5 with 25 structured Minna no Nihongo lessons, Kanji stroke practice, and quizzes.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#F12A5A",
+  "icons": [
+    {
+      "src": "favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
