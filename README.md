@@ -1,170 +1,176 @@
-# MinnaLearn - Japanese N5 Learning App
+# MinnaLearn (みんなラーン) — Japanese JLPT N5 Learning App
 
-**MinnaLearn** is a Flutter-based mobile application for **JLPT N5 learners** studying Japanese vocabulary, kana, and kanji through flashcards, quizzes, interactive mini-games, and writing practice inspired by the *Minna no Nihongo* learning approach.
+<p align="center">
+  <img src="docs/logo.png" alt="MinnaLearn Logo" width="120" style="border-radius: 24px;" />
+</p>
 
----
+<p align="center">
+  <strong>The colorful, gamified, and fun way to master Japanese JLPT N5!</strong><br />
+  25 structured <em>Minna no Nihongo</em> lessons, interactive Kanji stroke tracing, native audio vocabulary, and daily streak quests.
+</p>
 
-## Features
-
-### 25 Structured Lessons
-- Vocabulary from *Minna no Nihongo* textbook
-- 4 kanji per lesson with readings (on/kun)
-- Grammar points loaded from lesson-specific files
-- Progress tracking per lesson (0-100%)
-
-### Kanji Learning
-- **Flashcards** - Tap to reveal meaning and readings
-- **Writing Practice** - Stroke tracing on a drawing board
-- **Kanji Quiz** - Multiple choice meaning quiz
-- 100 JLPT N5 kanji across all lessons
-
-### Interactive Learning Modes
-- **Flashcards** - Swipeable cards with text-to-speech pronunciation
-- **Learn Mode** - Browse vocabulary list with bookmarks and audio
-- **Test Mode** - 10-question quiz (kana to English / English to kana)
-
-### Mini Games
-- **Matching Game** - Match Japanese words with meanings against the clock
-- **True or False** - Quick-fire kana and meaning matching
-- **Typing Test** - Type English meanings of Japanese words
-- **Kana Puzzle** - Timed drag-and-drop kana building
-
-### Progress Tracking
-- Daily study streak counter
-- Weekly study time chart
-- Vocabulary and kanji mastery meters
-- Lesson completion tracking
-- Game score history
-
-### Achievements
-- 9 unlockable achievements across 5 categories:
-  - **Lessons** - Complete 1 / 12 lessons
-  - **Streak** - Reach 3 / 7 day streaks
-  - **Vocabulary** - Learn 50 / 100 vocabulary items
-  - **Kanji** - Learn 10 / 25 kanji
-  - **Score** - Get 100% on any quiz
-
-### Notifications
-- Auto-requests notification permission on Android 13+
-- Daily reminder at 6:00 PM to continue studying
-- Streak reminder at 8:00 PM if yesterday's study was missed
-
-### Cloud Sync
-- Firebase Authentication (email/password + Google Sign-In)
-- Cloud Firestore sync for progress, achievements, bookmarks, and learned kanji
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.maadhu.minnalearn">
+    <img src="https://img.shields.io/badge/Google_Play-MinnaLearn-414141?style=for-the-badge&logo=google-play&logoColor=white" alt="Google Play" />
+  </a>
+  <a href="https://getminnalearn.xyz">
+    <img src="https://img.shields.io/badge/Official_Website-getminnalearn.xyz-F12A5A?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Official Website" />
+  </a>
+  <a href="https://github.com/Maadhu938/MinnaLearn-FlutterApp/releases">
+    <img src="https://img.shields.io/badge/Release-v1.0.12-58CC02?style=for-the-badge" alt="Release Version" />
+  </a>
+  <a href="https://flutter.dev">
+    <img src="https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
+  </a>
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License" />
+</p>
 
 ---
 
-## Getting Started
+## 📱 Quick Links
 
-```bash
-# Clone the repository
-git clone https://github.com/Maadhu938/MinnaLearn-FlutterApp.git
+- 🌐 **Official Website:** [https://getminnalearn.xyz](https://getminnalearn.xyz)
+- 📲 **Google Play Store:** [Download on Google Play](https://play.google.com/store/apps/details?id=com.maadhu.minnalearn)
+- 🔒 **Privacy Policy:** [https://getminnalearn.xyz/privacy-policy.html](https://getminnalearn.xyz/privacy-policy.html)
+- 🗑️ **Account Deletion:** [https://getminnalearn.xyz/delete-account.html](https://getminnalearn.xyz/delete-account.html)
 
-# Navigate to the project
-cd MinnaLearn-FlutterApp/flutter_minnalearn
+---
 
-# Install dependencies
-flutter pub get
+## 📸 App Preview
 
-# Run the app
-flutter run
+<p align="center">
+  <img src="docs/phone-mockup.png" alt="MinnaLearn App Screenshot" width="340" />
+</p>
+
+---
+
+## ✨ Key Features
+
+### 📚 25 Structured Lessons (Minna no Nihongo Curriculum)
+- **1,000+ Native Vocabulary Words** with native audio recordings and pitch accent clarity.
+- **100+ JLPT N5 Kanji** with Kun'yomi & On'yomi readings, stroke counts, and meaning flashcards.
+- **Grammar Explanations & Patterns** for all 25 lessons loaded offline.
+- **Lesson Progress Tracking** (0% to 100% completion per lesson).
+
+### 🖌️ Interactive Kanji Stroke Tracing Studio
+- **Stroke-by-Stroke Animation**: Watch the exact order and direction of every Kanji stroke.
+- **Guided Finger Tracing Canvas**: Smooth gesture-locked canvas preventing accidental page scrolling.
+- **Stroke Dictionary**: Numbered sequence badges and real-time tracing feedback.
+
+### 🎨 Global Japanese Font Customization
+- Choose between **6 authentic Japanese typography styles** across the entire app:
+  - *Modern Sans* (Noto Sans JP)
+  - *Classic Mincho* (Shippori Mincho)
+  - *Rounded Cute* (Zen Maru Gothic)
+  - *Historical Serif* (Kaisei Tokumin)
+  - *Casual Handwriting* (Yomogi)
+  - *Poster Display* (Dela Gothic One)
+- Dynamically styles vocabularies, flashcards, Kanji diagrams, grammar patterns, and quizzes.
+
+### 🎮 Gamified Mini-Games
+- **⚡ Matching Game**: Rapidly match Japanese kana/kanji with English definitions against the clock.
+- **🎯 True or False**: Fast-fire quick reaction drill for vocabulary accuracy.
+- **⌨️ Typing Test**: Speed typing test to reinforce active recall.
+- **🧩 Kana Puzzle**: Drag-and-drop syllable construction.
+
+### 📊 Quests, Streaks & Mastery Stats
+- **Daily Streak Counter**: Keep up your daily habit and streak rewards.
+- **Weekly Study Time Analytics**: Track total study minutes and weekly performance trends.
+- **Mastery Meters**: Track vocabulary retention and Kanji mastery over time.
+- **Kotowaza of the Day**: Rotating daily Japanese proverbs with full audio and English wisdom translations.
+
+### ☁️ Cloud Sync & Offline Support
+- **100% Offline Capability**: Built with SQLite (sqflite) — study on airplanes, trains, or subways without internet.
+- **Cloud Sync**: Firebase Authentication (Google Sign-In & Email) + Cloud Firestore backup for streaks, achievements, and bookmarks.
+
+---
+
+## 🛠️ Project Structure
+
+```text
+MinnaLearn/
+├── docs/                                # Official Website & GitHub Pages (getminnalearn.xyz)
+│   ├── index.html                       # Landing page with SEO, Schema.org, & interactive preview
+│   ├── privacy-policy.html              # Google Play compliant Privacy Policy
+│   ├── delete-account.html              # Account & data deletion request portal
+│   ├── robots.txt                       # Search engine crawler directives
+│   ├── sitemap.xml                      # XML sitemap for Google Search Console
+│   ├── CNAME                            # Custom domain configuration (getminnalearn.xyz)
+│   └── favicon.ico                      # Multi-resolution Google-compliant favicon suite
+├── flutter_minnalearn/
+│   ├── android/                         # Android native config (SDK 34+, ProGuard, Keystore)
+│   ├── assets/                          # Vocab files, grammar notes, audio clips, and vector graphics
+│   └── lib/
+│       ├── data/                        # N5 Kanji data & stroke path dictionaries
+│       ├── models/                      # Lesson, Vocabulary, and Kanji models
+│       ├── screens/                     # UI screens (Home, Lessons, Kanji, Games, Quizzes, Stats)
+│       ├── services/                    # Database (SQLite), Cloud (Firestore), Font, TTS, Audio
+│       ├── utils/                       # AppTheme design tokens, gradients, and typography
+│       └── widgets/                     # Kanji tracing canvas, custom dialogs, bouncing buttons
+└── README.md
 ```
 
 ---
 
-## Project Structure
-
-```
-flutter_minnalearn/
-  android/                        # Android native config
-  assets/
-    audio/                        # Sound effects (correct, wrong, click, success)
-    grammar/                      # grammarbai1.txt - grammarbai25.txt
-    vocab/                        # bai1.txt - bai25.txt (vocabulary files)
-  lib/
-    main.dart                     # App entry, Firebase init, MaterialApp
-    data/
-      n5_kanji_data.dart          # 107 JLPT N5 kanji entries
-    models/
-      lesson.dart                 # Vocabulary, Kanji, Lesson models
-    screens/
-      auth_screen.dart            # Email/password + Google Sign-In
-      home_screen.dart            # Dashboard with stats and feature cards
-      main_screen.dart            # PageView bottom nav (Home/Lessons/Games/Stats/Profile)
-      lessons_screen.dart         # List of 25 lessons with progress
-      lesson_detail_screen.dart   # Lesson hub (Flashcards/Learn/Test/Grammar)
-      flashcards_screen.dart      # Swipeable vocabulary flashcards
-      quiz_screen.dart            # Vocabulary quiz with lesson completion popup
-      kanji_screen.dart           # Kanji flashcards, writing, and quiz
-      vocabulary_list_screen.dart # Vocabulary list with speak/bookmark
-      grammar_screen.dart         # Grammar points per lesson
-      games_screen.dart           # Games hub with recent scores
-      matching_game_screen.dart   # Match words to meanings game
-      true_or_false_screen.dart   # Quick-fire true/false kana quiz
-      typing_test_screen.dart     # Typing speed test game
-      kana_puzzle_screen.dart     # Timed kana building puzzle
-      stats_screen.dart           # Progress charts and mastery bars
-      profile_screen.dart         # Profile, achievements, privacy policy
-      onboarding_screen.dart      # First-time user onboarding
-      startup_screen.dart         # Bootstrap (DB init, notifications, routing)
-    services/
-      achievement_service.dart    # Achievement definitions and unlocking
-      audio_service.dart          # Sound effects (audioplayers)
-      auth_service.dart           # Firebase Authentication
-      cloud_service.dart          # Firestore sync
-      database_service.dart       # SQLite database (all CRUD operations)
-      data_seeder.dart            # Loads vocab/kanji from bundled assets
-      notification_service.dart   # Local scheduled notifications with auto permission
-      quiz_engine.dart            # Quiz question generation
-      speech_service.dart         # Text-to-speech (flutter_tts)
-      study_timer_service.dart    # Background study time tracker
-    utils/
-      vocabulary_display.dart     # Vocabulary display helpers
-    widgets/
-      bottom_nav.dart             # Bottom navigation bar
-      feature_card.dart           # Reusable feature card
-      kanji_drawing_board.dart    # Kanji stroke drawing canvas
-      stat_card.dart              # Stat display card widget
-  docs/
-    index.html                    # Privacy policy (GitHub Pages)
-```
-
----
-
-## Tech Stack
+## 💻 Tech Stack
 
 | Component | Technology |
 |---|---|
-| Framework | Flutter (Dart) |
-| Database | SQLite (sqflite) |
-| Auth | Firebase Auth |
-| Cloud Sync | Cloud Firestore |
-| Notifications | flutter_local_notifications |
-| TTS | flutter_tts |
-| Audio | audioplayers |
-| Fonts | Google Fonts (Inter) |
-| Icons | Lucide Icons |
-| Timezone | timezone package |
+| **Framework** | [Flutter](https://flutter.dev) (Dart 3) |
+| **Local Database** | SQLite via [sqflite](https://pub.dev/packages/sqflite) |
+| **Authentication** | [Firebase Auth](https://firebase.google.com/products/auth) (Google Sign-In & Email) |
+| **Cloud Sync** | [Cloud Firestore](https://firebase.google.com/products/firestore) |
+| **Notifications** | [flutter_local_notifications](https://pub.dev/packages/flutter_local_notifications) |
+| **Audio & TTS** | [audioplayers](https://pub.dev/packages/audioplayers) & [flutter_tts](https://pub.dev/packages/flutter_tts) |
+| **Typography** | [Google Fonts](https://fonts.google.com) (Outfit, Plus Jakarta Sans, Noto Sans JP, Shippori Mincho) |
+| **Vector Icons** | [Lucide Icons](https://lucide.dev) |
 
 ---
 
-## Build
+## 🚀 Getting Started
 
-### Debug APK
+### Prerequisites
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (`>= 3.22.0`)
+- [Android Studio](https://developer.android.com/studio) / Android SDK (`API 34+`)
+- Java JDK 17
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Maadhu938/MinnaLearn-FlutterApp.git
+   cd MinnaLearn-FlutterApp/flutter_minnalearn
+   ```
+
+2. **Install Flutter packages:**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Run on an Android device or emulator:**
+   ```bash
+   flutter run
+   ```
+
+### Production Build
+
 ```bash
+# Build Android App Bundle for Google Play Store:
+flutter build appbundle --release
+
+# Build standalone Release APK:
 flutter build apk --release
 ```
-Output: `build/app/outputs/flutter-apk/app-release.apk`
-
-### Play Store (AAB)
-```bash
-flutter build appbundle --release
-```
-Output: `build/app/outputs/bundle/release/app-release.aab`
 
 ---
 
-## License
+## 📄 License
 
-MIT License
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">
+  Crafted with ❤️ for Japanese learners worldwide.<br />
+  <strong>MinnaLearn</strong> — <a href="https://getminnalearn.xyz">https://getminnalearn.xyz</a>
+</p>
