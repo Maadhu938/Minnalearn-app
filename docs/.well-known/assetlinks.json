@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.maadhu.minnalearn",
+      "sha256_cert_fingerprints": [
+        "24:A7:53:CB:05:46:AD:C6:5D:08:81:69:F1:0A:38:BB:A6:0F:78:B2:DD:4A:78:36:D1:3D:8B:51:8B:2E:6F:8B"
+      ]
+    }
+  }
+]

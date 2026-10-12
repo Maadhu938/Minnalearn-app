@@ -11,9 +11,16 @@ import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
 import '../services/auth_service.dart';
 import '../services/achievement_service.dart';
+import '../services/app_engagement_service.dart';
 import '../services/cloud_service.dart';
+import '../services/japanese_font_service.dart';
 import '../utils/app_theme.dart';
 import '../widgets/bouncing_widget.dart';
+import '../widgets/japanese_font_picker_dialog.dart';
+import '../widgets/playstore_review_dialog.dart';
+import '../widgets/whats_new_dialog.dart';
+import '../widgets/privacy_policy_bottom_sheet.dart';
+import '../widgets/delete_account_bottom_sheet.dart';
 import 'auth_screen.dart';
 import 'kanji_screen.dart';
 
@@ -465,6 +472,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Column(
                         children: [
                           ListTile(
+                            leading: const Icon(LucideIcons.type, color: Color(0xFF6B7280)),
+                            title: Text(
+                              'Japanese Font Style',
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1F2937),
+                              ),
+                            ),
+                            subtitle: ValueListenableBuilder<String>(
+                              valueListenable:
+                                  JapaneseFontService.currentFontNotifier,
+                              builder: (context, fontKey, _) => Text(
+                                JapaneseFontService().fontDisplayName,
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: AppColors.azureDark,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            trailing: const Icon(LucideIcons.chevronRight,
+                                size: 18, color: Color(0xFF9CA3AF)),
+                            onTap: () {
+                              JapaneseFontPickerDialog.show(context);
+                            },
+                          ),
+                          const Divider(height: 1),
+                          ListTile(
                             leading: const Icon(LucideIcons.shieldCheck, color: Color(0xFF6B7280)),
                             title: Text(
                               'Privacy Policy',
@@ -476,58 +512,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             trailing: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF9CA3AF)),
                             onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text(
-                                    'Privacy Policy',
-                                    style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-                                  ),
-                                  content: SingleChildScrollView(
-                                    child: Text(
-                                      'Last updated: April 8, 2026\n\n'
-                                      'This policy applies to MinnaLearn: Japanese N5 on Google Play. We respect your privacy and are committed to protecting your personal data.\n\n'
-                                      '1) Data We Collect\n'
-                                      '- Account: email and display name (Firebase Authentication / Google Sign-In).\n'
-                                      '- Learning: lesson completion, study time, streaks, quiz scores, bookmarked vocabulary, learned kanji, achievements.\n'
-                                      '- Usage: screen views and feature usage (first_open, session_start) via Firebase Analytics.\n'
-                                      '- Approximate location: city/region inferred from IP; no GPS/Wi-Fi/Bluetooth location is collected.\n'
-                                      '- Device: app version and device type for troubleshooting. Learning assets are bundled; no Firebase Storage downloads.\n\n'
-                                      '2) How We Use Data\n'
-                                      '- Create and manage your account; sync progress (Firestore).\n'
-                                      '- Track progress and streaks.\n'
-                                      '- Send local study reminders/streak alerts (with permission).\n'
-                                      '- Improve features using aggregated analytics.\n\n'
-                                      '3) Sharing\n'
-                                      '- Processed by Firebase (Google) for auth, analytics, and sync.\n'
-                                      '- We do not sell, rent, or share data with other third parties; no ads or profiling (ad ID disabled).\n\n'
-                                      '4) Storage & Security\n'
-                                      '- Stored locally in SQLite; synced to Firestore when signed in.\n'
-                                      '- Firebase encrypts data in transit and at rest.\n\n'
-                                      '5) Third-Party Services\n'
-                                      '- Firebase Authentication; Firebase Cloud Firestore; Firebase Analytics (all by Google; see Google Privacy Policy).\n\n'
-                                      '6) Your Rights\n'
-                                      '- Access, correct, or delete your data.\n'
-                                      '- Delete Account via Profile -> Delete Account.\n'
-                                      '- Sign out anytime.\n\n'
-                                      '7) Children\'s Privacy\n'
-                                      '- Not directed to children under 13; contact us if a child provided data.\n'
-                                      '- Rated IARC 3+; no ads.\n\n'
-                                      '8) Changes\n'
-                                      '- Updates will be posted in the app and on the docs page.\n\n'
-                                      '9) Contact\n'
-                                      '- maadhuavati7@gmail.com',
-                                      style: GoogleFonts.inter(fontSize: 13, height: 1.5),
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Close'),
-                                    ),
-                                  ],
-                                ),
-                              );
+                              PrivacyPolicyBottomSheet.show(context);
                             },
                           ),
                           const Divider(height: 1),
@@ -542,7 +527,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             trailing: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF9CA3AF)),
-                            onTap: _showDeleteAccountDialog,
+                            onTap: () {
+                              DeleteAccountBottomSheet.show(
+                                context,
+                                appVersion: _appInfo != null
+                                    ? '${_appInfo!.version} (${_appInfo!.buildNumber})'
+                                    : null,
+                                onConfirmDelete: _deleteAccount,
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -572,12 +565,144 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (_appInfo != null) ...[
                             const SizedBox(height: 4),
                             Text(
-                              'Version ${_appInfo!.version}',
+                              'Version ${_appInfo!.version} (Build ${_appInfo!.buildNumber})',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.inter(
                                 fontSize: 11,
                                 color: const Color(0xFF9CA3AF),
                               ),
+                            ),
+                            const SizedBox(height: 12),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                BouncingWidget(
+                                  scaleFactor: 0.95,
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    AppEngagementService().checkForAvailableUpdate(
+                                      context,
+                                      silentIfUpToDate: false,
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.azureLight,
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: AppColors.azureBorder,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          LucideIcons.refreshCw,
+                                          size: 12,
+                                          color: AppColors.azureDark,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          'Check for Updates',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.azureDark,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    WhatsNewDialog.show(
+                                      context,
+                                      _appInfo!.version,
+                                    );
+                                  },
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryLight,
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: AppColors.primary.withOpacity(0.3),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          LucideIcons.sparkles,
+                                          size: 12,
+                                          color: AppColors.primary,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          'What\'s New',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    PlaystoreReviewDialog.show(context);
+                                  },
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.amberLight,
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: AppColors.amberBorder,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          LucideIcons.star,
+                                          size: 12,
+                                          color: AppColors.amberDark,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          'Rate App',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.amberDark,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ],
@@ -592,67 +717,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showDeleteAccountDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            const Icon(LucideIcons.alertTriangle, color: Color(0xFFEF4444), size: 22),
-            const SizedBox(width: 8),
-            Text(
-              'Delete Account',
-              style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'This will permanently delete your account and all data including:\n\n'
-              '• Account (email and display name)\n'
-              '• Lesson progress and quiz scores\n'
-              '• Study time, streaks, and sessions\n'
-              '• Learned kanji and bookmarks\n'
-              '• Achievements and game scores\n\n'
-              'This action cannot be undone.',
-              style: GoogleFonts.inter(fontSize: 14, height: 1.5),
-            ),
-            const SizedBox(height: 16),
-            if (_appInfo != null)
-              Text(
-                'App version: ${_appInfo!.version} (${_appInfo!.buildNumber})',
-                style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF9CA3AF)),
-              ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.inter(color: const Color(0xFF6B7280)),
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await _deleteAccount();
-            },
-            child: Text(
-              'Delete',
-              style: GoogleFonts.inter(
-                color: const Color(0xFFEF4444),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Future<void> _deleteAccount() async {
     final messenger = ScaffoldMessenger.of(context);

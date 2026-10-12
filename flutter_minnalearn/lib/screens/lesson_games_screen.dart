@@ -5,9 +5,11 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../models/lesson.dart';
 import '../utils/app_theme.dart';
 import '../widgets/bouncing_widget.dart';
+import '../widgets/fox_mascot_bubble.dart';
 import 'matching_game_screen.dart';
 import 'true_or_false_screen.dart';
 import 'typing_test_screen.dart';
+import '../services/japanese_font_service.dart';
 
 class LessonGamesScreen extends StatelessWidget {
   final Lesson lesson;
@@ -45,7 +47,7 @@ class LessonGamesScreen extends StatelessWidget {
                         opacity: 0.08,
                         child: Text(
                           '遊',
-                          style: GoogleFonts.notoSansJp(
+                          style: JapaneseFontService().getJapaneseTextStyle(
                             fontSize: 104,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
@@ -120,6 +122,13 @@ class LessonGamesScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+              child: FoxMascotBubble(
+                message: 'Pick a game below to practice Lesson ${lesson.id} words! 🦊',
+                mood: FoxMood.neutral,
               ),
             ),
             Padding(

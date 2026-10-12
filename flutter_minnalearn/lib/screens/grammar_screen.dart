@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../models/lesson.dart';
+import '../services/japanese_font_service.dart';
 import '../utils/app_theme.dart';
 
 class GrammarScreen extends StatefulWidget {
@@ -27,7 +28,8 @@ class _GrammarScreenState extends State<GrammarScreen> {
 
   Future<void> _loadGrammar() async {
     try {
-      final content = await rootBundle.loadString('assets/grammar/grammar${widget.lesson.id}.txt');
+      final content = await rootBundle
+          .loadString('assets/grammar/grammar${widget.lesson.id}.txt');
       final points = _parseGrammar(content);
       if (mounted) {
         setState(() {
@@ -51,12 +53,14 @@ class _GrammarScreenState extends State<GrammarScreen> {
 
     for (var section in sections) {
       final lines = section.trim().split('\n');
-      if (lines.isEmpty || (lines.length == 1 && lines[0].trim().isEmpty)) continue;
+      if (lines.isEmpty || (lines.length == 1 && lines[0].trim().isEmpty)) {
+        continue;
+      }
 
       // Remove the numbering label (e.g., "1.1) ") from the title
       String title = lines[0].trim();
       title = title.replaceFirst(RegExp(r'^\d+(\.\d+)*\)?\s*'), '').trim();
-      
+
       final explanation = lines.skip(1).join('\n').trim();
 
       if (title.isNotEmpty) {
@@ -80,20 +84,34 @@ class _GrammarScreenState extends State<GrammarScreen> {
         elevation: 0,
         centerTitle: true,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-          : _error != null
-              ? Center(child: Text(_error!, style: GoogleFonts.inter(color: Colors.grey)))
-              : _grammarPoints.isEmpty
-                  ? Center(child: Text('No grammar notes available yet.', style: GoogleFonts.inter(color: Colors.grey)))
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(20),
-                      itemCount: _grammarPoints.length,
-                      itemBuilder: (context, index) {
-                        final point = _grammarPoints[index];
-                        return _buildGrammarCard(point);
-                      },
-                    ),
+      body: ValueListenableBuilder<String>(
+        valueListenable: JapaneseFontService.currentFontNotifier,
+        builder: (context, fontKey, _) {
+          if (_isLoading) {
+            return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary));
+          }
+          if (_error != null) {
+            return Center(
+                child: Text(_error!,
+                    style: GoogleFonts.inter(color: Colors.grey)));
+          }
+          if (_grammarPoints.isEmpty) {
+            return Center(
+                child: Text('No grammar notes available yet.',
+                    style: GoogleFonts.inter(color: Colors.grey)));
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(20),
+            itemCount: _grammarPoints.length,
+            itemBuilder: (context, index) {
+              final point = _grammarPoints[index];
+              return _buildGrammarCard(point);
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -123,14 +141,15 @@ class _GrammarScreenState extends State<GrammarScreen> {
                   color: const Color(0xFFFFF1F2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(LucideIcons.bookOpen, color: Color(0xFFE11D48), size: 16),
+                child: const Icon(LucideIcons.bookOpen,
+                    color: Color(0xFFE11D48), size: 16),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   point.title,
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
+                  style: JapaneseFontService().getJapaneseTextStyle(
+                    fontSize: 16.5,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF1F2937),
                   ),
@@ -141,10 +160,10 @@ class _GrammarScreenState extends State<GrammarScreen> {
           const SizedBox(height: 16),
           Text(
             point.content,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: const Color(0xFF4B5563),
-              height: 1.6,
+            style: JapaneseFontService().getJapaneseTextStyle(
+              fontSize: 14.5,
+              color: const Color(0xFF374151),
+              height: 1.7,
             ),
           ),
         ],

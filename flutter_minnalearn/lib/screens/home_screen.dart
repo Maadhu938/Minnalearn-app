@@ -13,6 +13,7 @@ import 'listening_set_selection_screen.dart';
 import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
 import '../services/speech_service.dart';
+import '../services/japanese_font_service.dart';
 
 class _ProverbItem {
   final String kanji;
@@ -387,7 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 opacity: 0.08,
                 child: Text(
                   '日本語',
-                  style: GoogleFonts.notoSansJp(
+                  style: JapaneseFontService().getJapaneseTextStyle(
                     fontSize: 108,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -523,7 +524,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 7),
           Text(
             greeting['jp']!,
-            style: GoogleFonts.notoSansJp(
+            style: JapaneseFontService().getJapaneseTextStyle(
               color: Colors.white,
               fontSize: 14,
               fontWeight: FontWeight.w700,
@@ -580,7 +581,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     'あ',
-                    style: GoogleFonts.notoSansJp(
+                    style: JapaneseFontService().getJapaneseTextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                       color: AppColors.amberDark,
@@ -589,7 +590,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(width: 4),
                   Text(
                     'ア',
-                    style: GoogleFonts.notoSansJp(
+                    style: JapaneseFontService().getJapaneseTextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                       color: AppColors.coralDark,

@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -10,9 +11,11 @@ import '../services/study_timer_service.dart';
 import '../services/audio_service.dart';
 import '../services/achievement_service.dart';
 import '../services/speech_service.dart';
-import '../widgets/kanji_drawing_board.dart';
+import '../widgets/kanji_tracing_board.dart';
+import '../data/kanji_stroke_dictionary.dart';
 import '../utils/app_theme.dart';
 import '../widgets/bouncing_widget.dart';
+import '../services/japanese_font_service.dart';
 
 enum _KanjiPracticeMode {
   flashcards,
@@ -44,6 +47,7 @@ class KanjiScreen extends StatefulWidget {
 }
 
 class _KanjiScreenState extends State<KanjiScreen> {
+  ScrollPhysics _scrollPhysics = const ClampingScrollPhysics();
   final Random _random = Random();
 
   static List<Kanji> _cachedKanji = [];
@@ -56,8 +60,13 @@ class _KanjiScreenState extends State<KanjiScreen> {
   String? _quizSelectedAnswer;
   bool _quizAnswered = false;
 
-  final GlobalKey<KanjiDrawingBoardState> _drawingBoardKey = GlobalKey<KanjiDrawingBoardState>();
-  bool _isDrawing = false;
+  final GlobalKey<KanjiTracingBoardState> _tracingBoardKey =
+      GlobalKey<KanjiTracingBoardState>();
+  TracingMode _tracingMode = TracingMode.guided;
+  bool _showStrokeNumbers = true;
+  double _ghostOpacity = 0.35;
+  int _activeStrokeIndex = 0;
+  bool _isKanjiMastered = false;
 
   @override
   void initState() {
@@ -109,7 +118,6 @@ class _KanjiScreenState extends State<KanjiScreen> {
     return _allKanji[_selectedKanjiIndex];
   }
 
-
   void _setSelectedKanji(int index) {
     if (index < 0 || index >= _allKanji.length) {
       return;
@@ -118,10 +126,12 @@ class _KanjiScreenState extends State<KanjiScreen> {
     setState(() {
       _selectedKanjiIndex = index;
       _isFlashcardFlipped = false;
+      _isKanjiMastered = false;
+      _activeStrokeIndex = 0;
       if (_practiceMode == _KanjiPracticeMode.quiz) {
         _prepareQuiz();
       }
-      _drawingBoardKey.currentState?.clear(); // Clear drawing board when changing kanji
+      _tracingBoardKey.currentState?.reset();
       AudioService().playClick();
     });
   }
@@ -201,7 +211,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
           // Pinned Header
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 56, bottom: 24, left: 20, right: 20),
+            padding:
+                const EdgeInsets.only(top: 56, bottom: 24, left: 20, right: 20),
             decoration: const BoxDecoration(
               gradient: AppGradients.primaryHeader,
               borderRadius: BorderRadius.only(
@@ -216,7 +227,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
                   scaleFactor: 0.94,
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(14),
@@ -224,7 +236,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 16),
+                        const Icon(LucideIcons.arrowLeft,
+                            color: Colors.white, size: 16),
                         const SizedBox(width: 6),
                         Text(
                           'Back',
@@ -269,7 +282,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.22),
                         borderRadius: BorderRadius.circular(12),
@@ -328,9 +342,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
 
     return SingleChildScrollView(
       key: const ValueKey('content'),
-      physics: _isDrawing
-          ? const NeverScrollableScrollPhysics()
-          : const ClampingScrollPhysics(),
+      physics: _scrollPhysics,
       child: Column(
         children: [
           // Sleek 3-Mode Segmented Selector
@@ -344,9 +356,12 @@ class _KanjiScreenState extends State<KanjiScreen> {
               ),
               child: Row(
                 children: [
-                  _buildSegmentItem('Flashcards', LucideIcons.layers, _KanjiPracticeMode.flashcards),
-                  _buildSegmentItem('Writing', LucideIcons.pencil, _KanjiPracticeMode.writing),
-                  _buildSegmentItem('Quiz', LucideIcons.target, _KanjiPracticeMode.quiz),
+                  _buildSegmentItem('Flashcards', LucideIcons.layers,
+                      _KanjiPracticeMode.flashcards),
+                  _buildSegmentItem('Writing', LucideIcons.pencil,
+                      _KanjiPracticeMode.writing),
+                  _buildSegmentItem(
+                      'Quiz', LucideIcons.target, _KanjiPracticeMode.quiz),
                 ],
               ),
             ),
@@ -517,23 +532,36 @@ class _KanjiScreenState extends State<KanjiScreen> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primaryLight : AppColors.card,
+                          color: isSelected
+                              ? AppColors.primaryLight
+                              : AppColors.card,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isSelected ? AppColors.primary : AppColors.ink200.withOpacity(0.9),
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.ink200.withOpacity(0.9),
                             width: isSelected ? 2 : 1.2,
                           ),
-                          boxShadow: isSelected ? AppShadows.primaryGlow : AppShadows.subtle,
+                          boxShadow: isSelected
+                              ? AppShadows.primaryGlow
+                              : AppShadows.subtle,
                         ),
                         child: Center(
-                          child: Text(
-                            item.character,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w800,
-                              color: isSelected ? AppColors.primary : AppColors.ink900,
-                              fontFamilyFallback: const ['Noto Sans CJK JP', 'sans-serif'],
-                            ),
+                          child: ValueListenableBuilder<String>(
+                            valueListenable:
+                                JapaneseFontService.currentFontNotifier,
+                            builder: (context, fontKey, _) {
+                              return Text(
+                                item.character,
+                                style: JapaneseFontService().getJapaneseTextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : AppColors.ink900,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -548,7 +576,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
     );
   }
 
-  Widget _buildSegmentItem(String title, IconData icon, _KanjiPracticeMode mode) {
+  Widget _buildSegmentItem(
+      String title, IconData icon, _KanjiPracticeMode mode) {
     final isSelected = _practiceMode == mode;
     return Expanded(
       child: BouncingWidget(
@@ -612,7 +641,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
             decoration: BoxDecoration(
               color: AppColors.card,
               borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: AppColors.ink200.withOpacity(0.8), width: 1.2),
+              border: Border.all(
+                  color: AppColors.ink200.withOpacity(0.8), width: 1.2),
               boxShadow: AppShadows.card,
             ),
             child: Column(
@@ -621,7 +651,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppColors.primaryLight,
                         borderRadius: BorderRadius.circular(10),
@@ -637,7 +668,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
                     ),
                     BouncingWidget(
                       scaleFactor: 0.90,
-                      onTap: () => SpeechService().speakJapanese(kanji.character),
+                      onTap: () =>
+                          SpeechService().speakJapanese(kanji.character),
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: const BoxDecoration(
@@ -655,19 +687,24 @@ class _KanjiScreenState extends State<KanjiScreen> {
                 ),
                 const SizedBox(height: 12),
                 if (!_isFlashcardFlipped) ...[
-                  Text(
-                    kanji.character,
-                    style: const TextStyle(
-                      fontSize: 88,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.ink900,
-                      fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
-                    ),
-                    textAlign: TextAlign.center,
+                  ValueListenableBuilder<String>(
+                    valueListenable: JapaneseFontService.currentFontNotifier,
+                    builder: (context, fontKey, _) {
+                      return Text(
+                        kanji.character,
+                        style: JapaneseFontService().getJapaneseTextStyle(
+                          fontSize: 92,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.ink900,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
                   ),
                   const SizedBox(height: 14),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: AppColors.ink100,
                       borderRadius: BorderRadius.circular(12),
@@ -675,7 +712,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.rotateCcw, size: 13, color: AppColors.ink500),
+                        const Icon(LucideIcons.rotateCcw,
+                            size: 13, color: AppColors.ink500),
                         const SizedBox(width: 6),
                         Text(
                           'Tap to reveal meaning & readings',
@@ -700,18 +738,24 @@ class _KanjiScreenState extends State<KanjiScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
-                  _buildKanjiInfoRow('On Reading (音)', kanji.onReading, AppColors.azureDark, AppColors.azureLight),
+                  _buildKanjiInfoRow('On Reading (音)', kanji.onReading,
+                      AppColors.azureDark, AppColors.azureLight),
                   const SizedBox(height: 10),
-                  _buildKanjiInfoRow('Kun Reading (訓)', kanji.kunReading, AppColors.amberDark, AppColors.amberLight),
+                  _buildKanjiInfoRow('Kun Reading (訓)', kanji.kunReading,
+                      AppColors.amberDark, AppColors.amberLight),
                   const SizedBox(height: 16),
-                  Text(
-                    kanji.character,
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.primary,
-                      fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
-                    ),
+                  ValueListenableBuilder<String>(
+                    valueListenable: JapaneseFontService.currentFontNotifier,
+                    builder: (context, fontKey, _) {
+                      return Text(
+                        kanji.character,
+                        style: JapaneseFontService().getJapaneseTextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ],
@@ -719,115 +763,515 @@ class _KanjiScreenState extends State<KanjiScreen> {
           ),
         );
       case _KanjiPracticeMode.writing:
+        final strokeData = KanjiStrokeDictionary.getStrokeData(kanji.character);
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: AppColors.card,
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: AppColors.ink200.withOpacity(0.8), width: 1.2),
+            border: Border.all(
+                color: AppColors.ink200.withOpacity(0.8), width: 1.2),
             boxShadow: AppShadows.card,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // 1. Kanji Character Header & Info (Clear visual focus)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Trace & Practice',
-                    style: GoogleFonts.inter(
-                      color: AppColors.ink700,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  BouncingWidget(
-                    scaleFactor: 0.90,
-                    onTap: () {
-                      _drawingBoardKey.currentState?.clear();
-                      AudioService().playClick();
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: AppColors.ink100,
-                        borderRadius: BorderRadius.circular(10),
+                  Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFFFF1F2), Color(0xFFFFE4E6)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                              color: AppColors.primary.withOpacity(0.3),
+                              width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: ValueListenableBuilder<String>(
+                            valueListenable:
+                                JapaneseFontService.currentFontNotifier,
+                            builder: (context, fontKey, _) {
+                              return Text(
+                                kanji.character,
+                                style: JapaneseFontService().getJapaneseTextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      const SizedBox(width: 14),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(LucideIcons.eraser, size: 14, color: AppColors.primary),
-                          const SizedBox(width: 4),
                           Text(
-                            'Clear',
-                            style: GoogleFonts.inter(
-                              color: AppColors.primary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
+                            kanji.meaning,
+                            style: GoogleFonts.outfit(
+                              color: AppColors.ink900,
+                              fontSize: 19,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryLight,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '${strokeData.strokeCount} 画 (Strokes)',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
+                      ),
+                    ],
+                  ),
+
+                  // Speak Audio Button
+                  BouncingWidget(
+                    onTap: () {
+                      SpeechService().speakJapanese(kanji.character);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.azureLight,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            color: AppColors.azureBorder, width: 1.2),
+                      ),
+                      child: const Icon(
+                        LucideIcons.volume2,
+                        size: 18,
+                        color: AppColors.azureDark,
                       ),
                     ),
                   ),
                 ],
               ),
+
               const SizedBox(height: 16),
-              Center(
-                child: Container(
-                  width: 250,
-                  height: 250,
+
+              // 2. Full-Width Mode Switcher (Guided vs Freehand) - Never cut off!
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppColors.ink100,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildModeTab(
+                        'Guided Tracing',
+                        TracingMode.guided,
+                        LucideIcons.compass,
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildModeTab(
+                        'Freehand Canvas',
+                        TracingMode.freehand,
+                        LucideIcons.pencil,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 14),
+
+              // 3. Action Toolbar: [ 🎬 Watch ] [ 🔢 Numbers ] [ 👁 Outline ] [ ↩ Undo ] [ 🔄 Clear ]
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                      color: AppColors.ink200.withOpacity(0.8), width: 1),
+                ),
+                child: Row(
+                  children: [
+                    _buildToolButton(
+                      label: 'Watch',
+                      icon: LucideIcons.playCircle,
+                      color: AppColors.primary,
+                      onTap: () {
+                        _tracingBoardKey.currentState?.playDemonstration();
+                      },
+                    ),
+                    _buildToolButton(
+                      label: 'Numbers',
+                      icon: LucideIcons.listOrdered,
+                      color: _showStrokeNumbers
+                          ? AppColors.azureDark
+                          : AppColors.ink400,
+                      isActive: _showStrokeNumbers,
+                      onTap: () {
+                        setState(() {
+                          _showStrokeNumbers = !_showStrokeNumbers;
+                        });
+                      },
+                    ),
+                    _buildToolButton(
+                      label: 'Outline',
+                      icon: LucideIcons.eye,
+                      color: _ghostOpacity > 0
+                          ? AppColors.bambooDark
+                          : AppColors.ink400,
+                      isActive: _ghostOpacity > 0,
+                      onTap: () {
+                        setState(() {
+                          if (_ghostOpacity >= 0.35) {
+                            _ghostOpacity = 0.15;
+                          } else if (_ghostOpacity > 0.0) {
+                            _ghostOpacity = 0.0;
+                          } else {
+                            _ghostOpacity = 0.35;
+                          }
+                        });
+                      },
+                    ),
+                    _buildToolButton(
+                      label: 'Undo',
+                      icon: LucideIcons.undo2,
+                      color: AppColors.ink700,
+                      onTap: () {
+                        _tracingBoardKey.currentState?.undo();
+                      },
+                    ),
+                    _buildToolButton(
+                      label: 'Clear',
+                      icon: LucideIcons.rotateCcw,
+                      color: AppColors.ink700,
+                      onTap: () {
+                        _tracingBoardKey.currentState?.reset();
+                        setState(() {
+                          _isKanjiMastered = false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 14),
+
+              // 4. Current Stroke Instruction & Progress (in Guided mode)
+              if (_tracingMode == TracingMode.guided && !_isKanjiMastered) ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.ink200, width: 1.5),
-                  ),
-                  child: ClipRRect(
+                    color: AppColors.azureLight,
                     borderRadius: BorderRadius.circular(18),
-                    child: GridPaper(
-                      divisions: 2,
-                      subdivisions: 2,
-                      color: AppColors.ink200.withOpacity(0.5),
-                      child: Stack(
+                    border:
+                        Border.all(color: AppColors.azureBorder, width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.azure.withOpacity(0.06),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
                         children: [
-                          Center(
-                            child: Text(
-                              kanji.character,
-                              style: TextStyle(
-                                fontSize: 130,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.ink200.withOpacity(0.4),
-                                fontFamilyFallback: const ['Noto Sans CJK JP', 'sans-serif'],
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF0284C7), Color(0xFF0EA5E9)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF0284C7).withOpacity(0.3),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                '${_activeStrokeIndex + 1}',
+                                style: GoogleFonts.outfit(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                             ),
                           ),
-                          KanjiDrawingBoard(
-                            key: _drawingBoardKey,
-                            strokeGuide: kanji.character,
-                            onStrokeStart: () {
-                              setState(() {
-                                _isDrawing = true;
-                              });
-                            },
-                            onStrokeComplete: () {
-                              setState(() {
-                                _isDrawing = false;
-                              });
-                            },
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'STROKE ${_activeStrokeIndex + 1} OF ${strokeData.strokeCount}',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.azureDark.withOpacity(0.85),
+                                    letterSpacing: 0.5,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  _activeStrokeIndex < strokeData.strokes.length
+                                      ? strokeData
+                                          .strokes[_activeStrokeIndex].displayDescription
+                                      : 'Complete!',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.ink900,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                  color: AppColors.azureBorder, width: 1),
+                            ),
+                            child: Text(
+                              '${_activeStrokeIndex + 1}/${strokeData.strokeCount}',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.azureDark,
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
+                      const SizedBox(height: 10),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: strokeData.strokeCount > 0
+                              ? (_activeStrokeIndex + 1) / strokeData.strokeCount
+                              : 0.0,
+                          minHeight: 5,
+                          backgroundColor:
+                              const Color(0xFFBAE6FD).withOpacity(0.5),
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              AppColors.azureDark),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                const SizedBox(height: 14),
+              ],
+
+              // 5. Tracing Canvas (Responsive & Centered)
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final canvasSize = math.min(constraints.maxWidth, 280.0);
+                  return SizedBox(
+                    width: canvasSize,
+                    height: canvasSize,
+                    child: KanjiTracingBoard(
+                      key: _tracingBoardKey,
+                      character: kanji.character,
+                      mode: _tracingMode,
+                      showNumbers: _showStrokeNumbers,
+                      ghostOpacity: _ghostOpacity,
+                      onInteractionStarted: () {
+                        if (_scrollPhysics is! NeverScrollableScrollPhysics) {
+                          setState(() {
+                            _scrollPhysics =
+                                const NeverScrollableScrollPhysics();
+                          });
+                        }
+                      },
+                      onInteractionEnded: () {
+                        if (_scrollPhysics is! ClampingScrollPhysics) {
+                          setState(() {
+                            _scrollPhysics = const ClampingScrollPhysics();
+                          });
+                        }
+                      },
+                      onActiveStrokeChanged: (index) {
+                        setState(() {
+                          _activeStrokeIndex = index;
+                        });
+                      },
+                      onKanjiMastered: () {
+                        setState(() {
+                          _isKanjiMastered = true;
+                        });
+                        DatabaseService().markKanjiAsLearned(kanji.character);
+                        DatabaseService().updateStreak();
+                        AchievementService()
+                            .checkAchievements(context: context);
+                      },
+                    ),
+                  );
+                },
               ),
+
+              // 6. Celebration Banner when Kanji is Mastered!
+              if (_isKanjiMastered) ...[
+                const SizedBox(height: 16),
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFECFDF5),
+                    borderRadius: BorderRadius.circular(18),
+                    border:
+                        Border.all(color: const Color(0xFFA7F3D0), width: 1.5),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child: Image.asset(
+                            'assets/gif/Shiba Happy.gif',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Sugoi! Kanji Mastered! 🎉',
+                              style: GoogleFonts.outfit(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFF047857),
+                              ),
+                            ),
+                            Text(
+                              'Stroke order perfected for ${kanji.character} (${kanji.meaning})',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF065F46),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
+              // 7. Stroke Order Rule Tip
+              if (strokeData.strokeOrderTip.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFFBEB),
+                    borderRadius: BorderRadius.circular(14),
+                    border:
+                        Border.all(color: const Color(0xFFFDE68A), width: 1),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(LucideIcons.lightbulb,
+                          size: 16, color: Color(0xFFD97706)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          strokeData.strokeOrderTip,
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF92400E),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
               const SizedBox(height: 16),
-              _buildKanjiInfoRow('Meaning', kanji.meaning, AppColors.ink900, AppColors.ink100),
+
+              // 8. Kanji Information Cards (Meaning, On'yomi, Kun'yomi)
+              _buildKanjiInfoRow(
+                  'Meaning', kanji.meaning, AppColors.ink900, AppColors.ink100),
               const SizedBox(height: 8),
-              _buildKanjiInfoRow('On Reading', kanji.onReading, AppColors.azureDark, AppColors.azureLight),
+              _buildKanjiInfoRow('On Reading', kanji.onReading,
+                  AppColors.azureDark, AppColors.azureLight),
               const SizedBox(height: 8),
-              _buildKanjiInfoRow('Kun Reading', kanji.kunReading, AppColors.amberDark, AppColors.amberLight),
+              _buildKanjiInfoRow('Kun Reading', kanji.kunReading,
+                  AppColors.amberDark, AppColors.amberLight),
             ],
           ),
         );
@@ -839,7 +1283,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
           decoration: BoxDecoration(
             color: AppColors.card,
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: AppColors.ink200.withOpacity(0.8), width: 1.2),
+            border: Border.all(
+                color: AppColors.ink200.withOpacity(0.8), width: 1.2),
             boxShadow: AppShadows.card,
           ),
           child: Column(
@@ -854,14 +1299,18 @@ class _KanjiScreenState extends State<KanjiScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              Text(
-                kanji.character,
-                style: const TextStyle(
-                  fontSize: 84,
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.ink900,
-                  fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
-                ),
+              ValueListenableBuilder<String>(
+                valueListenable: JapaneseFontService.currentFontNotifier,
+                builder: (context, fontKey, _) {
+                  return Text(
+                    kanji.character,
+                    style: JapaneseFontService().getJapaneseTextStyle(
+                      fontSize: 84,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.ink900,
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 18),
               ..._quizOptions.map((option) {
@@ -889,7 +1338,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
                     onTap: () => _selectQuizAnswer(option),
                     child: Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
                         color: backgroundColor,
                         borderRadius: BorderRadius.circular(16),
@@ -947,7 +1397,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
     }
   }
 
-  Widget _buildKanjiInfoRow(String label, String value, Color textColor, Color pillBg) {
+  Widget _buildKanjiInfoRow(
+      String label, String value, Color textColor, Color pillBg) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
@@ -969,7 +1420,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
             child: Text(
               value.isEmpty ? '--' : value,
               textAlign: TextAlign.right,
-              style: GoogleFonts.inter(
+              style: JapaneseFontService().getJapaneseTextStyle(
                 fontWeight: FontWeight.w700,
                 color: textColor,
                 fontSize: 13.5,
@@ -977,6 +1428,103 @@ class _KanjiScreenState extends State<KanjiScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildModeTab(String label, TracingMode mode, IconData icon) {
+    final isSelected = _tracingMode == mode;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _tracingMode = mode;
+          _isKanjiMastered = false;
+        });
+        _tracingBoardKey.currentState?.reset();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 15,
+              color: isSelected ? AppColors.primary : AppColors.ink500,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                color: isSelected ? AppColors.ink900 : AppColors.ink500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildToolButton({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+    bool isActive = false,
+  }) {
+    return Expanded(
+      child: BouncingWidget(
+        scaleFactor: 0.92,
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 2),
+          decoration: BoxDecoration(
+            color: isActive ? color.withOpacity(0.12) : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isActive ? color.withOpacity(0.35) : Colors.transparent,
+              width: 1,
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 19, color: color),
+              const SizedBox(height: 4),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: color,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -7,6 +7,7 @@ import '../services/speech_service.dart';
 import '../services/study_timer_service.dart';
 import '../utils/vocabulary_display.dart';
 import '../utils/app_theme.dart';
+import '../services/japanese_font_service.dart';
 import '../widgets/bouncing_widget.dart';
 
 class FlashcardsScreen extends StatefulWidget {
@@ -68,7 +69,8 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Japanese voice not available. Download it from Settings → Languages → Text-to-speech voice'),
+        content: const Text(
+            'Japanese voice not available. Download it from Settings → Languages → Text-to-speech voice'),
         action: SnackBarAction(
           label: 'OPEN SETTINGS',
           onPressed: () => SpeechService().openTtsSettings(),
@@ -102,7 +104,8 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
             child: Text(
               'No vocabulary is available for this lesson yet.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(fontSize: 18, color: const Color(0xFF4B5563)),
+              style: GoogleFonts.inter(
+                  fontSize: 18, color: const Color(0xFF4B5563)),
             ),
           ),
         ),
@@ -135,29 +138,41 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
                           onTap: () => Navigator.pop(context),
                           child: Row(
                             children: [
-                              const Icon(LucideIcons.arrowLeft, color: Color(0xFF4B5563), size: 20),
+                              const Icon(LucideIcons.arrowLeft,
+                                  color: Color(0xFF4B5563), size: 20),
                               const SizedBox(width: 8),
-                              Text('Back', style: GoogleFonts.inter(color: const Color(0xFF4B5563))),
+                              Text('Back',
+                                  style: GoogleFonts.inter(
+                                      color: const Color(0xFF4B5563))),
                             ],
                           ),
                         ),
                         Text(
                           '${_currentIndex + 1} / ${vocabulary.length}',
-                          style: GoogleFonts.inter(color: const Color(0xFF4B5563), fontSize: 14),
+                          style: GoogleFonts.inter(
+                              color: const Color(0xFF4B5563), fontSize: 14),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'Flashcards',
-                      style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF1F2937)),
+                      style: GoogleFonts.inter(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF1F2937)),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      widget.lesson.title.isEmpty
-                          ? 'Lesson ${widget.lesson.id}'
-                          : 'Lesson ${widget.lesson.id}: ${widget.lesson.title}',
-                      style: GoogleFonts.inter(color: const Color(0xFF4B5563), fontSize: 16),
+                      widget.lesson.id > 0
+                          ? (widget.lesson.title.isEmpty
+                              ? 'Lesson ${widget.lesson.id}'
+                              : 'Lesson ${widget.lesson.id}: ${widget.lesson.title}')
+                          : (widget.lesson.title.isNotEmpty
+                              ? widget.lesson.title
+                              : 'All Lessons'),
+                      style: GoogleFonts.inter(
+                          color: const Color(0xFF4B5563), fontSize: 16),
                     ),
                   ],
                 ),
@@ -174,125 +189,168 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         GestureDetector(
-                        onTap: _handleFlip,
-                        onHorizontalDragEnd: _handleCardSwipe,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                          width: double.infinity,
-                          constraints: const BoxConstraints(minHeight: 280),
-                          padding: const EdgeInsets.all(32),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(32),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                               if (!_isFlipped) ...[
-                                 GestureDetector(
-                                   behavior: HitTestBehavior.opaque,
-                                   onTap: _handleFlip,
-                                   child: Column(
-                                     children: [
-                                       Text(
-                                         promptText,
-                                         textAlign: TextAlign.center,
-                                         style: GoogleFonts.inter(fontSize: 60, fontWeight: FontWeight.bold, color: const Color(0xFF1F2937)),
-                                       ),
-                                       const SizedBox(height: 24),
-                                       Text(
-                                         'Tap to reveal',
-                                         style: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 14),
-                                       ),
-                                       const SizedBox(height: 8),
-                                       Text(
-                                         'Swipe left for next, right for previous',
-                                         textAlign: TextAlign.center,
-                                         style: GoogleFonts.inter(color: const Color(0xFFD1D5DB), fontSize: 12),
-                                       ),
-                                     ],
-                                   ),
-                                 ),
-                              ] else ...[
-                                 GestureDetector(
-                                   behavior: HitTestBehavior.opaque,
-                                   onTap: _handleFlip,
-                                   child: Column(
-                                     children: [
-                                       Text(
-                                         promptText,
-                                         textAlign: TextAlign.center,
-                                         style: GoogleFonts.inter(fontSize: 40, fontWeight: FontWeight.bold, color: const Color(0xFF1F2937)),
-                                       ),
-                                       const SizedBox(height: 16),
-                                       Text(
-                                         currentWord.meaning,
-                                         textAlign: TextAlign.center,
-                                         style: GoogleFonts.inter(fontSize: 20, color: const Color(0xFF4B5563)),
-                                       ),
-                                       const SizedBox(height: 12),
-                                       Text(
-                                         'Tap the card to flip back',
-                                         textAlign: TextAlign.center,
-                                         style: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 12),
-                                       ),
-                                     ],
-                                   ),
-                                 ),
-                                const SizedBox(height: 20),
-                                TextButton.icon(
-                                  onPressed: () => _handleSpeak(promptText),
-                                  icon: const Icon(LucideIcons.volume2, color: AppColors.primary, size: 20),
-                                  label: Text(
-                                    'Listen',
-                                    style: GoogleFonts.inter(
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'Swipe left for next, right for previous',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 12),
+                          onTap: _handleFlip,
+                          onHorizontalDragEnd: _handleCardSwipe,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                            width: double.infinity,
+                            constraints: const BoxConstraints(minHeight: 280),
+                            padding: const EdgeInsets.all(32),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(32),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
                                 ),
                               ],
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-
-                      // Navigation
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildNavButton(LucideIcons.chevronLeft, _currentIndex > 0, _handlePrevious),
-                          const Spacer(),
-                          Text(
-                            '${_currentIndex + 1} / ${vocabulary.length}',
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFF9CA3AF),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (!_isFlipped) ...[
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: _handleFlip,
+                                    child: Column(
+                                      children: [
+                                        FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            promptText,
+                                            textAlign: TextAlign.center,
+                                            style: JapaneseFontService()
+                                                .getJapaneseTextStyle(
+                                              fontSize: promptText.length > 6
+                                                  ? 42
+                                                  : 56,
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color(0xFF1F2937),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 24),
+                                        Text(
+                                          'Tap to reveal',
+                                          style: GoogleFonts.inter(
+                                              color: const Color(0xFF9CA3AF),
+                                              fontSize: 14),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Swipe left for next, right for previous',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.inter(
+                                              color: const Color(0xFFD1D5DB),
+                                              fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ] else ...[
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: _handleFlip,
+                                    child: Column(
+                                      children: [
+                                        FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            promptText,
+                                            textAlign: TextAlign.center,
+                                            style: JapaneseFontService()
+                                                .getJapaneseTextStyle(
+                                              fontSize: promptText.length > 6
+                                                  ? 32
+                                                  : 40,
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color(0xFF1F2937),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          currentWord.meaning,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.inter(
+                                            fontSize:
+                                                currentWord.meaning.length > 28
+                                                    ? 16
+                                                    : 20,
+                                            color: const Color(0xFF4B5563),
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.25,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          'Tap the card to flip back',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.inter(
+                                              color: const Color(0xFF9CA3AF),
+                                              fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  TextButton.icon(
+                                    onPressed: () => _handleSpeak(promptText),
+                                    icon: const Icon(LucideIcons.volume2,
+                                        color: AppColors.primary, size: 20),
+                                    label: Text(
+                                      'Listen',
+                                      style: GoogleFonts.inter(
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Swipe left for next, right for previous',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                        color: const Color(0xFF9CA3AF),
+                                        fontSize: 12),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
-                          const Spacer(),
-                          _buildNavButton(LucideIcons.chevronRight, _currentIndex < vocabulary.length - 1, _handleNext),
-                        ],
-                      ),
-                    ],
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Navigation
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildNavButton(LucideIcons.chevronLeft,
+                                _currentIndex > 0, _handlePrevious),
+                            const Spacer(),
+                            Text(
+                              '${_currentIndex + 1} / ${vocabulary.length}',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF9CA3AF),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Spacer(),
+                            _buildNavButton(
+                                LucideIcons.chevronRight,
+                                _currentIndex < vocabulary.length - 1,
+                                _handleNext),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
               ),
             ),
           ],
@@ -318,7 +376,9 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
             ),
           ],
         ),
-        child: Icon(icon, color: enabled ? const Color(0xFF374151) : Colors.grey.shade300, size: 24),
+        child: Icon(icon,
+            color: enabled ? const Color(0xFF374151) : Colors.grey.shade300,
+            size: 24),
       ),
     );
   }

@@ -6,7 +6,7 @@
 待ちます [まちます] /wait/
 止めます [とめます] /stop, park/
 曲がります [まがります] /turn/
-右へ曲がります み [ぎへまがります] /turn to the right/
+右へ曲がります [みぎへまがります] /turn to the right/
 持ちます [もちます] /hold/
 取ります [とります] /take, pass/
 手伝います [てつだいます] /help (with a task)/

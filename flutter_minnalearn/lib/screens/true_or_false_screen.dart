@@ -13,6 +13,8 @@ import '../services/achievement_service.dart';
 import '../utils/vocabulary_display.dart';
 import '../utils/app_theme.dart';
 import '../widgets/bouncing_widget.dart';
+import '../widgets/fox_mascot_bubble.dart';
+import '../services/japanese_font_service.dart';
 
 class TrueOrFalseScreen extends StatefulWidget {
   final Lesson lesson;
@@ -41,6 +43,9 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
   bool _isGameOver = false;
   bool _showFeedback = false;
   bool? _lastAnswerCorrect;
+
+  String _mascotMessage = 'Does this Japanese word match the meaning?';
+  FoxMood _mascotMood = FoxMood.neutral;
 
   @override
   void initState() {
@@ -72,6 +77,8 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
       _isGameOver = false;
       _showFeedback = false;
       _lastAnswerCorrect = null;
+      _mascotMessage = 'Does this Japanese word match the meaning?';
+      _mascotMood = FoxMood.neutral;
     });
 
     _loadNextQuestion();
@@ -96,6 +103,8 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
     setState(() {
       _isPlaying = false;
       _isGameOver = true;
+      _mascotMessage = 'Yatta! Time is up! Superb practice! 🏆';
+      _mascotMood = FoxMood.celebrate;
     });
     DatabaseService().saveGameScore('True or False', _score);
     AchievementService().checkAchievements(context: context);
@@ -123,6 +132,8 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
       _isCorrectPair = meaning == word.meaning.trim();
       _showFeedback = false;
       _lastAnswerCorrect = null;
+      _mascotMessage = 'Does this Japanese word match the meaning?';
+      _mascotMood = FoxMood.neutral;
     });
   }
 
@@ -144,6 +155,10 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
         _correctCount++;
         _showFeedback = true;
         _lastAnswerCorrect = true;
+        _mascotMessage = _combo >= 3
+            ? 'Sugoi! 🔥 Combo x$_combo!'
+            : 'Yatta! Spot on! 🎉';
+        _mascotMood = FoxMood.happy;
       });
     } else {
       SpeechService().playWrongAnswer();
@@ -151,10 +166,12 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
         _combo = 0;
         _showFeedback = true;
         _lastAnswerCorrect = false;
+        _mascotMessage = 'Oops! Not this one! 🦊 Keep going!';
+        _mascotMood = FoxMood.encouraging;
       });
     }
 
-    await Future.delayed(const Duration(milliseconds: 600));
+    await Future.delayed(const Duration(milliseconds: 650));
     if (mounted && _isPlaying) {
       _loadNextQuestion();
     }
@@ -163,13 +180,20 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.scaffold,
       body: SafeArea(
         child: _vocabPool.isEmpty
             ? _buildEmptyState()
             : Column(
                 children: [
                   _buildHeader(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                    child: FoxMascotBubble(
+                      message: _mascotMessage,
+                      mood: _mascotMood,
+                    ),
+                  ),
                   Expanded(
                     child: _isGameOver ? _buildGameOver() : _buildGameBoard(),
                   ),
@@ -183,51 +207,111 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
     return Center(
       child: Text(
         'Not enough vocabulary to play True or False.',
-        style: GoogleFonts.inter(color: const Color(0xFF6B7280), fontSize: 15),
+        style: GoogleFonts.outfit(fontSize: 16, color: AppColors.ink500),
       ),
     );
   }
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Column(
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GestureDetector(
+              BouncingWidget(
                 onTap: () => Navigator.pop(context),
-                child: const Icon(LucideIcons.arrowLeft, color: Color(0xFF4B5563)),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.ink200, width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(LucideIcons.arrowLeft, color: AppColors.ink700, size: 20),
+                ),
               ),
-              const SizedBox(width: 16),
-              Text(
-                'True or False',
-                style: GoogleFonts.inter(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1F2937),
+
+              // Title Pill
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.amberLight,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.amberBorder, width: 1.5),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(LucideIcons.checkCheck, size: 15, color: AppColors.amberDark),
+                    const SizedBox(width: 6),
+                    Text(
+                      widget.lesson.id > 0
+                          ? 'True or False • Lesson ${widget.lesson.id}'
+                          : 'True or False • All Lessons',
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.amberDark,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Reset / Restart
+              BouncingWidget(
+                onTap: _startGame,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.ink200, width: 1.5),
+                  ),
+                  child: const Icon(LucideIcons.rotateCcw, color: AppColors.ink500, size: 18),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+
+          const SizedBox(height: 12),
+
+          // Stat Pills (Score, Combo, Time)
           Row(
             children: [
-              Expanded(child: _buildStat('Score', '$_score', AppColors.primary)),
-              const SizedBox(width: 12),
               Expanded(
-                child: _buildStat(
-                  'Combo',
-                  'x$_combo',
-                  _combo >= 3 ? const Color(0xFFEAB308) : const Color(0xFF6B7280),
+                child: _buildHeaderStat(
+                  label: 'Score',
+                  value: '$_score',
+                  color: AppColors.primary,
+                  icon: LucideIcons.trophy,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
-                child: _buildStat(
-                  'Time',
-                  '${_timeLeft}s',
-                  _timeLeft <= 10 ? const Color(0xFFEF4444) : const Color(0xFF3B82F6),
+                child: _buildHeaderStat(
+                  label: 'Combo',
+                  value: 'x$_combo',
+                  color: _combo >= 3 ? AppColors.amberDark : AppColors.ink500,
+                  icon: LucideIcons.flame,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildHeaderStat(
+                  label: 'Time',
+                  value: '${_timeLeft}s',
+                  color: _timeLeft <= 10 ? AppColors.primary : AppColors.azureDark,
+                  icon: LucideIcons.clock,
                 ),
               ),
             ],
@@ -237,37 +321,51 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
     );
   }
 
-  Widget _buildStat(String label, String value, Color color) {
+  Widget _buildHeaderStat({
+    required String label,
+    required String value,
+    required Color color,
+    required IconData icon,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.ink200, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              color: const Color(0xFF6B7280),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: GoogleFonts.inter(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: GoogleFonts.outfit(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.ink400,
+                ),
+              ),
+              Text(
+                value,
+                style: GoogleFonts.outfit(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: color,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -280,157 +378,213 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          const Spacer(),
-          Text(
-            'Does this kana match this meaning?',
-            style: GoogleFonts.inter(
-              color: const Color(0xFF6B7280),
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(28),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Text(
-                  _currentWord!.kanaText,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.notoSansJp(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF1F2937),
-                  ),
-                ),
-                if (_currentWord!.romaji.trim().isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    _currentWord!.romaji,
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      color: const Color(0xFF9CA3AF),
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 20),
-                Container(
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF9FAFB),
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(color: AppColors.ink200, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    _displayMeaning!,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF374151),
-                    ),
+                  child: Column(
+                    children: [
+                      // Japanese Kana with speak audio button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                _currentWord!.kanaText,
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                style: JapaneseFontService().getJapaneseTextStyle(
+                                  fontSize: _currentWord!.kanaText.length > 7 ? 30 : 38,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.ink900,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          BouncingWidget(
+                            onTap: () {
+                              SpeechService().speakJapanese(_currentWord!.kanaText);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                color: AppColors.azureLight,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppColors.azureBorder, width: 1),
+                              ),
+                              child: const Icon(
+                                LucideIcons.volume2,
+                                size: 16,
+                                color: AppColors.azureDark,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      if (_currentWord!.romaji.trim().isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          _currentWord!.romaji,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            color: AppColors.ink400,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+
+                      const SizedBox(height: 22),
+
+                      // Equal symbol or divider
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.ink100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          LucideIcons.arrowDownUp,
+                          size: 16,
+                          color: AppColors.ink500,
+                        ),
+                      ),
+
+                      const SizedBox(height: 22),
+
+                      // Meaning Pill
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: AppColors.ink200, width: 1.5),
+                        ),
+                        child: Text(
+                          _displayMeaning!,
+                          textAlign: TextAlign.center,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(
+                            fontSize: _displayMeaning!.length > 30
+                                ? 15.0
+                                : (_displayMeaning!.length > 18 ? 17.5 : 20.0),
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.ink900,
+                            height: 1.25,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 40),
-          Row(
-            children: [
-              Expanded(
-                child: _buildAnswerButton(
-                  label: 'True',
-                  icon: LucideIcons.check,
-                  baseColor: const Color(0xFF10B981),
-                  onTap: () => _onAnswer(true),
-                  feedbackColor: _showFeedback
-                      ? (_isCorrectPair ? const Color(0xFF10B981) : const Color(0xFFEF4444))
-                      : null,
                 ),
               ),
-              const SizedBox(width: 16),
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          // Tactile 3D Action Buttons (False / True)
+          Row(
+            children: [
+              // FALSE (Crimson)
               Expanded(
-                child: _buildAnswerButton(
+                child: _buildDuolingoButton(
                   label: 'False',
                   icon: LucideIcons.x,
-                  baseColor: const Color(0xFFEF4444),
+                  bgColor: const Color(0xFFE11D48),
+                  topBorderColor: const Color(0xFFF43F5E),
+                  bottomBorderColor: const Color(0xFF9F1239),
                   onTap: () => _onAnswer(false),
-                  feedbackColor: _showFeedback
-                      ? (!_isCorrectPair ? const Color(0xFF10B981) : const Color(0xFFEF4444))
-                      : null,
+                  isFeedbackActive: _showFeedback && _lastAnswerCorrect != null,
+                ),
+              ),
+
+              const SizedBox(width: 16),
+
+              // TRUE (Bamboo Emerald)
+              Expanded(
+                child: _buildDuolingoButton(
+                  label: 'True',
+                  icon: LucideIcons.check,
+                  bgColor: const Color(0xFF10B981),
+                  topBorderColor: const Color(0xFF34D399),
+                  bottomBorderColor: const Color(0xFF059669),
+                  onTap: () => _onAnswer(true),
+                  isFeedbackActive: _showFeedback && _lastAnswerCorrect != null,
                 ),
               ),
             ],
           ),
-          if (_showFeedback && _lastAnswerCorrect != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              _lastAnswerCorrect! ? 'Correct!' : 'Wrong!',
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: _lastAnswerCorrect!
-                    ? const Color(0xFF10B981)
-                    : const Color(0xFFEF4444),
-              ),
-            ),
-          ],
-          const Spacer(),
+
+          SizedBox(height: MediaQuery.of(context).padding.bottom > 0 ? MediaQuery.of(context).padding.bottom + 12 : 20),
         ],
       ),
     );
   }
 
-  Widget _buildAnswerButton({
+  Widget _buildDuolingoButton({
     required String label,
     required IconData icon,
-    required Color baseColor,
+    required Color bgColor,
+    required Color topBorderColor,
+    required Color bottomBorderColor,
     required VoidCallback onTap,
-    Color? feedbackColor,
+    required bool isFeedbackActive,
   }) {
-    final color = feedbackColor ?? baseColor;
-
     return BouncingWidget(
+      scaleFactor: 0.94,
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(20),
+          color: bgColor,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: topBorderColor, width: 2),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
+              color: bottomBorderColor,
+              offset: const Offset(0, 4.5),
+              blurRadius: 0,
             ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 24),
-            const SizedBox(width: 10),
+            Icon(icon, color: Colors.white, size: 22),
+            const SizedBox(width: 8),
             Text(
               label,
-              style: GoogleFonts.inter(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.outfit(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
                 color: Colors.white,
               ),
             ),
@@ -446,125 +600,176 @@ class _TrueOrFalseScreenState extends State<TrueOrFalseScreen> {
         : 0;
 
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Fox Mascot Avatar Celebrating
             Container(
-              padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
-                color: AppColors.amber,
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF7ED),
                 shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFFDBA74), width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFEA580C).withOpacity(0.18),
+                    blurRadius: 14,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              child: const Icon(LucideIcons.trophy, size: 64, color: Colors.white),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/gif/Shiba Happy.gif',
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            const SizedBox(height: 32),
+
+            const SizedBox(height: 20),
+
             Text(
               "Time's Up!",
-              style: GoogleFonts.inter(
-                fontSize: 32,
-                fontWeight: FontWeight.w800,
-                color: const Color(0xFF1F2937),
+              style: GoogleFonts.outfit(
+                fontSize: 28,
+                fontWeight: FontWeight.w900,
+                color: AppColors.ink900,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 6),
+            Text(
+              "Great speed session! Keep challenging yourself!",
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                color: AppColors.ink500,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Results Card
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: AppColors.ink200, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildResultPill('Score', '$_score', AppColors.primary),
+                  Container(width: 1, height: 40, color: AppColors.ink200),
+                  _buildResultPill('Correct', '$_correctCount/$_totalAnswered', AppColors.bambooDark),
+                  Container(width: 1, height: 40, color: AppColors.ink200),
+                  _buildResultPill('Accuracy', '$accuracy%', AppColors.azureDark),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(
-                  children: [
-                    Text(
-                      '$_correctCount / $_totalAnswered',
-                      style: GoogleFonts.inter(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF10B981),
+                Expanded(
+                  child: BouncingWidget(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.ink200, width: 2),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0xFFCBD5E1),
+                            offset: Offset(0, 4),
+                            blurRadius: 0,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Exit',
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.ink700,
+                          ),
+                        ),
                       ),
                     ),
-                    Text(
-                      'Correct',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: const Color(0xFF6B7280),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                const SizedBox(width: 40),
-                Column(
-                  children: [
-                    Text(
-                      '$accuracy%',
-                      style: GoogleFonts.inter(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF3B82F6),
+                const SizedBox(width: 14),
+                Expanded(
+                  flex: 2,
+                  child: BouncingWidget(
+                    onTap: _startGame,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xFFF43F5E), width: 2),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0xFF9F1239),
+                            offset: Offset(0, 4),
+                            blurRadius: 0,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(LucideIcons.rotateCcw, color: Colors.white, size: 18),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Play Again',
+                            style: GoogleFonts.outfit(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Text(
-                      'Accuracy',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: const Color(0xFF6B7280),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Score: $_score',
-              style: GoogleFonts.inter(
-                fontSize: 18,
-                color: const Color(0xFF6B7280),
-              ),
-            ),
-            const SizedBox(height: 48),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _startGame,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  'Play Again',
-                  style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () => Navigator.pop(context),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: Text(
-                  'Back to Menu',
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF6B7280),
-                  ),
-                ),
-              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildResultPill(String title, String val, Color col) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.outfit(fontSize: 12, color: AppColors.ink400, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          val,
+          style: GoogleFonts.outfit(fontSize: 20, color: col, fontWeight: FontWeight.w800),
+        ),
+      ],
     );
   }
 }
