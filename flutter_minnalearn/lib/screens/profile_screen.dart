@@ -23,6 +23,8 @@ import '../widgets/privacy_policy_bottom_sheet.dart';
 import '../widgets/delete_account_bottom_sheet.dart';
 import 'auth_screen.dart';
 import 'kanji_screen.dart';
+import 'pro_upgrade_screen.dart';
+import '../services/pro_entitlement_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -164,6 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final unlockedCount = _unlockedAchievementIds.length;
+    final isPro = ProEntitlementService().isPro;
 
     return Scaffold(
       backgroundColor: AppColors.scaffold,
@@ -171,9 +174,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 56, bottom: 32, left: 20, right: 20),
+            padding: const EdgeInsets.only(top: 54, bottom: 26, left: 20, right: 20),
             decoration: const BoxDecoration(
-              gradient: AppGradients.primaryHeader,
+              gradient: LinearGradient(
+                colors: [Color(0xFFBE123C), Color(0xFFE11D48), Color(0xFFF43F5E)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(32),
                 bottomRight: Radius.circular(32),
@@ -198,15 +205,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
-                        _authService.currentUser?.email ?? 'Japanese N5 Journey',
+                        _authService.currentUser?.email ?? 'Learner Account',
                         style: GoogleFonts.inter(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withOpacity(0.85),
                           fontSize: 13,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3.5),
+                        decoration: BoxDecoration(
+                          color: isPro
+                              ? const Color(0xFFFEF3C7)
+                              : Colors.white.withOpacity(0.22),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isPro
+                                ? const Color(0xFFF59E0B)
+                                : Colors.white.withOpacity(0.35),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              'assets/crown_pro.png',
+                              width: 13,
+                              height: 13,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              isPro ? 'PRO Active' : 'Free Plan',
+                              style: GoogleFonts.inter(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: isPro
+                                    ? const Color(0xFFB45309)
+                                    : Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -221,12 +265,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(10),
+                    width: 42,
+                    height: 42,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.18),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.25),
+                      ),
                     ),
-                    child: const Icon(LucideIcons.logOut, color: Colors.white, size: 18),
+                    child: const Icon(Icons.logout_rounded, color: Colors.white, size: 20),
                   ),
                 ),
               ],
@@ -244,32 +292,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                     Row(
                       children: [
-                        _buildStatItemExpanded(
-                          LucideIcons.bookOpen,
-                          _vocabCount.toString(),
-                          'Vocab',
-                          AppColors.azureLight,
-                          AppColors.azureDark,
+                        Expanded(
+                          child: _buildStatCard(
+                            icon: Icons.menu_book_rounded,
+                            iconColor: const Color(0xFF0284C7),
+                            iconBg: const Color(0xFFE0F2FE),
+                            value: _vocabCount.toString(),
+                            label: 'Vocab',
+                            progress: _vocabCount / 500,
+                            progressColor: const Color(0xFF38BDF8),
+                            progressText: ' / 500',
+                          ),
                         ),
-                        const SizedBox(width: 8),
-                        _buildStatItemExpanded(
-                          LucideIcons.languages,
-                          _kanjiCount.toString(),
-                          'Kanji',
-                          AppColors.amberLight,
-                          AppColors.amberDark,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _buildStatCard(
+                            icon: Icons.translate_rounded,
+                            iconColor: const Color(0xFFD97706),
+                            iconBg: const Color(0xFFFEF3C7),
+                            value: _kanjiCount.toString(),
+                            label: 'Kanji',
+                            progress: _kanjiCount / 200,
+                            progressColor: const Color(0xFFFBBF24),
+                            progressText: ' / 200',
+                          ),
                         ),
-                        const SizedBox(width: 8),
-                        _buildStatItemExpanded(
-                          LucideIcons.flame,
-                          _streak.toString(),
-                          'Streak',
-                          AppColors.coralLight,
-                          AppColors.coralDark,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _buildStatCard(
+                            icon: Icons.local_fire_department_rounded,
+                            iconColor: const Color(0xFFEA580C),
+                            iconBg: const Color(0xFFFFEDD5),
+                            value: _streak.toString(),
+                            label: 'Streak',
+                            progress: _streak / 30,
+                            progressColor: const Color(0xFFFB923C),
+                            progressText: ' days',
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 18),
+                    _buildProMembershipCard(),
+                    const SizedBox(height: 18),
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
@@ -297,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(height: 16),
                           _buildSummaryRow('Total Study Time', _studyTime),
                           const SizedBox(height: 12),
-                          _buildSummaryRow('Lessons Completed', '$_completedLessons / 25'),
+                          _buildSummaryRow('Lessons Completed', '$_completedLessons'),
                           const SizedBox(height: 12),
                           _buildSummaryRow('Achievements Unlocked', '$unlockedCount / ${_achievements.length}'),
                         ],
@@ -783,15 +848,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Widget _buildStatItem(IconData icon, String value, String label, Color bgColor, Color iconColor) {
+    Widget _buildStatCard({
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBg,
+    required String value,
+    required String label,
+    required double progress,
+    required Color progressColor,
+    required String progressText,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withOpacity(0.035),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -800,22 +874,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(12)),
-            child: Icon(icon, color: iconColor, size: 20),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: iconBg,
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: Icon(icon, color: iconColor, size: 21),
           ),
           const SizedBox(height: 8),
           Text(
             value,
             style: GoogleFonts.inter(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF1F2937),
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              color: const Color(0xFF0F172A),
             ),
           ),
+          const SizedBox(height: 2),
           Text(
             label,
-            style: GoogleFonts.inter(fontSize: 9, color: const Color(0xFF6B7280)),
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF64748B),
+            ),
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: progress.clamp(0.0, 1.0),
+              minHeight: 5.5,
+              backgroundColor: const Color(0xFFF1F5F9),
+              valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+            ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            progressText,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF94A3B8),
+            ),
           ),
         ],
       ),
@@ -836,12 +938,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildStatItemExpanded(IconData icon, String value, String label, Color bgColor, Color iconColor) {
-    return Expanded(
-      child: _buildStatItem(icon, value, label, bgColor, iconColor),
     );
   }
 
@@ -1169,6 +1265,521 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildProMembershipCard() {
+    final isPro = ProEntitlementService().isPro;
+
+    if (isPro) {
+      // Subscribed state: Show PRO features unlocked & mascot holding crown!
+      return BouncingWidget(
+        scaleFactor: 0.98,
+        onTap: _showProFeaturesDialog,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 16, 10, 16),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFFFEF3C7),
+                Color(0xFFFFFBEB),
+                Color(0xFFFDE68A),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: const Color(0xFFF59E0B).withOpacity(0.45),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFF59E0B).withOpacity(0.12),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF59E0B),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFF59E0B).withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Image.asset(
+                              'assets/crown_pro.png',
+                              width: 20,
+                              height: 20,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'MinnaLearn PRO',
+                          style: GoogleFonts.inter(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFF78350F),
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.all(2.5),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF059669),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.check_rounded,
+                            size: 11,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'All 50 Lessons, 200 Kanji\n& 100% Ad-Free Immersion Unlocked!',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF92400E),
+                        height: 1.35,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF059669),
+                        borderRadius: BorderRadius.circular(999),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF059669).withOpacity(0.25),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.verified_rounded,
+                            color: Colors.white,
+                            size: 13,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            'PRO BENEFITS ACTIVE',
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 4),
+              // Right mascot: Speech bubble + anime girl holding crown
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.06),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      'すごい！\nよくやった！',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFB45309),
+                        height: 1.25,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Image.asset(
+                    'assets/mascot_pro_crown.png',
+                    height: 105,
+                    fit: BoxFit.contain,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Free state (matching screenshot media_1791825315891.jpg)
+    return BouncingWidget(
+      scaleFactor: 0.98,
+      onTap: () async {
+        final changed = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProUpgradeScreen(),
+          ),
+        );
+        if (changed == true && mounted) {
+          setState(() {});
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [
+              Color(0xFFFFEEF3),
+              Color(0xFFFFF0F5),
+              Color(0xFFFFE8EF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: const Color(0xFFFFD1DC),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFE11D48).withOpacity(0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE11D48),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFE11D48).withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/crown_pro.png',
+                            width: 22,
+                            height: 22,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'MinnaLearn PRO',
+                        style: GoogleFonts.inter(
+                          fontSize: 17.5,
+                          fontWeight: FontWeight.w900,
+                          color: const Color(0xFF0F172A),
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Container(
+                        width: 18,
+                        height: 18,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFE11D48),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.chevron_right_rounded,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Unlock Lessons 28–50, 200 Kanji\n& Ad-Free Learning.',
+                    style: GoogleFonts.inter(
+                      fontSize: 12.5,
+                      color: const Color(0xFF64748B),
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 9,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE11D48),
+                      borderRadius: BorderRadius.circular(999),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFE11D48).withOpacity(0.35),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Upgrade Now',
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 18,
+                          height: 18,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 12,
+                            color: Color(0xFFE11D48),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 4),
+            // Right mascot: Speech bubble + smiling anime girl
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    'もっと\nがんばろう！',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFFE11D48),
+                      height: 1.25,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Image.asset(
+                  'assets/mascot_profile.png',
+                  height: 100,
+                  fit: BoxFit.contain,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showProFeaturesDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(28),
+            topRight: Radius.circular(28),
+          ),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE2E8F0),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                width: 68,
+                height: 68,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFEF3C7),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Image.asset(
+                    'assets/crown_pro.png',
+                    width: 40,
+                    height: 40,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'MinnaLearn PRO Active',
+                style: GoogleFonts.inter(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: const Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'You have lifetime unlimited access to all features:',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: const Color(0xFF64748B),
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildProPerkRow('Complete Lessons 1–50 (JLPT N5 & N4)'),
+              _buildProPerkRow('200 Kanji Stroke Tracing & Quizzes'),
+              _buildProPerkRow('100% Ad-Free Immersion'),
+              _buildProPerkRow('Offline Study Anywhere'),
+              _buildProPerkRow('All Mini-Games & Full Audio Pronunciation'),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0F172A),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Awesome, Keep Learning!',
+                    style: GoogleFonts.inter(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProPerkRow(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: const BoxDecoration(
+              color: Color(0xFFDCFCE7),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.check_rounded,
+              color: Color(0xFF16A34A),
+              size: 14,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: GoogleFonts.inter(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF1E293B),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

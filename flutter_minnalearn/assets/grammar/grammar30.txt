@@ -1,0 +1,58 @@
+﻿1) て-form あります - has been done
+
+indicates a state as a result of an action
+
+1.1) N1に N2が Vてform あります - N2 has been put/written/etc. on N1
+
+つくえの　うえに　メモが　おいて　あります。　A memo has been put on the desk.
+
+カレンダーに　よていが　かいて　あります。　The schedule is written on the calendar.
+
+#
+1.2) N2は N1に Vてform あります
+
+When picking up N2 has a topic:
+
+メモは　つくえの　うえに　おいて　あります。
+
+#
+1.3) difference to てform います　
+
+てform あります expresses a state as a result of doing something. The difference to てform います is as follows:
+
+まどが　しまって　います。 The window is closed.
+
+まどが　しめって　あります。 The window has been closed.
+
+#
+2) てform おきます
+
+This pattern means:
+
+#
+2.1) Completion of a necessary action by a given time:
+
+りょこうの　まえに　きっぷを　かって　おきます。 I'll buy a ticket before the trip.
+
+かいぎまでに　この　しりょうを　よんで　おいて　ください。 Read these materials until the meeting please.
+
+#
+2.2) Preparatory action for the next use of something.
+
+はさみを　つかたら、もとの　ところに　もどして　おいて　ください。
+
+When you've finished using the scissors, please put them back.
+
+#
+2.3) Keeping something as it is.
+
+そこに　おいて　おいて　ください。 Please leave it there.
+
+Note: In daily conversation, て　おきます often becomes て　きます:
+
+そこに　おいといて　ください。
+
+#
+3) まだV - still V
+
+まだ　あめが　ふって　います。 It's still raining.

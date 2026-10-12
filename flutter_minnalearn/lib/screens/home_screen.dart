@@ -272,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     height: cardH,
                                     child: FeatureCard(
                                       title: 'Lessons',
-                                      subtitle: '25 Minna Units',
+                                      subtitle: '50 Units (N5 + N4)',
                                       icon: LucideIcons.bookOpen,
                                       bgColor: AppColors.azureLight,
                                       iconColor: AppColors.azureDark,

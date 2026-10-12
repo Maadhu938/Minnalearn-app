@@ -1,0 +1,75 @@
+﻿1) て
+
+This pattern is used to present cause and consequence, similar to ～から. It is used for:
+
+1.1) Expressing feelings
+
+e.g. びっくりする, あんしんする, こまる, さびしい, etc.:
+
+ニュースを　きいて、　びっくりした。 I was surprised to hear the news.
+
+かぞくに　あえなくて、　さびしいです。 Because I'm unable to meet my family, I'm sad.
+
+#
+1.2) Expressing states どようびは　つごうが　わるくて、　いけません。　Saturday is inconvenient for me, so I cannot go.
+
+はなしが　ふくざつで、　よく　わかりませんでした。 The story was complicated, so I didn't understand it well.
+
+#
+1.3) Situations in the past
+
+じこが　あって、　バスが　おくれて　しまいました。 There was an accident, so the bus was late.
+
+#
+2) This pattern can NOT be used for:
+
+#
+2.1) Expressions containing volition (will, orders, requests)
+
+O あぶないですから、きかいに　さわらないで　ください。
+
+It is dangerous, so please don't touch the machine.
+
+X あぶなくて、きかいに　さわらないで　ください。
+
+#
+2.2) Events that are NOT sequential, as in the first part not happening first
+
+Ｏ　あした　かいぎが　ありますから、きょう　じゅんび　しなければ　なりません。
+
+The meeting will be held tomorrow, so we have to prepare today.
+
+Ｘ　あした　かいぎ　あって、きょう　じゅんび　しなければ　なりません。
+
+#
+3) Nで
+
+で can be used to indicate an event, happenings or natural phenomenon as a cause, such as earthquakes, accidents, etc.
+
+じしんで　ビルが　たおれました。 Because of the earthquake, the building collapsed.
+
+As with the pattern in 1.), this cannot be used for expressions containing volition:
+
+Ｏ　びょうきで　かいしゃを　やすみました。　Because of illness, I took a day off work.
+
+Ｘ　びょうきで　あした　かいしゃを　やすみたいです。
+
+4.) ので
+
+This pattern is used to indicate causes and reasons, in an objective cause-and-effect relationship (unlike ～から, which is used subjectively). It softens the view of the speaker and expresses a reason gently. It can therefore not be used with the imperative or prohibitive form.
+
+にほんごが　わからないので、えいごで　はなして　いただけませんか。
+
+I don't understand Japanese, so could you please speak English?
+
+5.) とちゅうで
+
+とちゅうで means "during" or "on the way to". It follows V dictionary form or Nの:
+
+くる　とちゅうで　じこが　あって、　バスが　おくれて　しまったんです。
+
+On my way here there was an accident and the Bus was delayed.
+
+マラソンの　とちゅうで　ねむく　なりました。
+
+During the marathon I became tired.

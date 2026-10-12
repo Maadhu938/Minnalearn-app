@@ -1,0 +1,62 @@
+﻿1) そんけいご(polite expressions)
+
+そんけいご is used to describe the listener or the person referred to in a polite way.
+
+1.1) Respectful verbs
+
+The respectful form uses the exact same inflection as the passive form(see lesson 37):
+
+なかむらさんは　７じに　こられます。
+
+Mr. Nakamura is coming at seven.
+
+おさけを　やめられたんですか？
+
+Have you given up drinking?
+
+1.2)おVます-formに　なります
+
+This pattern is considered more polite than the respectful verbs in 1.1. It cannot be used for verbs whose ます-form consists of only one mora(みます, ねます, etc.) and group III verbs.
+
+しゃちょうは　もう　おかえりに　なりました。
+
+The president has already returned home.
+
+#
+1.3) Special respectful verbs
+
+Some verbs have special respectful equivalents. They show the same level of respect as 1.2:
+
+どうぞ　めしあがって　ください。
+
+Please help yourselves.
+
+#
+1.4) おVます-form　ください
+
+This is the respectful way of instructing or inviting someone to do something.
+
+あちらから　おはいり　ください。
+
+Please enter from over there.
+
+1.4)～まして
+
+In order to be very polite, the て-form can be changed to ～まして:
+
+ハンスが　ゆうべ　ねつを　だしまして、けさも　まだ　さがらないんです。
+
+Hans became feverish last night and it didn't go down this morning.
+
+[Note]
+
+When talking to a close friend about a respected person, the plain form of けいご can be used:
+
+ぶちょうは　なんじに　いらっしゃる？
+
+What time will the general manager come?
+
+#
+2) Nouns, adjectives and adverbs
+
+Some nouns, adjectives and adverbs can be turned into そんけいご by attaching お or ご at the front. Basically, お is used for words of Japanese origin and ご for words of Chinese origin

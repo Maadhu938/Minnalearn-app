@@ -1,0 +1,75 @@
+﻿1) けんじょうご(humble expressions)
+
+While そんけいご("respectful expressions", see L. 49) are used to describe the listener or the person referred to(ソトの　ひと) in a polite way, けんじょうご are used to describe actions of oneself or members of one's group/inside persons(ウチの　ひと) :
+
+ソト: なかむらさんは　きます。　→　なかむらさんは　いらっしゃいます。
+
+ウチ: わたしは　きます。　　　　 →　 わたくしは　まいります。
+
+けんじょうご consists of the お/ご transformation, see 1.1/1.2 and special humble verbs, see 2.
+
+1.1) おV(I,II group)ます-form します
+
+おもちしましょうか？
+
+Shall I carry it for you?
+
+あにが　くるまで　おおくりします。
+
+My elder brother will take you in his car.
+
+This pattern cannot be used for verbs whose ます-form consists of only one mora(みます, ねます, etc.) and group III verbs.
+
+#
+1.2) ごV(III group)
+
+よていを　ごせつめいします。
+
+I will explain the schedule.
+
+とうきょうへ　ごあんないします。
+
+I will show you around Tokyo.
+
+This pattern is only applicable to Group III verbs. Only those verbs which imply some association with the listener such as しょうかいします, しょうたいします, そうだんします, れんらくします can be used. Exception: でんわします and やくそくします use お instead of ご
+
+#
+2) Special humble verbs
+
+しゃちょうの　おめに　かかりました。
+
+I met the president's wife.
+
+ミラーと　もうします。
+
+My name is Miller.
+
+#
+3) ていねいご(polite expressions)
+
+#
+3.1) ございます
+
+This is the polite equivalent of あります.
+
+ここに　ございます。
+
+It is over there.
+
+#
+3.2) ～で　ございます
+
+This is the polite equivalent of です.
+
+はい、IMCで　ございます。
+
+Hello, this is IMC.
+
+#
+3.3) よろしいでしょうか
+
+This is the polite equivalent of いいですか.
+
+おのみものは　なにが　よろしいでしょうか？
+
+What would like to drink?

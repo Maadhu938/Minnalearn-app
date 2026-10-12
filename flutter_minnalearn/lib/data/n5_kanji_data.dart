@@ -97,13 +97,132 @@ class N5KanjiData {
     {'character': '雨', 'meaning': 'rain', 'on': 'u', 'kun': 'ame'},
     {'character': '空', 'meaning': 'sky, empty', 'on': 'kuu', 'kun': 'sora'},
     {'character': '海', 'meaning': 'sea', 'on': 'kai', 'kun': 'umi'},
-    {'character': '花', 'meaning': 'flower', 'on': 'ka', 'kun': 'hana'},
-    {'character': '草', 'meaning': 'grass', 'on': 'sou', 'kun': 'kusa'},
-    {'character': '魚', 'meaning': 'fish', 'on': 'gyo', 'kun': 'sakana'},
-    {'character': '石', 'meaning': 'stone', 'on': 'seki', 'kun': 'ishi'},
-    {'character': '林', 'meaning': 'woods', 'on': 'rin', 'kun': 'hayashi'},
-    {'character': '森', 'meaning': 'forest', 'on': 'shin', 'kun': 'mori'},
-    {'character': '力', 'meaning': 'power, strength', 'on': 'ryoku, riki', 'kun': 'chikara'},
+    // ── JLPT N4 Kanji (Lessons 26–50: 4 per lesson) ──────────────────────────
+    // Lesson 26
+    {'character': '験', 'meaning': 'test, examine', 'on': 'ken, gen', 'kun': 'tame(su)'},
+    {'character': '試', 'meaning': 'try, test', 'on': 'shi', 'kun': 'tame(su), kokoromi(ru)'},
+    {'character': '貸', 'meaning': 'lend', 'on': 'tai', 'kun': 'ka(su)'},
+    {'character': '借', 'meaning': 'borrow', 'on': 'shaku', 'kun': 'ka(riru)'},
+    // Lesson 27
+    {'character': '終', 'meaning': 'end, finish', 'on': 'shuu', 'kun': 'o(waru)'},
+    {'character': '始', 'meaning': 'begin, start', 'on': 'shi', 'kun': 'haji(meru)'},
+    {'character': '開', 'meaning': 'open', 'on': 'kai', 'kun': 'a(keru), hira(ku)'},
+    {'character': '閉', 'meaning': 'close', 'on': 'hei', 'kun': 'shi(meru), to(jiru)'},
+    // Lesson 28
+    {'character': '集', 'meaning': 'gather, collect', 'on': 'shuu', 'kun': 'atsu(maru)'},
+    {'character': '別', 'meaning': 'separate, another', 'on': 'betsu', 'kun': 'waka(reru)'},
+    {'character': '思', 'meaning': 'think', 'on': 'shi', 'kun': 'omo(u)'},
+    {'character': '知', 'meaning': 'know', 'on': 'chi', 'kun': 'shi(ru)'},
+    // Lesson 29
+    {'character': '引', 'meaning': 'pull', 'on': 'in', 'kun': 'hi(ku)'},
+    {'character': '押', 'meaning': 'push', 'on': 'ou', 'kun': 'o(su)'},
+    {'character': '落', 'meaning': 'fall, drop', 'on': 'raku', 'kun': 'o(chiru)'},
+    {'character': '拾', 'meaning': 'pick up, gather', 'on': 'shuu, juu', 'kun': 'hiro(u)'},
+    // Lesson 30
+    {'character': '止', 'meaning': 'stop', 'on': 'shi', 'kun': 'to(maru), to(meru)'},
+    {'character': '歩', 'meaning': 'walk', 'on': 'ho, bu', 'kun': 'aru(ku)'},
+    {'character': '走', 'meaning': 'run', 'on': 'sou', 'kun': 'hashi(ru)'},
+    {'character': '起', 'meaning': 'wake up, happen', 'on': 'ki', 'kun': 'o(kiru)'},
+    // Lesson 31
+    {'character': '持', 'meaning': 'hold, have', 'on': 'ji', 'kun': 'mo(tsu)'},
+    {'character': '待', 'meaning': 'wait', 'on': 'tai', 'kun': 'ma(tsu)'},
+    {'character': '送', 'meaning': 'send', 'on': 'sou', 'kun': 'oku(ru)'},
+    {'character': '使', 'meaning': 'use', 'on': 'shi', 'kun': 'tsuka(u)'},
+    // Lesson 32
+    {'character': '作', 'meaning': 'make, produce', 'on': 'saku, sa', 'kun': 'tsuku(ru)'},
+    {'character': '考', 'meaning': 'think, consider', 'on': 'kou', 'kun': 'kanga(eru)'},
+    {'character': '教', 'meaning': 'teach, religion', 'on': 'kyou', 'kun': 'oshi(eru)'},
+    {'character': '習', 'meaning': 'learn', 'on': 'shuu', 'kun': 'nara(u)'},
+    // Lesson 33
+    {'character': '勉', 'meaning': 'exertion, strive', 'on': 'ben', 'kun': 'tsuto(meru)'},
+    {'character': '強', 'meaning': 'strong', 'on': 'kyou, gou', 'kun': 'tsuyo(i)'},
+    {'character': '研', 'meaning': 'polish, study', 'on': 'ken', 'kun': 'to(gu)'},
+    {'character': '究', 'meaning': 'research, investigate', 'on': 'kyuu', 'kun': 'kiwa(meru)'},
+    // Lesson 34
+    {'character': '音', 'meaning': 'sound', 'on': 'on, in', 'kun': 'oto, ne'},
+    {'character': '楽', 'meaning': 'comfort, music', 'on': 'gaku, raku', 'kun': 'tano(shii)'},
+    {'character': '歌', 'meaning': 'sing, song', 'on': 'ka', 'kun': 'uta(u), uta'},
+    {'character': '画', 'meaning': 'picture, stroke', 'on': 'ga, kaku', 'kun': 'kaku(suru)'},
+    // Lesson 35
+    {'character': '写', 'meaning': 'copy, photograph', 'on': 'sha', 'kun': 'utsu(su)'},
+    {'character': '真', 'meaning': 'true, reality', 'on': 'shin', 'kun': 'ma'},
+    {'character': '旅', 'meaning': 'trip, travel', 'on': 'ryo', 'kun': 'tabi'},
+    {'character': '世', 'meaning': 'world, generation', 'on': 'sei, se', 'kun': 'yo'},
+    // Lesson 36
+    {'character': '界', 'meaning': 'world, boundary', 'on': 'kai', 'kun': '-'},
+    {'character': '特', 'meaning': 'special', 'on': 'toku', 'kun': '-'},
+    {'character': '急', 'meaning': 'hurry, urgent', 'on': 'kyuu', 'kun': 'iso(gu)'},
+    {'character': '便', 'meaning': 'convenience, mail', 'on': 'ben, bin', 'kun': 'tayo(ri)'},
+    // Lesson 37
+    {'character': '利', 'meaning': 'profit, benefit', 'on': 'ri', 'kun': 'ki(ku)'},
+    {'character': '不', 'meaning': 'non-, negative', 'on': 'fu, bu', 'kun': '-'},
+    {'character': '親', 'meaning': 'parent, intimate', 'on': 'shin', 'kun': 'oya, shita(shii)'},
+    {'character': '切', 'meaning': 'cut', 'on': 'setsu, sai', 'kun': 'ki(ru)'},
+    // Lesson 38
+    {'character': '好', 'meaning': 'fond, like', 'on': 'kou', 'kun': 'su(ki), kono(mu)'},
+    {'character': '意', 'meaning': 'mind, meaning', 'on': 'i', 'kun': '-'},
+    {'character': '味', 'meaning': 'flavor, taste', 'on': 'mi', 'kun': 'aji'},
+    {'character': '理', 'meaning': 'logic, reason', 'on': 'ri', 'kun': 'kotowari'},
+    // Lesson 39
+    {'character': '飯', 'meaning': 'meal, cooked rice', 'on': 'han', 'kun': 'meshi'},
+    {'character': '肉', 'meaning': 'meat', 'on': 'niku', 'kun': '-'},
+    {'character': '鳥', 'meaning': 'bird', 'on': 'chou', 'kun': 'tori'},
+    {'character': '牛', 'meaning': 'cow, cattle', 'on': 'gyuu', 'kun': 'ushi'},
+    // Lesson 40
+    {'character': '物', 'meaning': 'thing, object', 'on': 'butsu, motsu', 'kun': 'mono'},
+    {'character': '事', 'meaning': 'matter, thing', 'on': 'ji, zu', 'kun': 'koto'},
+    {'character': '朝', 'meaning': 'morning', 'on': 'chou', 'kun': 'asa'},
+    {'character': '昼', 'meaning': 'noon, daytime', 'on': 'chuu', 'kun': 'hiru'},
+    // Lesson 41
+    {'character': '夜', 'meaning': 'night, evening', 'on': 'ya', 'kun': 'yoru, yo'},
+    {'character': '夕', 'meaning': 'evening', 'on': 'seki', 'kun': 'yuu'},
+    {'character': '方', 'meaning': 'direction, person', 'on': 'hou', 'kun': 'kata'},
+    {'character': '洗', 'meaning': 'wash', 'on': 'sen', 'kun': 'ara(u)'},
+    // Lesson 42
+    {'character': '運', 'meaning': 'carry, luck', 'on': 'un', 'kun': 'hako(bu)'},
+    {'character': '動', 'meaning': 'move', 'on': 'dou', 'kun': 'ugo(ku)'},
+    {'character': '転', 'meaning': 'revolve, turn', 'on': 'ten', 'kun': 'koro(bu)'},
+    {'character': '通', 'meaning': 'commute, pass', 'on': 'tsuu', 'kun': 'too(ru), kayo(u)'},
+    // Lesson 43
+    {'character': '降', 'meaning': 'descend, fall', 'on': 'kou', 'kun': 'o(riru), fu(ru)'},
+    {'character': '着', 'meaning': 'arrive, wear', 'on': 'chaku, jaku', 'kun': 'tsu(ku), ki(ru)'},
+    {'character': '去', 'meaning': 'leave, past', 'on': 'kyo, ko', 'kun': 'sa(ru)'},
+    {'character': '院', 'meaning': 'institution, temple', 'on': 'in', 'kun': '-'},
+    // Lesson 44
+    {'character': '館', 'meaning': 'building, mansion', 'on': 'kan', 'kun': 'yakata'},
+    {'character': '堂', 'meaning': 'hall, chamber', 'on': 'dou', 'kun': '-'},
+    {'character': '屋', 'meaning': 'roof, shop', 'on': 'oku', 'kun': 'ya'},
+    {'character': '場', 'meaning': 'place, location', 'on': 'jou', 'kun': 'ba'},
+    // Lesson 45
+    {'character': '室', 'meaning': 'room', 'on': 'shitsu', 'kun': 'muro'},
+    {'character': '工', 'meaning': 'construction, craft', 'on': 'kou, ku', 'kun': '-'},
+    {'character': '質', 'meaning': 'quality, substance', 'on': 'shitsu, shichi', 'kun': '-'},
+    {'character': '問', 'meaning': 'question, ask', 'on': 'mon', 'kun': 'to(u)'},
+    // Lesson 46
+    {'character': '題', 'meaning': 'topic, subject', 'on': 'dai', 'kun': '-'},
+    {'character': '答', 'meaning': 'answer', 'on': 'tou', 'kun': 'kota(eru)'},
+    {'character': '宿', 'meaning': 'inn, lodge', 'on': 'shuku', 'kun': 'yado'},
+    {'character': '顔', 'meaning': 'face', 'on': 'gan', 'kun': 'kao'},
+    // Lesson 47
+    {'character': '頭', 'meaning': 'head', 'on': 'tou, zu', 'kun': 'atama'},
+    {'character': '心', 'meaning': 'heart, mind', 'on': 'shin', 'kun': 'kokoro'},
+    {'character': '病', 'meaning': 'illness, sickness', 'on': 'byou, hei', 'kun': 'ya(mu)'},
+    {'character': '薬', 'meaning': 'medicine, drug', 'on': 'yaku', 'kun': 'kusuri'},
+    // Lesson 48
+    {'character': '死', 'meaning': 'death, die', 'on': 'shi', 'kun': 'shi(nu)'},
+    {'character': '医', 'meaning': 'doctor, medicine', 'on': 'i', 'kun': 'iya(su)'},
+    {'character': '者', 'meaning': 'person, someone', 'on': 'sha', 'kun': 'mono'},
+    {'character': '体', 'meaning': 'body', 'on': 'tai, tei', 'kun': 'karada'},
+    // Lesson 49
+    {'character': '声', 'meaning': 'voice', 'on': 'sei, shou', 'kun': 'koe'},
+    {'character': '配', 'meaning': 'distribute, deliver', 'on': 'hai', 'kun': 'kuba(ru)'},
+    {'character': '番', 'meaning': 'turn, number', 'on': 'ban', 'kun': 'tsuga(u)'},
+    {'character': '号', 'meaning': 'number, issue', 'on': 'gou', 'kun': 'sake(bu)'},
+    // Lesson 50
+    {'character': '員', 'meaning': 'member, employee', 'on': 'in', 'kun': '-'},
+    {'character': '都', 'meaning': 'capital, metropolis', 'on': 'to, tsu', 'kun': 'miyako'},
+    {'character': '市', 'meaning': 'city, market', 'on': 'shi', 'kun': 'ichi'},
+    {'character': '町', 'meaning': 'town', 'on': 'chou', 'kun': 'machi'},
   ];
 
   static List<Kanji> buildKanjiForLesson(int lessonId) {

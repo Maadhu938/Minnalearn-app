@@ -1,0 +1,38 @@
+﻿1) Potential/capable form (can do..)
+
+Potential verbs indicate states, not actions. Thus, although the object of a transitive verb is indicated by the particle を, the object of a potential verb is usually indicated by が:
+
+わたしは　にほんごを　はなします。 I speak Japanese.
+
+わたしは　にほんごが　はなせます。I can speak Japanese.
+
+2) できます
+
+In addition use as "being able to", introduced in Lesson 18, できます can also mean to 'come into being', 'be completed', 'be made', etc:
+
+えきの　まえに　おおきい　スーパーが　できました。　A big supermarket was built in front of the station.
+
+とかいの　しゅうりは　いつ　できますか？　When can you repair the watch by?
+
+#
+3) ~しか ~only
+
+しか is appended to nouns, quantifiers, etc., and is always used with a negative. When used with a noun to which a particle is attached, it is appended to the particle unless this is が or を, which it replaces.
+
+ローマじしか　かけません。　I can only write Romaji.
+
+ローマじだけ　かけます。　I can write Romaji (but nothing else).
+
+#
+4) Nは　
+
+In addition to introducing a topic, は can also indicate a contrast.
+
+ワインは　のみますが、ビールは　のみません。　I drink wine, but not beer.
+
+#
+5) は with another particle already attached
+
+When は is used with a noun to which another particle is attached(other than が or を), it is appended to that particle.
+
+にほんでは　うまを　みる　ことが　できません。　In Japan, you can't see any horses.

@@ -7,7 +7,7 @@ import '../models/lesson.dart';
 class DataSeeder {
   static Future<List<Lesson>> loadInitialLessons() async {
     final List<Lesson> lessons = [];
-    for (int i = 1; i <= 25; i++) {
+    for (int i = 1; i <= 50; i++) {
       try {
         final content = await rootBundle.loadString('assets/vocab/vocab$i.txt');
         final vocab = _parseTxtVocab(content, i);

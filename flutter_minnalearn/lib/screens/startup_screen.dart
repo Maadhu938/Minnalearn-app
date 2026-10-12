@@ -8,6 +8,7 @@ import 'main_screen.dart';
 import 'onboarding_screen.dart';
 import 'auth_screen.dart';
 import '../services/notification_service.dart';
+import '../services/pro_entitlement_service.dart';
 import '../utils/app_theme.dart';
 
 class StartupScreen extends StatefulWidget {
@@ -32,6 +33,11 @@ class _StartupScreenState extends State<StartupScreen> {
     try {
       final dbService = DatabaseService();
       await dbService.initialize();
+      try {
+        await ProEntitlementService().initialize();
+      } catch (e) {
+        debugPrint('ProEntitlementService initialization failed: $e');
+      }
       try {
         await NotificationService().initialize();
         await NotificationService().rescheduleAll();

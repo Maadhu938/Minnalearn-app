@@ -1,0 +1,50 @@
+﻿1.) Causative verbs (make/let a person do something)
+
+Causative verbs indicate compulsion or permission. They are used when a senior(senpai) person forces or allows a junior person to do something. (Note: If a junior person has a senior person do something, ～て　いただきます is used instead.)
+
+How to make causative verbs:
+
+Group I
+
+Change the last syllable of the ます-form to the corresponding あ-sound and add -せます
+
+Group II
+
+Add -させます to the ます-form
+
+Group III
+
+1.1) N(person)を V(intransitive) causative - make/let a person V(intransitive)
+
+ぶちょうは　ミラーさんを　おおさかへ　しゅちょうさせます。
+
+The department manager makes Mr. Miller go to Osaka on business.
+
+わたしは　むすめを　じゆうに　あそばせました。
+
+I let my daughter play freely.
+
+[Note] When an intransitive verb with "N(place)を" is used in the sentence, the subject of the action is indicated with に instead of を, like so:
+
+わたしは　こどもに　みちの　みぎがわを　あるかせます。
+
+I make my child walk on the right side of the road.
+
+#
+1.2) N(person)に Nを V(transitive) causative - make/let a person V(intransitive)
+
+むすめに　あさごはんの　じゅんびを　てつだいわせます。
+
+I make my daughter help prepare breakfast.
+
+せんせいは　せいとに　じゆうに　いけんを　いわせました。
+
+The teacher let her students freely voice their opinions.
+
+2.) V causative て-form いただけませんか　　- Would you please let me do...?
+
+This pattern is used to seek permission.
+
+ねむいですから、そうたいさせて　いただけませんか。
+
+I'm tired, so could you please let me leave early?

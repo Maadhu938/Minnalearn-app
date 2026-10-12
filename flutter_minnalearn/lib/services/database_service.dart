@@ -42,8 +42,9 @@ class DatabaseService {
     final result = await db.rawQuery('SELECT COUNT(*) as count FROM lessons');
     final lessonCount = Sqflite.firstIntValue(result) ?? 0;
 
-    if (lessonCount == 0) {
-      await _replaceLessonContent(db);
+    if (lessonCount < 50) {
+      final existingProgress = await _captureLessonProgress(db);
+      await _replaceLessonContent(db, progressByLessonId: existingProgress);
     }
   }
 

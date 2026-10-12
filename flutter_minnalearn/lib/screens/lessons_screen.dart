@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 import '../models/lesson.dart';
 import '../services/database_service.dart';
+import '../services/pro_entitlement_service.dart';
 import '../utils/app_theme.dart';
 import '../widgets/animated_progress_bar.dart';
 import '../widgets/bouncing_widget.dart';
+import '../widgets/lesson_unlock_bottom_sheet.dart';
 import 'lesson_detail_screen.dart';
 import '../services/japanese_font_service.dart';
 
@@ -18,7 +19,8 @@ class LessonsScreen extends StatefulWidget {
 }
 
 class _LessonsScreenState extends State<LessonsScreen> {
-  int _selectedFilter = 0; // 0: All, 1: In Progress, 2: Completed
+  int _selectedLevel = 0; // 0: JLPT N5 (1–25), 1: JLPT N4 (26–50)
+  int _selectedFilter = 0; // 0: All (25), 1: In Progress, 2: Completed
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,15 @@ class _LessonsScreenState extends State<LessonsScreen> {
                 }
 
                 final allLessons = snapshot.data ?? [];
-                final filteredLessons = allLessons.where((lesson) {
+                final levelLessons = allLessons.where((lesson) {
+                  if (_selectedLevel == 0) {
+                    return lesson.id >= 1 && lesson.id <= 25;
+                  } else {
+                    return lesson.id >= 26 && lesson.id <= 50;
+                  }
+                }).toList();
+
+                final filteredLessons = levelLessons.where((lesson) {
                   if (_selectedFilter == 1) {
                     return lesson.progress > 0.0 && lesson.progress < 1.0;
                   } else if (_selectedFilter == 2) {
@@ -60,22 +70,23 @@ class _LessonsScreenState extends State<LessonsScreen> {
                 }).toList();
 
                 if (filteredLessons.isEmpty) {
+                  final levelName = _selectedLevel == 0 ? 'N5' : 'N4';
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           _selectedFilter == 2
-                              ? LucideIcons.award
-                              : LucideIcons.bookOpen,
+                              ? Icons.workspace_premium_outlined
+                              : Icons.menu_book_rounded,
                           size: 48,
                           color: AppColors.ink400,
                         ),
                         const SizedBox(height: 12),
                         Text(
                           _selectedFilter == 2
-                              ? 'No completed lessons yet.'
-                              : 'No lessons in progress.',
+                              ? 'No completed lessons in $levelName yet.'
+                              : 'No $levelName lessons in progress.',
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -84,7 +95,9 @@ class _LessonsScreenState extends State<LessonsScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Start exploring Lesson 1!',
+                          _selectedLevel == 0
+                              ? 'Start exploring Lesson 1!'
+                              : 'Start exploring Lesson 26!',
                           style: GoogleFonts.inter(
                             fontSize: 13,
                             color: AppColors.ink500,
@@ -133,7 +146,7 @@ class _LessonsScreenState extends State<LessonsScreen> {
               child: Opacity(
                 opacity: 0.07,
                 child: Text(
-                  '第課',
+                  _selectedLevel == 0 ? 'N5課' : 'N4課',
                   style: JapaneseFontService().getJapaneseTextStyle(
                     fontSize: 96,
                     fontWeight: FontWeight.w900,
@@ -146,7 +159,7 @@ class _LessonsScreenState extends State<LessonsScreen> {
           Padding(
             padding: const EdgeInsets.only(
               top: 56,
-              bottom: 30,
+              bottom: 22,
               left: 20,
               right: 20,
             ),
@@ -166,29 +179,13 @@ class _LessonsScreenState extends State<LessonsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        'Minna no Nihongo I',
+                        _selectedLevel == 0 ? 'JLPT N5' : 'JLPT N4',
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
-                    FutureBuilder<List<Lesson>>(
-                      future: DatabaseService().getLessons(),
-                      builder: (context, snapshot) {
-                        final lessons = snapshot.data ?? [];
-                        final completed =
-                            lessons.where((l) => l.progress >= 1.0).length;
-                        return Text(
-                          '$completed / 25 Done',
-                          style: GoogleFonts.inter(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        );
-                      },
                     ),
                   ],
                 ),
@@ -204,13 +201,17 @@ class _LessonsScreenState extends State<LessonsScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Master vocabulary, kanji, and grammar step-by-step',
+                  _selectedLevel == 0
+                      ? 'Master beginner N5 vocabulary, kanji & grammar'
+                      : 'Advance with N4 sentence patterns & compound verbs',
                   style: GoogleFonts.inter(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
+                const SizedBox(height: 16),
+                _buildLevelSwitcher(),
               ],
             ),
           ),
@@ -219,8 +220,154 @@ class _LessonsScreenState extends State<LessonsScreen> {
     );
   }
 
+  Widget _buildLevelSwitcher() {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.18),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.25), width: 1),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: BouncingWidget(
+              scaleFactor: 0.96,
+              onTap: () {
+                if (_selectedLevel != 0) {
+                  setState(() {
+                    _selectedLevel = 0;
+                  });
+                }
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: _selectedLevel == 0 ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: _selectedLevel == 0
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.12),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _selectedLevel == 0
+                            ? AppColors.primary
+                            : Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'N5',
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'JLPT N5',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: _selectedLevel == 0
+                            ? AppColors.primaryDark
+                            : Colors.white.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: BouncingWidget(
+              scaleFactor: 0.96,
+              onTap: () {
+                if (_selectedLevel != 1) {
+                  setState(() {
+                    _selectedLevel = 1;
+                  });
+                }
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: _selectedLevel == 1 ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: _selectedLevel == 1
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.12),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _selectedLevel == 1
+                            ? AppColors.primary
+                            : Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'N4',
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'JLPT N4',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: _selectedLevel == 1
+                            ? AppColors.primaryDark
+                            : Colors.white.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildFilterTabs() {
-    final filters = ['All (25)', 'In Progress', 'Completed'];
+    final filters = ['All', 'In Progress', 'Completed'];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
@@ -272,10 +419,30 @@ class _LessonsScreenState extends State<LessonsScreen> {
   Widget _buildLessonCard(Lesson lesson) {
     final isDone = lesson.progress >= 1.0;
     final percentInt = (lesson.progress * 100).toInt();
+    final isUnlocked = ProEntitlementService().isLessonUnlocked(lesson.id);
 
     return BouncingWidget(
       scaleFactor: 0.98,
       onTap: () async {
+        if (!isUnlocked) {
+          final didUnlock = await LessonUnlockBottomSheet.show(
+            context,
+            lessonId: lesson.id,
+            lessonTitle: lesson.title,
+          );
+          if (didUnlock && mounted) {
+            setState(() {});
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LessonDetailScreen(lesson: lesson),
+              ),
+            );
+            if (mounted) setState(() {});
+          }
+          return;
+        }
+
         await Navigator.push(
           context,
           MaterialPageRoute(
@@ -290,9 +457,11 @@ class _LessonsScreenState extends State<LessonsScreen> {
           color: AppColors.card,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: isDone
-                ? AppColors.bambooBorder
-                : AppColors.ink200.withOpacity(0.8),
+            color: !isUnlocked
+                ? AppColors.ink200
+                : (isDone
+                    ? AppColors.bambooBorder
+                    : AppColors.ink200.withOpacity(0.8)),
             width: 1.2,
           ),
           boxShadow: AppShadows.card,
@@ -307,11 +476,13 @@ class _LessonsScreenState extends State<LessonsScreen> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: isDone
-                        ? AppColors.bambooLight
-                        : (lesson.progress > 0
-                            ? AppColors.amberLight
-                            : AppColors.primaryLight),
+                    color: !isUnlocked
+                        ? AppColors.ink100
+                        : (isDone
+                            ? AppColors.bambooLight
+                            : (lesson.progress > 0
+                                ? AppColors.amberLight
+                                : AppColors.primaryLight)),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Center(
@@ -320,11 +491,13 @@ class _LessonsScreenState extends State<LessonsScreen> {
                       style: GoogleFonts.inter(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: isDone
-                            ? AppColors.bambooDark
-                            : (lesson.progress > 0
-                                ? AppColors.amberDark
-                                : AppColors.primary),
+                        color: !isUnlocked
+                            ? AppColors.ink500
+                            : (isDone
+                                ? AppColors.bambooDark
+                                : (lesson.progress > 0
+                                    ? AppColors.amberDark
+                                    : AppColors.primary)),
                       ),
                     ),
                   ),
@@ -345,7 +518,37 @@ class _LessonsScreenState extends State<LessonsScreen> {
                             ),
                           ),
                           const SizedBox(width: 6),
-                          if (isDone)
+                          if (!isUnlocked)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.ink100,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.lock_outline,
+                                    size: 11,
+                                    color: AppColors.ink500,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    'Locked',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.ink500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          else if (isDone)
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
@@ -359,7 +562,7 @@ class _LessonsScreenState extends State<LessonsScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   const Icon(
-                                    LucideIcons.checkCircle2,
+                                    Icons.check_circle_rounded,
                                     size: 11,
                                     color: AppColors.bambooDark,
                                   ),
@@ -385,7 +588,7 @@ class _LessonsScreenState extends State<LessonsScreen> {
                         style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.ink900,
+                          color: !isUnlocked ? AppColors.ink700 : AppColors.ink900,
                           letterSpacing: -0.2,
                         ),
                       ),
@@ -396,12 +599,14 @@ class _LessonsScreenState extends State<LessonsScreen> {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: AppColors.ink100,
+                    color: !isUnlocked ? AppColors.amberLight : AppColors.ink100,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    LucideIcons.chevronRight,
-                    color: AppColors.ink500,
+                  child: Icon(
+                    !isUnlocked
+                        ? Icons.lock_outline
+                        : Icons.chevron_right_rounded,
+                    color: !isUnlocked ? AppColors.amberDark : AppColors.ink500,
                     size: 18,
                   ),
                 ),
@@ -413,25 +618,56 @@ class _LessonsScreenState extends State<LessonsScreen> {
             Row(
               children: [
                 _buildInfoChip(
-                  icon: LucideIcons.bookOpen,
+                  icon: Icons.menu_book_rounded,
                   label: '${lesson.vocabulary.length} words',
                 ),
                 const Spacer(),
-                Text(
-                  '$percentInt%',
-                  style: GoogleFonts.inter(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w700,
-                    color: isDone ? AppColors.bambooDark : AppColors.ink700,
+                if (!isUnlocked)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2.5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.amberLight,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/crown_pro.png',
+                          width: 13,
+                          height: 13,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Watch ad or PRO',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.amberDark,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Text(
+                    '$percentInt%',
+                    style: GoogleFonts.inter(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: isDone ? AppColors.bambooDark : AppColors.ink700,
+                    ),
                   ),
-                ),
               ],
             ),
             const SizedBox(height: 8),
 
             // Animated Progress Bar
             AnimatedProgressBar(
-              value: lesson.progress,
+              value: !isUnlocked ? 0.0 : lesson.progress,
               height: 7,
               foregroundColor: isDone ? AppColors.bamboo : AppColors.primary,
               gradient: isDone ? AppGradients.bamboo : AppGradients.primaryHeader,

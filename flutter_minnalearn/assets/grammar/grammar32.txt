@@ -1,0 +1,47 @@
+﻿1.) た-form/ない-form ほうが　いいです
+
+This is used for suggestions or advice.
+
+まいにち　うんどうした　ほうが　いいです。　It is good to exercise daily.
+
+おふろに　はいらない　ほうが　いいです。　You better not take a bath.
+
+NOTE: The difference between た　ほうが　いい and たら　いい
+
+た　ほうが　いい implies a comparison and a choice between two things:
+
+おてらが　みたいんですが…。- きょうとへ　いったら　いいですよ。
+
+I'd like to see temples... - You should go to Kyoto.
+
+2.) でしょう
+
+This pattern expresses the speakers inference from some information he has, or asks for the listeners inference.
+
+あした　あめが　ふるでしょう。 I think it will rain tomorrow.
+
+タワポンさんは　ごうかくするでしょうか。 Do you think Mr. Tawapon will pass the exam?
+
+3.) かも　しれません
+
+This expresses the inference that something might occur. Noun and な-adjective clauses must not use だ:
+
+X　せんせいだかもしれない → O せんせいかもしれない
+
+He might be a teacher.
+
+やくそくの　じかんに　まに　あわないかも　しれません。
+
+We might be late for the appointment.
+
+えいがをみたかもしれない。
+
+I might have seen this movie.
+
+4.) もしかしたら - per chance
+
+This is used with かも　しれません in most cases.
+
+もしかしたら　３がつに　そつぎょう　できないかも　しれません。
+
+I might not be able to graduate in march.

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'n4_kanji_stroke_data.dart';
 
 /// Represents a single stroke of a Kanji character with verified authentic
 /// start, path waypoints, directional guidance, and numbered badge positioning (from KanjiVG).
@@ -97,7 +98,9 @@ class KanjiStrokeDictionary {
     if (_cache.containsKey(character)) {
       return _cache[character]!;
     }
-    final data = _database[character] ?? _generateFallbackData(character);
+    final data = _database[character] ??
+        N4KanjiStrokeData.database[character] ??
+        _generateFallbackData(character);
     _cache[character] = data;
     return data;
   }
