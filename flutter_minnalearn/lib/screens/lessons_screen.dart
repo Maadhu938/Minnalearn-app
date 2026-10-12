@@ -8,6 +8,7 @@ import '../utils/app_theme.dart';
 import '../widgets/animated_progress_bar.dart';
 import '../widgets/bouncing_widget.dart';
 import 'lesson_detail_screen.dart';
+import '../services/japanese_font_service.dart';
 
 class LessonsScreen extends StatefulWidget {
   const LessonsScreen({Key? key}) : super(key: key);
@@ -133,7 +134,7 @@ class _LessonsScreenState extends State<LessonsScreen> {
                 opacity: 0.07,
                 child: Text(
                   '第課',
-                  style: GoogleFonts.notoSansJp(
+                  style: JapaneseFontService().getJapaneseTextStyle(
                     fontSize: 96,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,

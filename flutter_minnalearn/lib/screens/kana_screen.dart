@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../services/japanese_font_service.dart';
 import '../utils/app_theme.dart';
 import '../widgets/bouncing_widget.dart';
 
@@ -344,22 +345,27 @@ class _KanaScreenState extends State<KanaScreen>
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
       ),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF9FAFB),
-        body: Column(
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildKanaPage(isHiragana: true),
-                  _buildKanaPage(isHiragana: false),
-                ],
-              ),
+      child: ValueListenableBuilder<String>(
+        valueListenable: JapaneseFontService.currentFontNotifier,
+        builder: (context, fontKey, _) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFF9FAFB),
+            body: Column(
+              children: [
+                _buildHeader(),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildKanaPage(isHiragana: true),
+                      _buildKanaPage(isHiragana: false),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -452,9 +458,39 @@ class _KanaScreenState extends State<KanaScreen>
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
-              tabs: const [
-                Tab(text: 'Hiragana  あ'),
-                Tab(text: 'Katakana  ア'),
+              tabs: [
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Hiragana  '),
+                      Text(
+                        'あ',
+                        style: JapaneseFontService().getJapaneseTextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Katakana  '),
+                      Text(
+                        'ア',
+                        style: JapaneseFontService().getJapaneseTextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -580,11 +616,10 @@ class _KanaScreenState extends State<KanaScreen>
               child: Text(
                 char.kana,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: JapaneseFontService().getJapaneseTextStyle(
                   color: AppColors.ink900,
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
-                  fontFamilyFallback: ['Noto Sans CJK JP', 'sans-serif'],
                 ),
               ),
             ),

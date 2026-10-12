@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+
 import '../models/lesson.dart';
 import '../services/quiz_engine.dart';
 import '../services/database_service.dart';
 import '../services/study_timer_service.dart';
 import '../services/audio_service.dart';
+import '../services/speech_service.dart';
 import '../services/achievement_service.dart';
 import '../utils/app_theme.dart';
 import '../widgets/bouncing_widget.dart';
+import '../widgets/fox_mascot_bubble.dart';
+import '../services/japanese_font_service.dart';
 
 class QuizScreen extends StatefulWidget {
   final Lesson lesson;
@@ -24,16 +28,22 @@ class _QuizScreenState extends State<QuizScreen> {
   late List<Question> _questions;
   int _currentIndex = 0;
   int _score = 0;
+  int _streak = 0;
   bool _isAnswered = false;
   int? _selectedOptionIndex;
   bool _showResults = false;
   int _questionGeneration = 0;
 
+  String _mascotMessage = 'What does this kana word mean?';
+  FoxMood _mascotMood = FoxMood.neutral;
+
   @override
   void initState() {
     super.initState();
     StudyTimerService().startTimer();
+    DatabaseService().updateStreak();
     _questions = QuizEngine().generateQuiz(widget.lesson);
+    _updateMascotPrompt();
   }
 
   @override
@@ -42,38 +52,64 @@ class _QuizScreenState extends State<QuizScreen> {
     super.dispose();
   }
 
+  void _updateMascotPrompt() {
+    if (_questions.isEmpty) return;
+    final currentQ = _questions[_currentIndex];
+    if (currentQ.type == QuestionType.kanaToEnglish) {
+      _mascotMessage = 'What does this kana word mean?';
+    } else {
+      _mascotMessage = 'Choose the matching kana for this meaning:';
+    }
+    _mascotMood = FoxMood.neutral;
+  }
+
   void _handleAnswer(int optionIndex) {
     if (_isAnswered) return;
 
     final generation = _questionGeneration;
+    final currentQ = _questions[_currentIndex];
+    final isCorrect = currentQ.options[optionIndex] == currentQ.correctAnswer;
 
     setState(() {
       _isAnswered = true;
       _selectedOptionIndex = optionIndex;
-      if (_questions[_currentIndex].options[optionIndex] == _questions[_currentIndex].correctAnswer) {
+      if (isCorrect) {
         _score++;
+        _streak++;
         AudioService().playCorrect();
+        _mascotMessage = _streak > 1
+            ? 'Sugoi! 🔥 $_streak in a row!'
+            : 'Yatta! That is correct! 🎉';
+        _mascotMood = FoxMood.happy;
       } else {
+        _streak = 0;
         AudioService().playWrong();
+        _mascotMessage = 'Oops! Correct: "${currentQ.correctAnswer}" 💡';
+        _mascotMood = FoxMood.encouraging;
       }
     });
 
     if (_currentIndex < _questions.length - 1) {
-      Future.delayed(const Duration(milliseconds: 500), () {
+      Future.delayed(const Duration(milliseconds: 700), () {
         if (mounted && generation == _questionGeneration) {
           setState(() {
             _currentIndex++;
             _isAnswered = false;
             _selectedOptionIndex = null;
+            _updateMascotPrompt();
           });
         }
       });
     } else {
-      setState(() {
-        _showResults = true;
+      Future.delayed(const Duration(milliseconds: 600), () {
+        if (mounted) {
+          setState(() {
+            _showResults = true;
+          });
+          AudioService().playLevelComplete();
+          _updateLessonProgress();
+        }
       });
-      AudioService().playLevelComplete();
-      Future(() => _updateLessonProgress());
     }
   }
 
@@ -123,42 +159,61 @@ class _QuizScreenState extends State<QuizScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: AppColors.bambooLight,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(LucideIcons.trophy, size: 48, color: Colors.green),
+                child: const Icon(LucideIcons.trophy, size: 48, color: AppColors.bambooDark),
               ),
               const SizedBox(height: 20),
               Text(
                 'Sugoi desu ne!',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.outfit(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1F2937),
+                  color: AppColors.ink900,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Lesson ${widget.lesson.id} completed!',
+                widget.lesson.id > 0 ? 'Lesson ${widget.lesson.id} completed!' : 'Quiz completed!',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.outfit(
                   fontSize: 16,
-                  color: const Color(0xFF6B7280),
+                  color: AppColors.ink500,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                child: BouncingWidget(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    decoration: BoxDecoration(
+                      color: AppColors.bamboo,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFF34D399), width: 1.5),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: AppColors.bambooDark,
+                          offset: Offset(0, 4),
+                          blurRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Yatta!',
+                        style: GoogleFonts.outfit(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
                   ),
-                  child: const Text('Yatta!', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -168,12 +223,36 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
+  void _restartQuiz() {
+    setState(() {
+      _questionGeneration++;
+      _currentIndex = 0;
+      _score = 0;
+      _streak = 0;
+      _isAnswered = false;
+      _selectedOptionIndex = null;
+      _showResults = false;
+      _questions = QuizEngine().generateQuiz(widget.lesson);
+      _updateMascotPrompt();
+    });
+  }
+
+  bool _isJapaneseText(String text) {
+    return RegExp(
+            r'[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]')
+        .hasMatch(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_questions.isEmpty) {
       return Scaffold(
+        backgroundColor: AppColors.scaffold,
         body: Center(
-          child: Text('No questions available for this lesson.', style: GoogleFonts.inter()),
+          child: Text(
+            'No questions available for this lesson.',
+            style: GoogleFonts.outfit(fontSize: 16, color: AppColors.ink500),
+          ),
         ),
       );
     }
@@ -184,79 +263,186 @@ class _QuizScreenState extends State<QuizScreen> {
 
     final currentQuestion = _questions[_currentIndex];
     final progress = (_currentIndex + 1) / _questions.length;
+    final isJapaneseQuestion = currentQuestion.type == QuestionType.kanaToEnglish;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.scaffold,
       body: SafeArea(
         child: Column(
           children: [
-            // Header with progress
+            // Header with Progress & Close
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
+                      BouncingWidget(
                         onTap: () => Navigator.pop(context),
-                        child: const Icon(LucideIcons.x, color: Color(0xFF4B5563)),
-                      ),
-                      Text(
-                        'Question ${_currentIndex + 1}/${_questions.length}',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF4B5563),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.ink200, width: 1.5),
+                          ),
+                          child: const Icon(LucideIcons.x, color: AppColors.ink700, size: 18),
                         ),
                       ),
-                      const SizedBox(width: 24), // Spacer for centering
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: LinearPercentIndicator(
+                          padding: EdgeInsets.zero,
+                          lineHeight: 12.0,
+                          percent: progress,
+                          backgroundColor: AppColors.ink200.withOpacity(0.6),
+                          progressColor: AppColors.primary,
+                          barRadius: const Radius.circular(10),
+                          animation: true,
+                          animateFromLastPercent: true,
+                          animationDuration: 250,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: _streak > 0 ? AppColors.amberLight : Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: _streak > 0 ? AppColors.amberBorder : AppColors.ink200,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _streak > 0 ? '🔥' : '🎯',
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${_currentIndex + 1}/${_questions.length}',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w800,
+                                color: _streak > 0 ? AppColors.amberDark : AppColors.ink700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
-                  ),
-                  const SizedBox(height: 16),
-                  LinearPercentIndicator(
-                    padding: EdgeInsets.zero,
-                    lineHeight: 8.0,
-                    percent: progress,
-                    backgroundColor: AppColors.ink100,
-                    progressColor: AppColors.primary,
-                    barRadius: const Radius.circular(10),
                   ),
                 ],
               ),
             ),
 
-            // Question Section
+            // Fox Mascot Speech Bubble
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: FoxMascotBubble(
+                message: _mascotMessage,
+                mood: _mascotMood,
+              ),
+            ),
+
+            // Question Box & Choices
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
-                    Text(
-                      _getQuestionLabel(currentQuestion.type),
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0xFF6B7280),
-                        fontWeight: FontWeight.w500,
+                    // Question Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 26),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: AppColors.ink200, width: 1.5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                isJapaneseQuestion ? 'Japanese Kana' : 'English Meaning',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.ink500,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              if (isJapaneseQuestion) ...[
+                                const SizedBox(width: 8),
+                                BouncingWidget(
+                                  onTap: () {
+                                    SpeechService().speakJapanese(currentQuestion.question);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.azureLight,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: AppColors.azureBorder, width: 1),
+                                    ),
+                                    child: const Icon(
+                                      LucideIcons.volume2,
+                                      size: 15,
+                                      color: AppColors.azureDark,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            currentQuestion.question,
+                            textAlign: TextAlign.center,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: (isJapaneseQuestion ||
+                                    _isJapaneseText(currentQuestion.question))
+                                ? JapaneseFontService().getJapaneseTextStyle(
+                                    fontSize: currentQuestion.question.length > 7 ? 26 : 34,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppColors.ink900,
+                                    height: 1.25,
+                                  )
+                                : GoogleFonts.outfit(
+                                    fontSize: currentQuestion.question.length > 28
+                                        ? 18
+                                        : (currentQuestion.question.length > 16 ? 21 : 25),
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.ink900,
+                                    height: 1.25,
+                                  ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      currentQuestion.question,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF1F2937),
-                      ),
-                    ),
-                    const SizedBox(height: 60),
 
-                    // Options
+                    const SizedBox(height: 24),
+
+                    // Options: Tactile 3D Buttons
                     ...List.generate(currentQuestion.options.length, (index) {
                       return _buildOptionButton(index, currentQuestion);
                     }),
+
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -267,73 +453,104 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  String _getQuestionLabel(QuestionType type) {
-    switch (type) {
-      case QuestionType.kanaToEnglish:
-        return 'What does this kana word mean?';
-      case QuestionType.englishToKana:
-        return 'Choose the kana for this meaning:';
-    }
-  }
-
   Widget _buildOptionButton(int index, Question question) {
     final optionText = question.options[index];
     final isCorrect = optionText == question.correctAnswer;
     final isSelected = _selectedOptionIndex == index;
 
-    Color borderColor = Colors.transparent;
+    final optionLetters = ['A', 'B', 'C', 'D'];
+    final letter = index < optionLetters.length ? optionLetters[index] : '${index + 1}';
+
     Color bgColor = Colors.white;
-    Color textColor = const Color(0xFF374151);
-    Widget? icon;
+    Color borderColor = AppColors.ink200;
+    Color bottomBorderColor = const Color(0xFFCBD5E1); // 3D depth border
+    Color textColor = AppColors.ink900;
+    Color letterBg = AppColors.ink100;
+    Color letterColor = AppColors.ink700;
+    Widget? statusIcon;
 
     if (_isAnswered) {
       if (isCorrect) {
-        borderColor = Colors.green.shade400;
-        bgColor = Colors.green.shade50;
-        textColor = Colors.green.shade700;
-        icon = const Icon(LucideIcons.checkCircle2, color: Colors.green, size: 20);
+        bgColor = const Color(0xFFECFDF5);
+        borderColor = AppColors.bamboo;
+        bottomBorderColor = AppColors.bambooDark;
+        textColor = const Color(0xFF047857);
+        letterBg = AppColors.bamboo;
+        letterColor = Colors.white;
+        statusIcon = const Icon(LucideIcons.checkCircle2, color: AppColors.bambooDark, size: 20);
       } else if (isSelected) {
-        borderColor = Colors.red.shade400;
-        bgColor = Colors.red.shade50;
-        textColor = Colors.red.shade700;
-        icon = const Icon(LucideIcons.xCircle, color: Colors.red, size: 20);
+        bgColor = const Color(0xFFFEF2F2);
+        borderColor = AppColors.primary;
+        bottomBorderColor = AppColors.primaryDark;
+        textColor = const Color(0xFFB91C1C);
+        letterBg = AppColors.primary;
+        letterColor = Colors.white;
+        statusIcon = const Icon(LucideIcons.xCircle, color: AppColors.primary, size: 20);
       }
-    } else {
-      borderColor = Colors.grey.shade200;
     }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: BouncingWidget(
+        scaleFactor: 0.96,
         onTap: () => _handleAnswer(index),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(color: borderColor, width: 2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 10,
+                color: bottomBorderColor,
                 offset: const Offset(0, 4),
+                blurRadius: 0,
               ),
             ],
           ),
           child: Row(
             children: [
-              Expanded(
-                child: Text(
-                  optionText,
-                  style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: textColor,
+              // Option Letter Pill (A, B, C, D)
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: letterBg,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    letter,
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: letterColor,
+                    ),
                   ),
                 ),
               ),
-              if (icon != null) icon,
+              const SizedBox(width: 14),
+
+              // Option Text
+              Expanded(
+                child: Text(
+                  optionText,
+                  style: _isJapaneseText(optionText)
+                      ? JapaneseFontService().getJapaneseTextStyle(
+                          fontSize: 16.5,
+                          fontWeight: FontWeight.w700,
+                          color: textColor,
+                        )
+                      : GoogleFonts.outfit(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: textColor,
+                        ),
+                ),
+              ),
+
+              if (statusIcon != null) statusIcon,
             ],
           ),
         ),
@@ -346,65 +563,224 @@ class _QuizScreenState extends State<QuizScreen> {
     bool isPassed = percentage >= 80;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.scaffold,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 16),
+
+              // Celebratory Fox Mascot Header
               Container(
-                padding: const EdgeInsets.all(32),
-                decoration: BoxDecoration(
-                  color: isPassed ? Colors.green.shade50 : Colors.orange.shade50,
-                  shape: BoxShape.circle,
-                ),
-                child: Image.asset(
-                  isPassed ? 'assets/gif/Shiba Happy.gif' : 'assets/gif/Shiba Sad.gif',
-                  width: 120,
-                  height: 120,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                isPassed ? 'Excellent!' : 'Keep Practicing!',
-                style: GoogleFonts.inter(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1F2937),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'You scored $_score out of ${_questions.length}',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  color: const Color(0xFF4B5563),
-                ),
-              ),
-              const SizedBox(height: 48),
-              _buildStatRow('Accuracy', '${percentage.toInt()}%'),
-              const SizedBox(height: 12),
-              _buildStatRow('Lesson', 'Lesson ${widget.lesson.id}'),
-              const SizedBox(height: 48),
-              SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    elevation: 0,
+                padding: const EdgeInsets.all(28),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                    color: isPassed ? AppColors.bambooBorder : AppColors.amberBorder,
+                    width: 2,
                   ),
-                  child: Text(
-                    'Back to Lessons',
-                    style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isPassed ? AppColors.bamboo : AppColors.amber).withOpacity(0.12),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // Fox Avatar Badge
+                    Container(
+                      width: 104,
+                      height: 104,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isPassed ? const Color(0xFFECFDF5) : const Color(0xFFFEF3C7),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isPassed ? AppColors.bamboo : AppColors.amber,
+                          width: 2.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: (isPassed ? AppColors.bamboo : AppColors.amber).withOpacity(0.2),
+                            blurRadius: 14,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        isPassed ? 'assets/gif/Shiba Happy.gif' : 'assets/gif/Shiba Sad.gif',
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+
+                    Text(
+                      isPassed ? 'Sugoi! Quiz Passed! 🎉' : 'Good Effort! Keep Going! 💪',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.ink900,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      isPassed
+                          ? (widget.lesson.id > 0 ? 'You mastered the vocabulary in Lesson ${widget.lesson.id}!' : 'You mastered the vocabulary from All Lessons!')
+                          : 'Practice makes perfect. Review the words and try again!',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: 14.5,
+                        color: AppColors.ink500,
+                        fontWeight: FontWeight.w500,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+
+              const SizedBox(height: 20),
+
+              // Stats Cards
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildResultStatCard(
+                      icon: LucideIcons.checkCheck,
+                      iconColor: AppColors.bambooDark,
+                      iconBg: AppColors.bambooLight,
+                      label: 'Score',
+                      value: '$_score / ${_questions.length}',
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _buildResultStatCard(
+                      icon: LucideIcons.award,
+                      iconColor: AppColors.azureDark,
+                      iconBg: AppColors.azureLight,
+                      label: 'Accuracy',
+                      value: '${percentage.toInt()}%',
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 14),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildResultStatCard(
+                      icon: LucideIcons.flame,
+                      iconColor: AppColors.amberDark,
+                      iconBg: AppColors.amberLight,
+                      label: 'Streak Bonus',
+                      value: '+${_score * 5} XP',
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _buildResultStatCard(
+                      icon: LucideIcons.bookOpen,
+                      iconColor: AppColors.primary,
+                      iconBg: AppColors.primaryLight,
+                      label: 'Lesson',
+                      value: widget.lesson.id > 0 ? 'Lesson ${widget.lesson.id}' : 'All Lessons',
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 32),
+
+              // Action Buttons (Duolingo Tactile 3D Buttons)
+              Row(
+                children: [
+                  Expanded(
+                    child: BouncingWidget(
+                      onTap: _restartQuiz,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.ink200, width: 2),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0xFFCBD5E1),
+                              offset: Offset(0, 4),
+                              blurRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(LucideIcons.rotateCcw, color: AppColors.ink700, size: 18),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Retry',
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.ink700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    flex: 2,
+                    child: BouncingWidget(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: const Color(0xFFF43F5E), width: 2),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0xFF9F1239),
+                              offset: Offset(0, 4),
+                              blurRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Continue',
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(LucideIcons.arrowRight, color: Colors.white, size: 18),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -412,25 +788,62 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Widget _buildStatRow(String label, String value) {
+  Widget _buildResultStatCard({
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBg,
+    required String label,
+    required String value,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.ink200, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: GoogleFonts.inter(color: const Color(0xFF6B7280), fontWeight: FontWeight.w500)),
-          Text(value, style: GoogleFonts.inter(color: const Color(0xFF1F2937), fontWeight: FontWeight.bold, fontSize: 18)),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: iconBg,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, size: 18, color: iconColor),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.ink500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: GoogleFonts.outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.ink900,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

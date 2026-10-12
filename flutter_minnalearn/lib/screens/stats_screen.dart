@@ -6,6 +6,7 @@ import '../services/database_service.dart';
 import '../utils/app_theme.dart';
 import '../widgets/animated_progress_bar.dart';
 import '../widgets/bouncing_widget.dart';
+import '../services/japanese_font_service.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({Key? key}) : super(key: key);
@@ -120,7 +121,7 @@ class _StatsScreenState extends State<StatsScreen> {
                 opacity: 0.08,
                 child: Text(
                   '進歩',
-                  style: GoogleFonts.notoSansJp(
+                  style: JapaneseFontService().getJapaneseTextStyle(
                     fontSize: 96,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -339,6 +340,8 @@ class _StatsScreenState extends State<StatsScreen> {
                 return _buildAnimatedBar(
                   data['day']?.toString() ?? '',
                   (data['percent'] as num?)?.toDouble() ?? 0.0,
+                  (data['seconds'] as num?)?.toInt() ?? 0,
+                  data['isToday'] as bool? ?? false,
                 );
               }).toList(),
             ),
@@ -348,39 +351,68 @@ class _StatsScreenState extends State<StatsScreen> {
     );
   }
 
-  Widget _buildAnimatedBar(String day, double percent) {
+  Widget _buildAnimatedBar(String day, double percent, int seconds, bool isToday) {
     final clampedPercent = percent.clamp(0.0, 1.0);
+    final hasStudied = seconds > 0;
     final isMax = clampedPercent > 0.6;
+    final minutes = (seconds / 60).round();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        TweenAnimationBuilder<double>(
-          tween: Tween<double>(begin: 0.0, end: clampedPercent),
-          duration: const Duration(milliseconds: 700),
-          curve: Curves.easeOutCubic,
-          builder: (context, val, _) {
-            final barHeight = (val * 105).clamp(6.0, 105.0);
-            return Container(
-              width: 24,
-              height: barHeight,
-              decoration: BoxDecoration(
-                gradient: isMax
-                    ? AppGradients.primaryHeader
-                    : AppGradients.azure,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: isMax ? AppShadows.primaryGlow : AppShadows.subtle,
-              ),
-            );
-          },
+        // Time label above bar
+        Text(
+          hasStudied ? '${minutes > 0 ? minutes : 1}m' : '',
+          style: GoogleFonts.outfit(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: isToday ? AppColors.primary : AppColors.ink400,
+          ),
+        ),
+        const SizedBox(height: 4),
+
+        // Track and Bar Container
+        Container(
+          width: 22,
+          height: 90,
+          decoration: BoxDecoration(
+            color: isToday ? AppColors.primaryLight.withOpacity(0.5) : AppColors.ink100,
+            borderRadius: BorderRadius.circular(8),
+            border: isToday
+                ? Border.all(color: AppColors.primaryBorder.withOpacity(0.6), width: 1)
+                : null,
+          ),
+          alignment: Alignment.bottomCenter,
+          child: TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0.0, end: clampedPercent),
+            duration: const Duration(milliseconds: 700),
+            curve: Curves.easeOutCubic,
+            builder: (context, val, _) {
+              if (val <= 0.0) return const SizedBox.shrink();
+              final barHeight = (val * 90).clamp(10.0, 90.0);
+              return Container(
+                width: 22,
+                height: barHeight,
+                decoration: BoxDecoration(
+                  gradient: isMax
+                      ? AppGradients.primaryHeader
+                      : AppGradients.azure,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: isMax ? AppShadows.primaryGlow : AppShadows.subtle,
+                ),
+              );
+            },
+          ),
         ),
         const SizedBox(height: 8),
+
+        // Day Label
         Text(
           day,
-          style: GoogleFonts.inter(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: AppColors.ink500,
+          style: GoogleFonts.outfit(
+            fontSize: 12,
+            fontWeight: isToday ? FontWeight.w800 : FontWeight.w600,
+            color: isToday ? AppColors.primary : AppColors.ink500,
           ),
         ),
       ],

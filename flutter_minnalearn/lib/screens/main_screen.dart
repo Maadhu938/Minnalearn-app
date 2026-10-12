@@ -7,6 +7,7 @@ import 'lessons_screen.dart';
 import 'profile_screen.dart';
 import 'stats_screen.dart';
 import '../services/analytics_service.dart';
+import '../services/app_engagement_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -41,6 +42,23 @@ class _MainScreenState extends State<MainScreen> {
 
     // Log initial screen
     _logScreen(_currentIndex);
+
+    // Start active usage tracking and check for updates and engagement reviews
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        // Start 5-minute active app usage tracking
+        AppEngagementService().startTracking(context);
+
+        // 1. If user just updated app to a new version, show What's New
+        AppEngagementService().checkAndShowUpdateChangelog(context).then((_) {
+          if (mounted) {
+            // 2. Check if a newer version is available on Google Play
+            AppEngagementService()
+                .checkForAvailableUpdate(context, silentIfUpToDate: true);
+          }
+        });
+      }
+    });
   }
 
   void _changeTab(int index) {
@@ -62,6 +80,10 @@ class _MainScreenState extends State<MainScreen> {
     });
 
     _logScreen(index);
+    AppEngagementService().updateContext(context);
+    if (index == 0) {
+      AppEngagementService().checkAndPromptReview(context);
+    }
   }
 
   @override

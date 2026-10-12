@@ -8,12 +8,14 @@ import '../services/speech_service.dart';
 import '../services/study_timer_service.dart';
 import '../utils/vocabulary_display.dart';
 import '../utils/app_theme.dart';
+import '../services/japanese_font_service.dart';
 import '../widgets/bouncing_widget.dart';
 
 class VocabularyListScreen extends StatefulWidget {
   final Lesson lesson;
 
-  const VocabularyListScreen({Key? key, required this.lesson}) : super(key: key);
+  const VocabularyListScreen({Key? key, required this.lesson})
+      : super(key: key);
 
   @override
   State<VocabularyListScreen> createState() => _VocabularyListScreenState();
@@ -69,7 +71,8 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Japanese voice not available. Download it from Settings → Languages → Text-to-speech voice'),
+        content: const Text(
+            'Japanese voice not available. Download it from Settings → Languages → Text-to-speech voice'),
         action: SnackBarAction(
           label: 'OPEN SETTINGS',
           onPressed: () => SpeechService().openTtsSettings(),
@@ -85,7 +88,8 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
       return;
     }
 
-    final isBookmarked = await DatabaseService().toggleVocabularyBookmark(vocabularyId);
+    final isBookmarked =
+        await DatabaseService().toggleVocabularyBookmark(vocabularyId);
     if (!mounted) {
       return;
     }
@@ -94,13 +98,15 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
       if (isBookmarked) {
         _bookmarkedIds = {..._bookmarkedIds, vocabularyId};
       } else {
-        _bookmarkedIds = _bookmarkedIds.where((id) => id != vocabularyId).toSet();
+        _bookmarkedIds =
+            _bookmarkedIds.where((id) => id != vocabularyId).toSet();
       }
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(isBookmarked ? 'Saved to bookmarks' : 'Removed from bookmarks'),
+        content: Text(
+            isBookmarked ? 'Saved to bookmarks' : 'Removed from bookmarks'),
         duration: const Duration(milliseconds: 1200),
       ),
     );
@@ -136,7 +142,8 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 56, bottom: 28, left: 20, right: 20),
+            padding:
+                const EdgeInsets.only(top: 56, bottom: 28, left: 20, right: 20),
             decoration: const BoxDecoration(
               gradient: AppGradients.primaryHeader,
               borderRadius: BorderRadius.only(
@@ -152,11 +159,13 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 20),
+                      const Icon(LucideIcons.arrowLeft,
+                          color: Colors.white, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         'Back',
-                        style: GoogleFonts.inter(color: Colors.white.withOpacity(0.9)),
+                        style: GoogleFonts.inter(
+                            color: Colors.white.withOpacity(0.9)),
                       ),
                     ],
                   ),
@@ -172,9 +181,13 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  widget.lesson.title.isEmpty
-                      ? 'Lesson ${widget.lesson.id}'
-                      : 'Lesson ${widget.lesson.id}: ${widget.lesson.title}',
+                  widget.lesson.id > 0
+                      ? (widget.lesson.title.isEmpty
+                          ? 'Lesson ${widget.lesson.id}'
+                          : 'Lesson ${widget.lesson.id}: ${widget.lesson.title}')
+                      : (widget.lesson.title.isNotEmpty
+                          ? widget.lesson.title
+                          : 'All Lessons'),
                   style: GoogleFonts.inter(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 16,
@@ -191,7 +204,8 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
               itemBuilder: (context, index) {
                 final word = widget.lesson.vocabulary[index];
                 final vocabularyId = word.id ?? '';
-                final isBookmarked = vocabularyId.isNotEmpty && _bookmarkedIds.contains(vocabularyId);
+                final isBookmarked = vocabularyId.isNotEmpty &&
+                    _bookmarkedIds.contains(vocabularyId);
 
                 return Container(
                   padding: const EdgeInsets.all(16),
@@ -219,14 +233,15 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
                               children: [
                                 Text(
                                   word.kanaText,
-                                  style: GoogleFonts.inter(
+                                  style: JapaneseFontService().getJapaneseTextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: const Color(0xFF1F2937),
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
                                     color: _getTypeBgColor(word.type),
                                     borderRadius: BorderRadius.circular(6),
@@ -264,9 +279,15 @@ class _VocabularyListScreenState extends State<VocabularyListScreen> {
                           const SizedBox(width: 8),
                           _buildCircleButton(
                             LucideIcons.bookmark,
-                            isBookmarked ? AppColors.amberLight : Colors.grey.shade50,
-                            isBookmarked ? AppColors.amberDark : Colors.grey.shade400,
-                            onTap: _isLoadingBookmarks ? null : () => _toggleBookmark(word),
+                            isBookmarked
+                                ? AppColors.amberLight
+                                : Colors.grey.shade50,
+                            isBookmarked
+                                ? AppColors.amberDark
+                                : Colors.grey.shade400,
+                            onTap: _isLoadingBookmarks
+                                ? null
+                                : () => _toggleBookmark(word),
                           ),
                         ],
                       ),

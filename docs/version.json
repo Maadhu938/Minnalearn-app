@@ -1,0 +1,16 @@
+{
+  "latest_version": "1.0.13",
+  "latest_build_number": 29,
+  "release_date": "2026-10-11",
+  "title": "MinnaLearn N5 - Listening Hub & Kanji Studio Polish",
+  "message": "Improved Kanji stroke tracing guide lines and enhanced layout padding in the Listening Hub!",
+  "release_notes": [
+    "Refined Kanji guided tracing with authentic stroke trajectory and directional chevrons.",
+    "Improved notch and status-bar safe-area padding across Listening practice screens.",
+    "Streamlined practice mode descriptions and clean UI hierarchy.",
+    "Interactive audio player with native Japanese recordings."
+  ],
+  "play_store_url": "https://play.google.com/store/apps/details?id=com.maadhu.minnalearn",
+  "website_url": "https://getminnalearn.xyz",
+  "force_update": false
+}

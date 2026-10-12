@@ -10,6 +10,10 @@ import '../services/speech_service.dart';
 import '../services/audio_service.dart';
 import '../services/study_timer_service.dart';
 import '../utils/vocabulary_display.dart';
+import '../utils/app_theme.dart';
+import '../widgets/bouncing_widget.dart';
+import '../widgets/fox_mascot_bubble.dart';
+import '../services/japanese_font_service.dart';
 
 class TypingTestScreen extends StatefulWidget {
   final Lesson lesson;
@@ -30,6 +34,9 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
   bool _answered = false;
   bool _wasCorrect = false;
   bool _scoreSaved = false;
+
+  String _mascotMessage = 'Type the English meaning of this Japanese word!';
+  FoxMood _mascotMood = FoxMood.neutral;
 
   @override
   void initState() {
@@ -56,6 +63,8 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
       _wasCorrect = false;
       _scoreSaved = false;
       _controller.clear();
+      _mascotMessage = 'Type the English meaning of this Japanese word!';
+      _mascotMood = FoxMood.neutral;
     });
   }
 
@@ -72,6 +81,11 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
       _wasCorrect = correct;
       if (correct) {
         _correctAnswers += 1;
+        _mascotMessage = 'Sugoi! Accurate typing! 🎉';
+        _mascotMood = FoxMood.happy;
+      } else {
+        _mascotMessage = 'Oops! Correct was: "${_questions[_currentIndex].meaning}" 💡';
+        _mascotMood = FoxMood.encouraging;
       }
     });
 
@@ -97,6 +111,8 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
       _answered = false;
       _wasCorrect = false;
       _controller.clear();
+      _mascotMessage = 'Type the English meaning for the next word!';
+      _mascotMood = FoxMood.neutral;
     });
   }
 
@@ -113,15 +129,11 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
   Set<String> _candidateAnswers(String meaning) {
     final values = <String>{};
 
-    // Strip parenthetical content - it's explanatory, not an alternative answer
-    // e.g., "to walk (go on foot)" → only "to walk" is accepted
     final cleaned = meaning
         .replaceAll(RegExp(r'\([^)]*\)'), '')
         .replaceAll(RegExp(r'（[^）]*）'), '')
         .trim();
 
-    // Split by comma, slash, semicolon for alternative meanings
-    // e.g., "he, she" → both "he" and "she" accepted
     final segments = cleaned.split(RegExp(r'[,/]'));
 
     for (final segment in segments) {
@@ -132,7 +144,6 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
 
       values.add(normalized);
 
-      // Strip common prefixes: "to walk" also accepts "walk"
       for (final prefix in ['to ', 'a ', 'an ', 'the ']) {
         if (normalized.startsWith(prefix)) {
           final trimmed = _normalize(normalized.substring(prefix.length));
@@ -169,200 +180,375 @@ class _TypingTestScreenState extends State<TypingTestScreen> {
     final hasEnoughWords = _questions.isNotEmpty;
     final isFinished = hasEnoughWords && _answered && _currentIndex == _questions.length - 1;
 
+    if (!hasEnoughWords) {
+      return Scaffold(
+        backgroundColor: AppColors.scaffold,
+        body: Center(
+          child: Text(
+            'Not enough vocabulary to start Typing Test.',
+            style: GoogleFonts.outfit(color: AppColors.ink500, fontSize: 16),
+          ),
+        ),
+      );
+    }
+
+    final currentWord = _questions[_currentIndex];
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.scaffold,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: hasEnoughWords
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+        child: Column(
+          children: [
+            // Top Bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  BouncingWidget(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppColors.ink200, width: 1.5),
+                      ),
+                      child: const Icon(LucideIcons.arrowLeft, color: AppColors.ink700, size: 20),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppColors.bambooLight,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.bambooBorder, width: 1.5),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: const Icon(LucideIcons.arrowLeft, color: Color(0xFF4B5563)),
-                        ),
-                        const SizedBox(width: 16),
+                        const Icon(LucideIcons.keyboard, size: 15, color: AppColors.bambooDark),
+                        const SizedBox(width: 6),
                         Text(
-                          'Typing Test',
-                          style: GoogleFonts.inter(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1F2937),
+                          'Typing Test • Word ${_currentIndex + 1}/${_questions.length}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.bambooDark,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Question ${_currentIndex + 1} of ${_questions.length}',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: const Color(0xFF6B7280),
+                  ),
+                  BouncingWidget(
+                    onTap: _setupQuiz,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppColors.ink200, width: 1.5),
+                      ),
+                      child: const Icon(LucideIcons.rotateCcw, color: AppColors.ink500, size: 18),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Fox Mascot Prompt
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              child: FoxMascotBubble(
+                message: _mascotMessage,
+                mood: _mascotMood,
+              ),
+            ),
+
+            // Content Area
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Column(
+                  children: [
+                    // Question Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 26),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(26),
+                        border: Border.all(color: AppColors.ink200, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 14,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Japanese Word',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.ink500,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              BouncingWidget(
+                                onTap: () {
+                                  SpeechService().speakJapanese(currentWord.kanaText);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.azureLight,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: AppColors.azureBorder, width: 1),
+                                  ),
+                                  child: const Icon(LucideIcons.volume2, size: 15, color: AppColors.azureDark),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              currentWord.kanaText,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              style: JapaneseFontService().getJapaneseTextStyle(
+                                fontSize: currentWord.kanaText.length > 7 ? 28 : 38,
+                                fontWeight: FontWeight.w900,
+                                color: AppColors.ink900,
+                              ),
+                            ),
+                          ),
+                          if (currentWord.romaji.trim().isNotEmpty) ...[
+                            const SizedBox(height: 6),
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                currentWord.romaji,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 15,
+                                  color: AppColors.ink400,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(999),
-                      child: LinearProgressIndicator(
-                        value: (_currentIndex + (_answered ? 1 : 0)) / _questions.length,
-                        minHeight: 8,
-                        backgroundColor: const Color(0xFFE5E7EB),
-                        color: const Color(0xFF10B981),
+
+                    const SizedBox(height: 20),
+
+                    // Input Field
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: _answered
+                              ? (_wasCorrect ? AppColors.bamboo : AppColors.primary)
+                              : AppColors.ink200,
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.03),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _controller,
+                        enabled: !_answered,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) => _submitAnswer(),
+                        style: GoogleFonts.outfit(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.ink900,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Type English translation...',
+                          hintStyle: GoogleFonts.outfit(
+                            fontSize: 16,
+                            color: AppColors.ink400,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                          suffixIcon: _controller.text.isNotEmpty && !_answered
+                              ? IconButton(
+                                  icon: const Icon(LucideIcons.x, size: 18, color: AppColors.ink400),
+                                  onPressed: () => setState(() => _controller.clear()),
+                                )
+                              : null,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
+
+                    if (_answered) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: _wasCorrect ? const Color(0xFFECFDF5) : const Color(0xFFFFF1F2),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: _wasCorrect ? AppColors.bamboo : AppColors.primary,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Row(
                           children: [
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [Color(0xFF34D399), Color(0xFF10B981)],
+                            Icon(
+                              _wasCorrect ? LucideIcons.checkCircle2 : LucideIcons.alertCircle,
+                              color: _wasCorrect ? AppColors.bambooDark : AppColors.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                _wasCorrect
+                                    ? 'Perfect! "${currentWord.meaning}"'
+                                    : 'Meaning: ${currentWord.meaning}',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: _wasCorrect ? const Color(0xFF065F46) : const Color(0xFF9F1239),
                                 ),
-                                borderRadius: BorderRadius.circular(28),
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Type English meaning of kana',
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white.withOpacity(0.92),
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 18),
-                                  Text(
-                                    _questions[_currentIndex].kanaText,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
                               ),
                             ),
-                            const SizedBox(height: 24),
-                            TextField(
-                              controller: _controller,
-                              enabled: !_answered,
-                              textInputAction: TextInputAction.done,
-                              onSubmitted: (_) => _submitAnswer(),
-                              decoration: InputDecoration(
-                                hintText: 'Type the meaning here',
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            if (_answered)
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(18),
-                                decoration: BoxDecoration(
-                                  color: _wasCorrect ? const Color(0xFFECFDF5) : const Color(0xFFFEF2F2),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: _wasCorrect ? const Color(0xFFA7F3D0) : const Color(0xFFFECACA),
-                                  ),
-                                ),
-                                child: Text(
-                                  _wasCorrect
-                                      ? 'Correct! "${_questions[_currentIndex].meaning}"'
-                                      : 'Correct answer: ${_questions[_currentIndex].meaning}',
-                                  style: GoogleFonts.inter(
-                                    color: _wasCorrect ? const Color(0xFF065F46) : const Color(0xFF991B1B),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
                           ],
                         ),
                       ),
+                    ],
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            ),
+
+            // Bottom Action Bar
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                20,
+                10,
+                20,
+                MediaQuery.of(context).padding.bottom > 0
+                    ? MediaQuery.of(context).padding.bottom + 14
+                    : 20,
+              ),
+              child: Row(
+                children: [
+                  // Score Indicator Pill
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.ink200, width: 1.5),
                     ),
-                    const SizedBox(height: 16),
-                    Row(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Score',
-                                  style: GoogleFonts.inter(
-                                    color: const Color(0xFF6B7280),
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '$_correctAnswers',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF1F2937),
-                                  ),
-                                ),
-                              ],
-                            ),
+                        Text(
+                          'Score',
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.ink400,
                           ),
                         ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          flex: 2,
-                          child: ElevatedButton(
-                            onPressed: isFinished
-                                ? _setupQuiz
-                                : _answered
-                                    ? _nextQuestion
-                                    : _submitAnswer,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF10B981),
-                              padding: const EdgeInsets.symmetric(vertical: 18),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            ),
-                            child: Text(
-                              isFinished ? 'Play Again' : _answered ? 'Next Word' : 'Submit',
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                        Text(
+                          '$_correctAnswers/${_questions.length}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.ink900,
                           ),
                         ),
                       ],
                     ),
-                  ],
-                )
-              : Center(
-                  child: Text(
-                    'Not enough vocabulary to start Typing Test.',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF6B7280),
-                      fontSize: 15,
+                  ),
+
+                  const SizedBox(width: 14),
+
+                  // Tactile 3D Action Button
+                  Expanded(
+                    child: BouncingWidget(
+                      scaleFactor: 0.95,
+                      onTap: isFinished
+                          ? _setupQuiz
+                          : _answered
+                              ? _nextQuestion
+                              : _submitAnswer,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          color: isFinished
+                              ? AppColors.azure
+                              : _answered
+                                  ? AppColors.primary
+                                  : AppColors.bamboo,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: isFinished
+                                ? const Color(0xFF38BDF8)
+                                : _answered
+                                    ? const Color(0xFFF43F5E)
+                                    : const Color(0xFF34D399),
+                            width: 2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isFinished
+                                  ? AppColors.azureDark
+                                  : _answered
+                                      ? const Color(0xFF9F1239)
+                                      : AppColors.bambooDark,
+                              offset: const Offset(0, 4),
+                              blurRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            isFinished
+                                ? 'Play Again'
+                                : _answered
+                                    ? 'Next Word →'
+                                    : 'Check Answer',
+                            style: GoogleFonts.outfit(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

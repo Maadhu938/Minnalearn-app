@@ -7,10 +7,12 @@ import '../models/lesson.dart';
 import '../services/database_service.dart';
 import '../utils/app_theme.dart';
 import '../widgets/bouncing_widget.dart';
+import '../widgets/fox_mascot_bubble.dart';
 import 'true_or_false_screen.dart';
 import 'matching_game_screen.dart';
 import 'typing_test_screen.dart';
 import 'kana_puzzle_screen.dart';
+import '../services/japanese_font_service.dart';
 
 class GamesScreen extends StatefulWidget {
   const GamesScreen({Key? key}) : super(key: key);
@@ -100,6 +102,13 @@ class _GamesScreenState extends State<GamesScreen> {
                 ),
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
                 children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 18),
+                    child: FoxMascotBubble(
+                      message: 'Practice with mini-games to build lightning-fast recall! ⚡',
+                      mood: FoxMood.happy,
+                    ),
+                  ),
                   GridView.builder(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -325,7 +334,7 @@ class _GamesScreenState extends State<GamesScreen> {
                 opacity: 0.08,
                 child: Text(
                   '遊',
-                  style: GoogleFonts.notoSansJp(
+                  style: JapaneseFontService().getJapaneseTextStyle(
                     fontSize: 104,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,

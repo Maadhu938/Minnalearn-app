@@ -533,17 +533,31 @@ class DatabaseService {
       last7Days,
     );
 
-    // Map to result ensuring all days are present
+    int maxSeconds = 0;
+    for (final s in sessions) {
+      final sec = (s['duration_seconds'] as num?)?.toInt() ?? 0;
+      if (sec > maxSeconds) maxSeconds = sec;
+    }
+    // Scale against at least 10 minutes (600s) or maximum session in the week
+    final int scaleBase = maxSeconds > 600 ? maxSeconds : 600;
+    final String today = DateTime.now().toIso8601String().split('T')[0];
+
     return last7Days.map((date) {
       final session = sessions.firstWhere(
         (s) => s['date'] == date,
         orElse: () => {'date': date, 'duration_seconds': 0},
       );
       final seconds = (session['duration_seconds'] as num?)?.toInt() ?? 0;
+      double percent = 0.0;
+      if (seconds > 0) {
+        // Minimum visual height of 15% so any active day is clearly visible, scaling up to 100%
+        percent = (0.15 + (seconds / scaleBase) * 0.85).clamp(0.15, 1.0);
+      }
       return {
         'day': _getDayLabel(date),
         'seconds': seconds,
-        'percent': seconds / 3600, // Normalized to 1 hour
+        'percent': percent,
+        'isToday': date == today,
       };
     }).toList();
   }
@@ -850,5 +864,51 @@ class DatabaseService {
     try { await db.delete('achievements'); } catch (e) { debugPrint('Failed to delete achievements: $e'); }
     try { await db.delete('study_sessions'); } catch (e) { debugPrint('Failed to delete study_sessions: $e'); }
     try { await db.delete('game_scores'); } catch (e) { debugPrint('Failed to delete game_scores: $e'); }
+  }
+
+  Future<String?> getUserStatText(String key) async {
+    final db = await database;
+    final result = await db.query(
+      'user_stats',
+      where: 'key = ?',
+      whereArgs: [key],
+      limit: 1,
+    );
+    if (result.isNotEmpty) {
+      return result.first['value_text'] as String?;
+    }
+    return null;
+  }
+
+  Future<void> setUserStatText(String key, String value) async {
+    final db = await database;
+    await db.insert(
+      'user_stats',
+      {'key': key, 'value_text': value},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<int?> getUserStatInt(String key) async {
+    final db = await database;
+    final result = await db.query(
+      'user_stats',
+      where: 'key = ?',
+      whereArgs: [key],
+      limit: 1,
+    );
+    if (result.isNotEmpty) {
+      return result.first['value_int'] as int?;
+    }
+    return null;
+  }
+
+  Future<void> setUserStatInt(String key, int value) async {
+    final db = await database;
+    await db.insert(
+      'user_stats',
+      {'key': key, 'value_int': value},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 }

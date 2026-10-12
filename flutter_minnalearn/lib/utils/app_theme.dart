@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/japanese_font_service.dart';
 
 /// Central Design System for MinnaLearn
 /// Authentic Japanese Modern Aesthetic (Akane Crimson, Warm Sun Amber, Bamboo Emerald, Sky Azure)
@@ -170,7 +171,8 @@ class AppShadows {
 }
 
 class AppTheme {
-  static ThemeData get lightTheme {
+  static ThemeData getTheme([String? fontKey]) {
+    final japaneseFontFamily = JapaneseFontService().currentFontFamily;
     return ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: AppColors.scaffold,
@@ -199,6 +201,8 @@ class AppTheme {
         bodyMedium: GoogleFonts.inter(
           color: AppColors.ink700,
         ),
+      ).apply(
+        fontFamilyFallback: [japaneseFontFamily],
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -207,4 +211,6 @@ class AppTheme {
       ),
     );
   }
+
+  static ThemeData get lightTheme => getTheme();
 }
