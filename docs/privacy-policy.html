@@ -389,69 +389,66 @@
     <div class="policy-card">
       <div class="badge-tag">🔒 Legal & Transparency</div>
       <h1 data-i18n="title">Privacy Policy</h1>
-      <p class="updated-date" data-i18n="updated">Last updated: April 8, 2026</p>
+      <p class="updated-date" data-i18n="updated">Last updated: October 15, 2026</p>
 
-      <p data-i18n="intro1">This Privacy Policy applies to the <strong>MinnaLearn: Japanese N5</strong> mobile application on Google Play.</p>
-      <p data-i18n="intro2">MinnaLearn is a Japanese language learning app for JLPT N5 learners. We respect your privacy and are committed to protecting your personal data.</p>
+      <p data-i18n="intro1">This Privacy Policy applies to the <strong>MinnaLearn: Japanese N5 & N4</strong> mobile application on Google Play.</p>
+      <p data-i18n="intro2">MinnaLearn is an interactive Japanese language learning app. We respect your privacy and are committed to protecting your personal data in accordance with international privacy laws, including the European Union General Data Protection Regulation (GDPR), UK GDPR, and California Consumer Privacy Act (CCPA).</p>
 
       <h2 data-i18n="section1_title">1. Data We Collect</h2>
       <ul>
         <li data-i18n="data1"><strong>Account information:</strong> Email address and display name (Firebase Authentication, including Google Sign-In).</li>
-        <li data-i18n="data2"><strong>Learning data:</strong> Lesson completion, study time, streaks, quiz scores, bookmarked vocabulary, learned kanji, achievements.</li>
-        <li data-i18n="data3"><strong>Usage data:</strong> Screen views and feature usage (e.g., first_open, session_start) via Firebase Analytics.</li>
-        <li data-i18n="data4"><strong>Approximate location:</strong> City/region inferred by Firebase from IP; no GPS/Wi-Fi/Bluetooth location is collected.</li>
-        <li data-i18n="data5"><strong>Device info:</strong> App version and device type for troubleshooting. Learning assets are bundled in the app; no downloads from Firebase Storage.</li>
-        <li data-i18n="data6">Study progress is stored locally (SQLite) and synced to Firebase Cloud Firestore only when you are signed in.</li>
+        <li data-i18n="data2"><strong>Learning progress:</strong> Lesson completion, study time, streak counters, quiz scores, bookmarked vocabulary, learned kanji, and unlocked achievements.</li>
+        <li data-i18n="data3"><strong>Purchases & Subscriptions:</strong> Purchase tokens, transaction receipts, and PRO subscription status processed securely via RevenueCat and Google Play Billing. We never collect or store your payment card details.</li>
+        <li data-i18n="data4"><strong>App Diagnostics & Analytics:</strong> Aggregate screen views, session duration, and feature engagement via Google Firebase Analytics.</li>
+        <li data-i18n="data5"><strong>Advertising Identifiers:</strong> Google Advertising ID (GAID) collected by Google AdMob strictly for delivering rewarded and interstitial advertisements. In the EEA and UK, ad personalization is governed by your consent settings.</li>
+        <li data-i18n="data6"><strong>Approximate location:</strong> Coarse city/region inferred by Firebase from IP for CDN latency optimization; no GPS or real-time location is collected.</li>
       </ul>
 
       <h2 data-i18n="section2_title">2. How We Use Your Data</h2>
       <ul>
-        <li data-i18n="use1">Create and manage your account.</li>
-        <li data-i18n="use2">Track learning progress and streaks.</li>
-        <li data-i18n="use3">Sync your data across devices.</li>
-        <li data-i18n="use4">Send local study reminders and streak alerts (with your permission).</li>
-        <li data-i18n="use5">Improve app features using aggregated analytics.</li>
+        <li data-i18n="use1">Provide, operate, and maintain your account and learning data.</li>
+        <li data-i18n="use2">Sync your study progress across multiple Android devices when signed in.</li>
+        <li data-i18n="use3">Manage PRO entitlements, subscription renewals, and purchase restorations via RevenueCat.</li>
+        <li data-i18n="use4">Serve optional rewarded video ads (allowing free users to unlock lessons) and interstitial ads via Google AdMob.</li>
+        <li data-i18n="use5">Send local study reminders and streak notifications (only when explicitly permitted).</li>
+        <li data-i18n="use6">Diagnose bugs, detect crashes, and improve overall app stability.</li>
       </ul>
 
-      <h2 data-i18n="section3_title">3. Data Sharing</h2>
+      <h2 data-i18n="section3_title">3. Data Sharing & Third-Party Service Providers</h2>
+      <p data-i18n="thirdparty_intro">We do not sell, rent, or trade your personal data. We partner with reputable service providers who process data strictly under confidentiality agreements:</p>
       <ul>
-        <li data-i18n="share1">Your data is processed by <strong>Google Firebase</strong> for authentication, analytics, and cloud sync.</li>
-        <li data-i18n="share2">We do <strong>not</strong> sell, rent, or share your personal data with third parties.</li>
-        <li data-i18n="share3">Advertising IDs are disabled; the app shows no ads and performs no profiling.</li>
+        <li data-i18n="share1"><strong>Google Firebase:</strong> Authentication, Cloud Firestore (cloud database sync), and Firebase Analytics.</li>
+        <li data-i18n="share2"><strong>Google AdMob:</strong> Ad serving, rewarded ads, and consent management via Google User Messaging Platform (UMP). Governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.</li>
+        <li data-i18n="share3"><strong>RevenueCat:</strong> Subscription infrastructure and in-app purchase validation. Governed by <a href="https://www.revenuecat.com/privacy" target="_blank" rel="noopener">RevenueCat Privacy Policy</a>.</li>
+        <li data-i18n="share4"><strong>Google Play Billing:</strong> Payment processing for digital purchases and subscriptions.</li>
       </ul>
 
       <h2 data-i18n="section4_title">4. Data Storage & Security</h2>
       <ul>
-        <li data-i18n="storage1">Data is stored locally on your device (SQLite).</li>
-        <li data-i18n="storage2">When signed in, data is securely synced to Firebase Cloud Firestore.</li>
-        <li data-i18n="storage3">Firebase uses industry-standard encryption in transit and at rest.</li>
+        <li data-i18n="storage1">Your study progress is saved locally on your device (SQLite) and encrypted in transit via TLS 1.3 / HTTPS when synced to Cloud Firestore.</li>
+        <li data-i18n="storage2">Google Firebase data centers maintain industry-leading physical, technical, and organizational security certifications (ISO 27001, SOC 1/2/3).</li>
       </ul>
 
-      <h2 data-i18n="section5_title">5. Third-Party Services</h2>
-      <p data-i18n="thirdparty_intro">Provided by Google:</p>
+      <h2 data-i18n="section5_title">5. International Privacy Rights (GDPR & CCPA)</h2>
       <ul>
-        <li>Firebase Authentication</li>
-        <li>Firebase Cloud Firestore</li>
-        <li>Firebase Analytics</li>
+        <li data-i18n="rights_gdpr"><strong>EEA & UK Users (GDPR):</strong> You have the right to access, rectify, port, or erase your data. Users in the EEA and UK are presented with a Google UMP consent dialog to accept or reject personalized advertising. You may change your consent preferences at any time in app settings.</li>
+        <li data-i18n="rights_ccpa"><strong>California Residents (CCPA):</strong> We do not "sell" personal information as defined by the CCPA. You have the right to know what personal data is collected and request its deletion.</li>
       </ul>
-      <p data-i18n="thirdpolicy">Governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
 
-      <h2 data-i18n="section6_title">6. Your Rights</h2>
+      <h2 data-i18n="section6_title">6. Your Rights & Account Deletion</h2>
       <ul>
-        <li data-i18n="right1">Access your personal data.</li>
-        <li data-i18n="right2">Correct your personal data.</li>
-        <li data-i18n="right3">Delete your account and all associated data (Profile -> Delete Account).</li>
-        <li data-i18n="right4">Sign out at any time.</li>
+        <li data-i18n="right1"><strong>Access & Correction:</strong> View and update your profile details within the app.</li>
+        <li data-i18n="right2"><strong>Instant Account Deletion:</strong> You can permanently delete your account and all associated cloud data directly inside the app (Profile -> Account Settings -> Delete Account) or by submitting a request on our <a href="delete-account.html">Data Deletion Page</a>.</li>
+        <li data-i18n="right3"><strong>Sign Out / Offline Mode:</strong> You can study 100% offline as a guest without creating an account.</li>
       </ul>
-      <p data-i18n="right_note">See our <a href="delete-account.html">Account & Data Deletion</a> page for details.</p>
 
-      <h2 data-i18n="section7_title">7. Children's Privacy</h2>
-      <p data-i18n="children">MinnaLearn does not knowingly collect personal information from children under 13. If you believe a child has provided personal data, contact us. The app is rated <strong>IARC 3+</strong> and contains no ads.</p>
+      <h2 data-i18n="section7_title">7. Children's Privacy (COPPA Compliance)</h2>
+      <p data-i18n="children">MinnaLearn is designed for high school students, university learners, and adults aged 13 and older. We do not knowingly collect personal information from children under the age of 13. If you believe a child under 13 has provided personal data, please contact us immediately, and we will promptly delete it.</p>
 
       <h2 data-i18n="section8_title">8. Changes to This Policy</h2>
-      <p data-i18n="changes">We may update this Privacy Policy from time to time. Updates will be posted on this page.</p>
+      <p data-i18n="changes">We may update this Privacy Policy periodically to reflect new features or regulatory requirements. Any modifications will be posted to this page with an updated revision date.</p>
 
-      <h2 data-i18n="section9_title">9. Contact</h2>
+      <h2 data-i18n="section9_title">9. Contact Us</h2>
       <p><strong data-i18n="email_label">Email:</strong> <a href="mailto:maadhuavati7@gmail.com">maadhuavati7@gmail.com</a></p>
     </div>
 
@@ -465,87 +462,87 @@
       en: {
         back_home: "← Home",
         title: "Privacy Policy",
-        updated: "Last updated: April 8, 2026",
-        intro1: "This Privacy Policy applies to the <strong>MinnaLearn: Japanese N5</strong> mobile application on Google Play.",
-        intro2: "MinnaLearn is a Japanese language learning app for JLPT N5 learners. We respect your privacy and are committed to protecting your personal data.",
+        updated: "Last updated: October 15, 2026",
+        intro1: "This Privacy Policy applies to the <strong>MinnaLearn: Japanese N5 & N4</strong> mobile application on Google Play.",
+        intro2: "MinnaLearn is an interactive Japanese language learning app. We respect your privacy and are committed to protecting your personal data in accordance with international privacy laws, including GDPR and CCPA.",
         section1_title: "1. Data We Collect",
         data1: "<strong>Account information:</strong> Email address and display name (Firebase Authentication, including Google Sign-In).",
-        data2: "<strong>Learning data:</strong> Lesson completion, study time, streaks, quiz scores, bookmarked vocabulary, learned kanji, achievements.",
-        data3: "<strong>Usage data:</strong> Screen views and feature usage (e.g., first_open, session_start) via Firebase Analytics.",
-        data4: "<strong>Approximate location:</strong> City/region inferred by Firebase from IP; no GPS/Wi-Fi/Bluetooth location is collected.",
-        data5: "<strong>Device info:</strong> App version and device type for troubleshooting. Learning assets are bundled in the app; no downloads from Firebase Storage.",
-        data6: "Study progress is stored locally (SQLite) and synced to Firebase Cloud Firestore only when you are signed in.",
+        data2: "<strong>Learning progress:</strong> Lesson completion, study time, streak counters, quiz scores, bookmarked vocabulary, learned kanji, and unlocked achievements.",
+        data3: "<strong>Purchases & Subscriptions:</strong> Purchase tokens, transaction receipts, and PRO subscription status processed securely via RevenueCat and Google Play Billing. We never collect or store your payment card details.",
+        data4: "<strong>App Diagnostics & Analytics:</strong> Aggregate screen views, session duration, and feature engagement via Google Firebase Analytics.",
+        data5: "<strong>Advertising Identifiers:</strong> Google Advertising ID (GAID) collected by Google AdMob strictly for delivering rewarded and interstitial advertisements. In the EEA and UK, ad personalization is governed by your consent settings.",
+        data6: "<strong>Approximate location:</strong> Coarse city/region inferred by Firebase from IP for CDN latency optimization; no GPS or real-time location is collected.",
         section2_title: "2. How We Use Your Data",
-        use1: "Create and manage your account.",
-        use2: "Track learning progress and streaks.",
-        use3: "Sync your data across devices.",
-        use4: "Send local study reminders and streak alerts (with your permission).",
-        use5: "Improve app features using aggregated analytics.",
-        section3_title: "3. Data Sharing",
-        share1: "Your data is processed by <strong>Google Firebase</strong> for authentication, analytics, and cloud sync.",
-        share2: "We do <strong>not</strong> sell, rent, or share your personal data with third parties.",
-        share3: "Advertising IDs are disabled; the app shows no ads and performs no profiling.",
+        use1: "Provide, operate, and maintain your account and learning data.",
+        use2: "Sync your study progress across multiple Android devices when signed in.",
+        use3: "Manage PRO entitlements, subscription renewals, and purchase restorations via RevenueCat.",
+        use4: "Serve optional rewarded video ads (allowing free users to unlock lessons) and interstitial ads via Google AdMob.",
+        use5: "Send local study reminders and streak notifications (only when explicitly permitted).",
+        use6: "Diagnose bugs, detect crashes, and improve overall app stability.",
+        section3_title: "3. Data Sharing & Third Parties",
+        thirdparty_intro: "We do not sell, rent, or trade your personal data. We partner with reputable service providers who process data strictly under confidentiality agreements:",
+        share1: "<strong>Google Firebase:</strong> Authentication, Cloud Firestore (cloud database sync), and Firebase Analytics.",
+        share2: "<strong>Google AdMob:</strong> Ad serving, rewarded ads, and consent management via Google User Messaging Platform (UMP).",
+        share3: "<strong>RevenueCat:</strong> Subscription infrastructure and in-app purchase validation.",
+        share4: "<strong>Google Play Billing:</strong> Payment processing for digital purchases and subscriptions.",
         section4_title: "4. Data Storage & Security",
-        storage1: "Data is stored locally on your device (SQLite).",
-        storage2: "When signed in, data is securely synced to Firebase Cloud Firestore.",
-        storage3: "Firebase uses industry-standard encryption in transit and at rest.",
-        section5_title: "5. Third-Party Services",
-        thirdparty_intro: "Provided by Google:",
-        thirdpolicy: "Governed by <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener\">Google's Privacy Policy</a>.",
-        section6_title: "6. Your Rights",
-        right1: "Access your personal data.",
-        right2: "Correct your personal data.",
-        right3: "Delete your account and all associated data (Profile -> Delete Account).",
-        right4: "Sign out at any time.",
-        right_note: "See our <a href=\"delete-account.html\">Account & Data Deletion</a> page for details.",
-        section7_title: "7. Children's Privacy",
-        children: "MinnaLearn does not knowingly collect personal information from children under 13. If you believe a child has provided personal data, contact us. The app is rated <strong>IARC 3+</strong> and contains no ads.",
+        storage1: "Your study progress is saved locally on your device (SQLite) and encrypted in transit via TLS 1.3 / HTTPS when synced to Cloud Firestore.",
+        storage2: "Google Firebase data centers maintain industry-leading physical, technical, and organizational security certifications (ISO 27001, SOC 1/2/3).",
+        section5_title: "5. International Privacy Rights (GDPR & CCPA)",
+        rights_gdpr: "<strong>EEA & UK Users (GDPR):</strong> You have the right to access, rectify, port, or erase your data. Users in the EEA and UK can manage ad personalization consent anytime via Google UMP.",
+        rights_ccpa: "<strong>California Residents (CCPA):</strong> We do not sell personal data. You have the right to request deletion of your information anytime.",
+        section6_title: "6. Your Rights & Account Deletion",
+        right1: "<strong>Access & Correction:</strong> View and update your profile details within the app.",
+        right2: "<strong>Instant Account Deletion:</strong> You can permanently delete your account directly in the app (Profile -> Delete Account) or on our <a href=\"delete-account.html\">Data Deletion Page</a>.",
+        right3: "<strong>Sign Out / Offline Mode:</strong> You can study 100% offline as a guest without creating an account.",
+        section7_title: "7. Children's Privacy (COPPA Compliance)",
+        children: "MinnaLearn is designed for language learners aged 13 and older. We do not knowingly collect personal data from children under 13.",
         section8_title: "8. Changes to This Policy",
-        changes: "We may update this Privacy Policy from time to time. Updates will be posted on this page.",
-        section9_title: "9. Contact",
+        changes: "We may update this Privacy Policy periodically. Updates will be posted on this page.",
+        section9_title: "9. Contact Us",
         email_label: "Email:",
         footer_rights: "All rights reserved."
       },
       ja: {
         back_home: "← ホーム",
         title: "プライバシーポリシー",
-        updated: "最終更新日：2026年4月8日",
-        intro1: "このプライバシーポリシーは、Google Playの<strong>MinnaLearn: Japanese N5</strong>モバイルアプリケーションに適用されます。",
-        intro2: "MinnaLearnは、JLPT N5学習者向けの日本語学習アプリです。私たちはお客様のプライバシーを尊重し、個人データの保護に全力を尽くしています。",
+        updated: "最終更新日：2026年10月15日",
+        intro1: "このプライバシーポリシーは、Google Playの<strong>MinnaLearn: Japanese N5 & N4</strong>モバイルアプリケーションに適用されます。",
+        intro2: "MinnaLearnは日本語学習アプリです。お客様のプライバシーを尊重し、GDPRやCCPAなどの国際的なプライバシー法に従って個人データを保護します。",
         section1_title: "1. 収集するデータ",
-        data1: "<strong>アカウント情報：</strong>メールアドレスと表示名（Firebase認証、Googleサインインを含む）。",
-        data2: "<strong>学習データ：</strong>レッスン完了状況、学習時間、連続記録、クイズスコア、ブックマークした単語、学習した漢字、実績。",
-        data3: "<strong>使用データ：</strong>画面表示と機能使用状況（例：first_open、session_start）をFirebase Analytics経由で収集。",
-        data4: "<strong>おおよその位置情報：</strong>FirebaseがIPから推測する都市/地域；GPS/Wi-Fi/Bluetoothの位置情報は収集しません。",
-        data5: "<strong>デバイス情報：</strong>トラブルシューティング用のアプリバージョンとデバイスタイプ。学習アセットはアプリにバンドルされています。",
-        data6: "学習進捗はローカル（SQLite）に保存され、サインイン時のみFirebase Cloud Firestoreに同期されます。",
-        section2_title: "2. データの使用方法",
-        use1: "アカウントの作成と管理。",
-        use2: "学習進捗と連続記録の追跡。",
-        use3: "デバイス間でのデータ同期。",
-        use4: "ローカルの学習リマインダーと連続記録アラートの送信（許可がある場合）。",
-        use5: "集計された分析を使用してアプリ機能の改善。",
-        section3_title: "3. データの共有",
-        share1: "お客様のデータは、認証、分析、クラウド同期のために<strong>Google Firebase</strong>によって処理されます。",
-        share2: "私たちは、お客様の個人データを第三者に<strong>販売、貸与、または共有しません</strong>。",
-        share3: "広告IDは無効になっています；このアプリには広告が表示されず、プロファイリングも行われません。",
+        data1: "<strong>アカウント情報：</strong>メールアドレスと表示名（Firebase認証、Googleサインイン）。",
+        data2: "<strong>学習進捗：</strong>レッスン完了、学習時間、連続記録、クイズスコア、ブックマークした単語、漢字、実績。",
+        data3: "<strong>購入とサブスクリプション：</strong>RevenueCatおよびGoogle Play Billingを介して安全に処理される購入トークンとPROステータス（クレジットカード情報は一切保持しません）。",
+        data4: "<strong>診断と分析：</strong>Firebase Analyticsによる匿名のアプリ利用状況。",
+        data5: "<strong>広告識別子：</strong>Google AdMobによるリワード広告・インタースティシャル広告の配信（欧州では同意管理UMPに準拠）。",
+        data6: "<strong>おおよその位置情報：</strong>IPに基づく国・地域情報（GPSは収集しません）。",
+        section2_title: "2. データの使用目的",
+        use1: "アカウントおよび学習データの提供・管理。",
+        use2: "サインイン時の複数デバイス間での学習進捗同期。",
+        use3: "RevenueCatを通じたPRO機能・サブスクリプションの管理と購入復元。",
+        use4: "Google AdMobを通じたリワード広告（無料枠でのレッスン解放）の配信。",
+        use5: "学習リマインダー通知の送信（許可時のみ）。",
+        use6: "クラッシュ検知とアプリの品質向上。",
+        section3_title: "3. データの共有とサードパーティ",
+        thirdparty_intro: "個人データを第三者に販売・貸与することはありません。以下の信頼できるプロバイダーを利用しています：",
+        share1: "<strong>Google Firebase：</strong>認証、Cloud Firestore、アナリティクス。",
+        share2: "<strong>Google AdMob：</strong>リワード広告配信およびUMP同意管理。",
+        share3: "<strong>RevenueCat：</strong>アプリ内課金およびサブスクリプション検証。",
+        share4: "<strong>Google Play Billing：</strong>決済処理。",
         section4_title: "4. データの保存とセキュリティ",
-        storage1: "データはお客様のデバイスにローカルに保存されます（SQLite）。",
-        storage2: "サインイン時、データは安全にFirebase Cloud Firestoreに同期されます。",
-        storage3: "Firebaseは、業界標準の転送時および保存時の暗号化を使用しています。",
-        section5_title: "5. サードパーティサービス",
-        thirdparty_intro: "Googleが提供：",
-        thirdpolicy: "<a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener\">Googleのプライバシーポリシー</a>に準拠。",
-        section6_title: "6. お客様の権利",
-        right1: "個人データにアクセスする。",
-        right2: "個人データを修正する。",
-        right3: "アカウントとすべての関連データを削除する（プロフィール -> アカウント削除）。",
-        right4: "いつでもサインアウトする。",
-        right_note: "詳細については、<a href=\"delete-account.html\">アカウントとデータ削除</a>ページをご覧ください。",
-        section7_title: "7. 子供のプライバシー",
-        children: "MinnaLearnは、13歳未満の子供から意図的に個人情報を収集することはありません。子供が個人データを提供したと思われる場合は、お問い合わせください。このアプリは<strong>IARC 3+</strong>の評価で、広告は含まれていません。",
+        storage1: "学習データはデバイス上のSQLiteに保存され、TLS 1.3による暗号化通信でFirestoreと同期されます。",
+        storage2: "Google Firebaseは業界最高水準のセキュリティ基準（ISO 27001、SOC）に準拠しています。",
+        section5_title: "5. 国際的なプライバシー権利（GDPR / CCPA）",
+        rights_gdpr: "<strong>EEA・英国ユーザー（GDPR）：</strong>Google UMP同意ダイアログによりパーソナライズ広告の同意をいつでも管理できます。",
+        rights_ccpa: "<strong>カリフォルニア州住民（CCPA）：</strong>個人情報の販売は行いません。いつでもデータ削除を請求できます。",
+        section6_title: "6. お客様の権利とアカウント削除",
+        right1: "<strong>アクセスと修正：</strong>アプリ内でプロフィールを確認・変更できます。",
+        right2: "<strong>アカウント削除：</strong>プロフィール -> アカウント削除、または<a href=\"delete-account.html\">データ削除ページ</a>から即座に削除できます。",
+        right3: "<strong>オフライン利用：</strong>ゲストとしてアカウント登録なしでオフライン学習が可能です。",
+        section7_title: "7. 子供のプライバシー（COPPA遵守）",
+        children: "MinnaLearnは13歳以上の学習者を対象としています。13歳未満の子供から意図的に個人情報を収集することはありません。",
         section8_title: "8. ポリシーの変更",
-        changes: "このプライバシーポリシーは随時更新される場合があります。更新はこのページに掲載されます。",
+        changes: "本ポリシーは随時更新される場合があります。更新はこのページに掲載されます。",
         section9_title: "9. お問い合わせ",
         email_label: "メール：",
         footer_rights: "全著作権所有。"
