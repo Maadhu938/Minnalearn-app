@@ -17,7 +17,7 @@
     <img src="https://img.shields.io/badge/Official_Website-getminnalearn.xyz-F12A5A?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Official Website" />
   </a>
   <a href="https://github.com/Maadhu938/MinnaLearn-FlutterApp/releases">
-    <img src="https://img.shields.io/badge/Release-v1.0.12-58CC02?style=for-the-badge" alt="Release Version" />
+    <img src="https://img.shields.io/badge/Release-v1.0.13-58CC02?style=for-the-badge" alt="Release Version" />
   </a>
   <a href="https://flutter.dev">
     <img src="https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
